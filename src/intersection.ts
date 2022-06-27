@@ -21,8 +21,6 @@ export default class Intersection {
     }
     if (point) {
       this.point = point;
-    } else if (point && !normal) {
-      this.normal = point.normalize();
     }
   }
 

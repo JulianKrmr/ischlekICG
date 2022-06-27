@@ -23,8 +23,22 @@ export default function phong(
   const kS = 0.5;
   // TODO
   const ambient = color.mul(kA);
-  let sumOfLights = 
-  const diffuse = kD * sumOfLights;
+  let sumOfDiffuseLights: Vector = new Vector(0, 0, 0, 0);
+  let sumOfSpecularLights: Vector = new Vector(0, 0, 0, 0);
+  lightPositions.forEach((light) => {
+    const helper = light.normalize().dot(intersection.normal);
+    const helper1 = intersection.normal.mul(helper).mul(2);
+    const r = helper1.sub(light.normalize());
+    sumOfSpecularLights = sumOfSpecularLights.add(
+      lightColor.mul(Math.pow(r.dot(cameraPosition.normalize()), shininess))
+    );
+    sumOfDiffuseLights = sumOfDiffuseLights.add(
+      lightColor.mul(Math.max(0, intersection.normal.dot(light)))
+    );
+  });
+  const diffuse = sumOfDiffuseLights.mul(kD);
 
-  return ambient;
+  const specular = sumOfSpecularLights.mul(kS);
+  color = ambient.add(diffuse).add(specular);
+  return color;
 }

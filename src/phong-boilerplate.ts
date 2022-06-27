@@ -40,7 +40,7 @@ window.addEventListener("load", () => {
         let minObj = null;
         for (let shape of objects) {
           const intersection = shape.intersect(ray);
-          if (intersection) {
+          if (intersection && intersection.closerThan(minIntersection)) {
             minIntersection = intersection;
             minObj = shape;
           }

@@ -16,9 +16,7 @@ export default class Sphere {
     public center: Vector,
     public radius: number,
     public color: Vector
-  ) {
-    (this.center = center), (this.radius = radius), (this.color = color);
-  }
+  ) {}
 
   /**
    * Calculates the intersection of the sphere with the given ray
@@ -26,48 +24,23 @@ export default class Sphere {
    * @return The intersection if there is one, null if there is none
    */
   intersect(ray: Ray): Intersection | null {
-    var x0: Vector = ray.origin.sub(this.center);
-    var c: number =
+    const x0 = ray.origin.sub(this.center); //Translate ray about -center
+    const c =
       Math.pow(x0.dot(ray.direction), 2) -
-      x0.dot(x0) +
-      this.radius * this.radius;
-
+      Math.pow(x0.length, 2) +
+      Math.pow(this.radius, 2); //calculate the discremenant to determine how many intersections there are
     if (c < 0) {
       return null;
-    }
-
-    var normal: Vector = ray.direction;
-
-    var t1: number =
-      -ray.origin.dot(ray.direction) +
-      Math.sqrt(
-        Math.pow(ray.origin.dot(ray.direction), 2) -
-          ray.origin.dot(ray.origin) +
-          this.radius * this.radius
-      );
-
-    var t2: number =
-      -ray.origin.dot(ray.direction) -
-      Math.sqrt(
-        Math.pow(ray.origin.dot(ray.direction), 2) -
-          ray.origin.dot(ray.origin) +
-          this.radius * this.radius
-      );
-
-    var intersection1: Intersection = new Intersection(
-      t1,
-      ray.origin.add(ray.direction.mul(t1)),
-      normal
-    );
-    var intersection2: Intersection = new Intersection(
-      t2,
-      ray.origin.add(ray.direction.mul(t2)),
-      normal
-    );
-    if (intersection1.closerThan(intersection2)) {
-      return intersection1;
     } else {
-      return intersection2;
+      const t1 = -x0.dot(ray.direction) + c; //calculate distance +/- c with p-q Formula
+      const t2 = -x0.dot(ray.direction) - c;
+      const closest = Math.min(t1, t2);
+      const intersectionPoint = x0.add(ray.direction.mul(closest)); //x0 + t*d to calculate the closest intersection point
+      return new Intersection(
+        closest,
+        intersectionPoint,
+        intersectionPoint.normalize()
+      );
     }
   }
 }

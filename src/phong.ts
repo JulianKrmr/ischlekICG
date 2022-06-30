@@ -21,24 +21,30 @@ export default function phong(
   const kA = 0.8;
   const kD = 0.5;
   const kS = 0.5;
-  // TODO
-  const ambient = color.mul(kA);
-  let sumOfDiffuseLights: Vector = new Vector(0, 0, 0, 0);
-  let sumOfSpecularLights: Vector = new Vector(0, 0, 0, 0);
+
+  let sumOfLightsDiffuse: Vector = new Vector(0, 0, 0, 0);
+  let sumOfLightsSpecular: Vector = new Vector(0, 0, 0, 0);
+
+  //berechnung für jede lichtquelle
   lightPositions.forEach((light) => {
-    const helper = light.normalize().dot(intersection.normal);
-    const helper1 = intersection.normal.mul(helper).mul(2);
-    const r = helper1.sub(light.normalize());
-    sumOfSpecularLights = sumOfSpecularLights.add(
-      lightColor.mul(Math.pow(r.dot(cameraPosition.normalize()), shininess))
+    let s: Vector = light.sub(intersection.point).normalize(); //light vector
+    let n: Vector = intersection.normal; //normal vector
+    let v: Vector = cameraPosition.sub(intersection.point).normalize(); //camera Vector
+    let r: Vector = intersection.normal.mul(s.dot(n)).mul(2).sub(s);
+
+    //berechnung diffuse Anteil
+    sumOfLightsDiffuse = sumOfLightsDiffuse.add(
+      lightColor.mul(Math.max(0, n.dot(s)))
     );
-    sumOfDiffuseLights = sumOfDiffuseLights.add(
-      lightColor.mul(Math.max(0, intersection.normal.dot(light)))
+    //berechnung specular Anteil
+    sumOfLightsSpecular = sumOfLightsSpecular.add(
+      lightColor.mul(Math.pow(Math.max(0, r.dot(v)), shininess))
     );
   });
-  const diffuse = sumOfDiffuseLights.mul(kD);
 
-  const specular = sumOfSpecularLights.mul(kS);
-  color = ambient.add(diffuse).add(specular);
-  return color;
+  let ambient: Vector = color.mul(kA);
+  let diffuse: Vector = sumOfLightsDiffuse.mul(kD);
+  let specular: Vector = sumOfLightsSpecular.mul(kS);
+
+  return ambient.add(diffuse).add(specular);
 }

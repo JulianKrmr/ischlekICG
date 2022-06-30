@@ -16,7 +16,11 @@ export default class Sphere {
     public center: Vector,
     public radius: number,
     public color: Vector
-  ) {}
+  ) {
+    this.center = center;
+    this.radius = radius;
+    this.color = color;
+  }
 
   /**
    * Calculates the intersection of the sphere with the given ray
@@ -26,21 +30,23 @@ export default class Sphere {
   intersect(ray: Ray): Intersection | null {
     const x0 = ray.origin.sub(this.center); //Translate ray about -center
     const c =
-      Math.pow(x0.dot(ray.direction), 2) -
+      Math.pow(x0.dot(ray.direction.normalize()), 2) -
       Math.pow(x0.length, 2) +
       Math.pow(this.radius, 2); //calculate the discremenant to determine how many intersections there are
     if (c < 0) {
       return null;
-    } else {
-      const t1 = -x0.dot(ray.direction) + c; //calculate distance +/- c with p-q Formula
-      const t2 = -x0.dot(ray.direction) - c;
-      const closest = Math.min(t1, t2);
-      const intersectionPoint = x0.add(ray.direction.mul(closest)); //x0 + t*d to calculate the closest intersection point
-      return new Intersection(
-        closest,
-        intersectionPoint,
-        intersectionPoint.normalize()
-      );
     }
+
+    const t1 = -x0.dot(ray.direction.normalize()) + Math.sqrt(c); //calculate distance +/- c with p-q Formula
+    const t2 = -x0.dot(ray.direction.normalize()) - Math.sqrt(c);
+
+    const closest = Math.min(t1, t2); //closer than methode verwenden?
+    let intersectionPoint = ray.origin.add(ray.direction.mul(closest));
+
+    return new Intersection(
+      closest,
+      intersectionPoint,
+      intersectionPoint.sub(this.center).normalize()
+    );
   }
 }

@@ -1,14 +1,15 @@
-import Vector from "./vector";
-
+import Vector from './vector';
+ 
 /**
  * Class representing a 4x4 Matrix
  */
 export default class Matrix {
+ 
   /**
    * Data representing the matrix values
    */
   data: Float32Array;
-
+ 
   /**
    * Constructor of the matrix. Expects an array in row-major layout. Saves the data as column major internally.
    * @param mat Matrix values row major
@@ -21,7 +22,7 @@ export default class Matrix {
       }
     }
   }
-
+ 
   /**
    * Returns the value of the matrix at position row, col
    * @param row The value's row
@@ -31,7 +32,7 @@ export default class Matrix {
   getVal(row: number, col: number): number {
     return this.data[col * 4 + row];
   }
-
+ 
   /**
    * Sets the value of the matrix at position row, col
    * @param row The value's row
@@ -41,78 +42,66 @@ export default class Matrix {
   setVal(row: number, col: number, val: number) {
     this.data[col * 4 + row] = val;
   }
-
+ 
   /**
    * Returns a matrix that represents a translation
    * @param translation The translation vector that shall be expressed by the matrix
    * @return The resulting translation matrix
    */
-  //identity methode verwenden
   static translation(translation: Vector): Matrix {
-    let newMatrix = this.identity();
-    newMatrix.data[3] = translation.x;
-    return newMatrix;
+    return new Matrix([
+      1, 0, 0, translation.x,
+      0, 1, 0, translation.y,
+      0, 0, 1, translation.z,
+      0, 0, 0, 1
+    ]);
   }
-
+ 
   /**
    * Returns a matrix that represents a rotation. The rotation axis is either the x, y or z axis (either x, y, z is 1).
    * @param axis The axis to rotate around
    * @param angle The angle to rotate
    * @return The resulting rotation matrix
    */
-  static rotation(axis: Vector, angle: number): Matrix {
-    let newMatrix = this.identity();
-    for (let row = 0; row < 4; row++) {
-      let cos = Math.cos(angle);
-      let sin = Math.sin(angle);
-
-      if (axis.x == 1) {
-        newMatrix.data[10] = cos;
-        newMatrix.data[6] = -1 * sin;
-        newMatrix.data[9] = sin;
-        newMatrix.data[5] = cos;
-      } else if (axis.y == 1) {
-        newMatrix.data[0] = cos;
-        newMatrix.data[2] = sin;
-        newMatrix.data[8] = -1 * sin;
-        newMatrix.data[10] = cos;
-      } else if (axis.z == 1) {
-        newMatrix.data[0] = cos;
-        newMatrix.data[1] = -1 * sin;
-        newMatrix.data[4] = sin;
-        newMatrix.data[5] = cos;
-      }
+   static rotation(axis: Vector, angle: number): Matrix {
+    if (axis.x == 1){
+      return new Matrix([
+        1, 0, 0, 0,
+        0, Math.cos(angle), - Math.sin(angle), 0,
+        0, Math.sin(angle), Math.cos(angle), 0,
+        0, 0, 0, 1
+      ]);
+    } else if (axis.y == 1){
+      return new Matrix([
+        Math.cos(angle), 0, Math.sin(angle), 0,
+        0, 1, 0, 0,
+        - Math.sin(angle), 0, Math.cos(angle), 0,
+        0, 0, 0, 1
+      ]);
+    } else if(axis.z == 1){
+      return new Matrix([
+        Math.cos(angle), - Math.sin(angle), 0, 0,
+        Math.sin(angle), Math.cos(angle), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+      ]);
     }
-    return newMatrix;
   }
-
+ 
   /**
    * Returns a matrix that represents a scaling
    * @param scale The amount to scale in each direction
    * @return The resulting scaling matrix
    */
   static scaling(scale: Vector): Matrix {
-    const scalingVector = scale.data;
     return new Matrix([
-      scalingVector[0],
-      0,
-      0,
-      0,
-      0,
-      scalingVector[1],
-      0,
-      0,
-      0,
-      0,
-      scalingVector[2],
-      0,
-      0,
-      0,
-      0,
-      1,
+      scale.x, 0, 0, 0,
+      0, scale.y, 0, 0,
+      0, 0, scale.z, 0,
+      0, 0, 0, 1
     ]);
   }
-
+ 
   /**
    * Constructs a lookat matrix
    * @param eye The position of the viewer
@@ -121,51 +110,47 @@ export default class Matrix {
    * @return The resulting lookat matrix
    */
   static lookat(eye: Vector, center: Vector, up: Vector): Matrix {
-    const f = center.sub(eye).normalize();
-    const s = f.cross(up).normalize();
-    const u = s.cross(f).normalize();
-    const m = new Matrix([
-      s.x,
-      u.x,
-      -f.x,
-      0,
-      s.y,
-      u.y,
-      -f.y,
-      0,
-      s.z,
-      u.z,
-      -f.z,
-      0,
-      0,
-      0,
-      0,
-      1,
+      var f = (center.sub(eye).div(center.sub(eye).length)).normalize();
+      var s = f.cross(up).normalize();
+      var u = s.cross(f);
+      var m = Matrix.identity();
+      m.setVal(0, 0, s.x);
+      m.setVal(1, 0, s.y);
+      m.setVal(2, 0, s.z);
+      m.setVal(0, 1, u.x);
+      m.setVal(1, 1, u.y);
+      m.setVal(2, 1, u.z);
+      m.setVal(0, 2, -f.x);
+      m.setVal(1, 2, -f.y);
+      m.setVal(2, 2, -f.z);
+      m.setVal(3, 0, -s.dot(eye));
+      m.setVal(3, 1, -u.dot(eye));
+      m.setVal(3, 2, f.dot(eye));
+      return m;
+  }
+ 
+  /**
+   * Constructs a new matrix that represents a projection normalisation transformation
+   * @param left Camera-space left value of lower near point
+   * @param right Camera-space right value of upper right far point
+   * @param bottom Camera-space bottom value of lower lower near point
+   * @param top Camera-space top value of upper right far point
+   * @param near Camera-space near value of lower lower near point
+   * @param far Camera-space far value of upper right far point
+   * @return The rotation matrix
+   */
+  static frustum(left: number, right: number, bottom: number, top: number, near: number, far: number): Matrix {
+    var rl = 1 / (right - left);
+    var tb = 1 / (top - bottom);
+    var nf = 1 / (near - far);
+    return new Matrix([
+      (near * 2) * rl, 0, 0, 0,
+      0, (near * 2) * tb, 0, 0,
+      (right + left) * rl, (top + bottom) * tb, (far + near) * nf, -1,
+      0, 0, (far * near * 2) * nf, 0
     ]);
-    return m;
   }
-
-  // /**
-  //  * Constructs a new matrix that represents a projection normalisation transformation
-  //  * @param left Camera-space left value of lower near point
-  //  * @param right Camera-space right value of upper right far point
-  //  * @param bottom Camera-space bottom value of lower lower near point
-  //  * @param top Camera-space top value of upper right far point
-  //  * @param near Camera-space near value of lower lower near point
-  //  * @param far Camera-space far value of upper right far point
-  //  * @return The rotation matrix
-  //  */
-  static frustum(
-    left: number,
-    right: number,
-    bottom: number,
-    top: number,
-    near: number,
-    far: number
-  ): Matrix {
-    return null;
-  }
-
+ 
   /**
    * Constructs a new matrix that represents a projection normalisation transformation.
    * @param fovy Field of view in y-direction
@@ -174,85 +159,90 @@ export default class Matrix {
    * @param far Camera-space distance to far plane
    * @return The resulting matrix
    */
-  static perspective(
-    fovy: number,
-    aspect: number,
-    near: number,
-    far: number
-  ): Matrix {
-    return null;
+  static perspective(fovy: number, aspect: number, near: number, far: number): Matrix {
+    var f = 1.0 / Math.tan(fovy / 2);
+    var nf = 1 / (near - far);
+    return new Matrix([
+      f / aspect, 0, 0, 0,
+      0, f, 0, 0,
+      0, 0, (far + near) * nf, 2 * far * near * nf,
+      0, 0, -1, 0
+    ]);
   }
-
+ 
   /**
    * Returns the identity matrix
    * @return A new identity matrix
    */
   static identity(): Matrix {
-    return new Matrix([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    return new Matrix([
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+    ]);
   }
-
+ 
   /**
    * Matrix multiplication
    * @param other The matrix to multiply with
    * @return The result of the multiplication this*other
    */
   mul(other: Matrix): Matrix {
-    let NewData = new Array(16);
 
+    const result = new Matrix([]);
     for (let row = 0; row < 4; row++) {
       for (let col = 0; col < 4; col++) {
-        let sum: number = 0;
+        let sum = 0;
         for (let i = 0; i < 4; i++) {
-          sum += this.data[row * 4 + i] * other.data[i * 4 + col];
+          sum += this.getVal(row, i) * other.getVal(i, col);
         }
-        NewData[col * 4 + row] = sum;
+        result.setVal(row, col, sum);
       }
     }
-    return new Matrix(NewData);
+    return result;
   }
-
+ 
   /**
    * Matrix-vector multiplication
    * @param other The vector to multiply with
    * @return The result of the multiplication this*other
    */
   mulVec(other: Vector): Vector {
-    let newVector: Vector = new Vector(0, 0, 0, 0);
-
-    //iteriert über die newMatrix
+    const result = new Vector(0, 0, 0, 0);
     for (let row = 0; row < 4; row++) {
-      let result: number = 0;
+      let sum = 0;
       for (let col = 0; col < 4; col++) {
-        //führt immer die vier benötigten rechenschritte durch
-        result += this.data[row * 4 + col] * other.data[col];
+        sum += this.getVal(row, col) * other.data[col];
       }
-      newVector.data[row] = result;
+      result.data[row] = sum;
     }
-    return newVector;
+    return result;
   }
-
+ 
   /**
    * Returns the transpose of this matrix
    * @return A new matrix that is the transposed of this
    */
   transpose(): Matrix {
-    return null;
+    let result = new Matrix([]);
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 4; col++) {
+        result.setVal(col, row, this.getVal(row, col));
+      }
+    }
+    return result;
   }
-
+ 
   /**
    * Debug print to console
    */
   print() {
     for (let row = 0; row < 4; row++) {
-      console.log(
-        "> " +
-          this.getVal(row, 0) +
-          "\t" +
-          this.getVal(row, 1) +
-          "\t" +
-          this.getVal(row, 2) +
-          "\t" +
-          this.getVal(row, 3)
+      console.log("> " + this.getVal(row, 0) +
+        "\t" + this.getVal(row, 1) +
+        "\t" + this.getVal(row, 2) +
+        "\t" + this.getVal(row, 3)
       );
     }
   }

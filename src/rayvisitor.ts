@@ -13,6 +13,7 @@ import {
   TextureBoxNode,
 } from "./nodes";
 import AABox from "./aabox";
+import { ChildProcess } from "child_process";
 
 const UNIT_SPHERE = new Sphere(
   new Vector(0, 0, 0, 1),
@@ -54,8 +55,6 @@ export default class RayVisitor implements Visitor {
     height: number
   ) {
     this.imageData = context.getImageData(0, 0, width, height);
-    this.transformations = new Array() as Array<Matrix>;
-    this.inverseTransformations = new Array() as Array<Matrix>;
   }
 
   /**
@@ -79,8 +78,8 @@ export default class RayVisitor implements Visitor {
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
         this.ray = Ray.makeRay(x, y, camera);
-        this.transformations.push(Matrix.identity());
-        this.inverseTransformations.push(Matrix.identity());
+        this.transformations = [Matrix.identity()];
+        this.inverseTransformations = [Matrix.identity()];
 
         this.intersection = null;
         rootNode.accept(this);
@@ -115,15 +114,14 @@ export default class RayVisitor implements Visitor {
    * @param node The node to visit
    */
   visitGroupNode(node: GroupNode) {
-    this.transformations.push(
-      node.transform.getMatrix().mul(this.transformations[length - 1])
-    );
-    this.inverseTransformations.push(
-      node.transform.getInverseMatrix().mul(this.transformations[length - 1])
-    );
-    node.children.forEach((child) => {
-      child.accept(this);
-    });
+    this.transformations.push(node.transform.getMatrix());
+    this.inverseTransformations.push(node.transform.getInverseMatrix());
+
+    for (let i = 0; i < node.children.length; i++) {
+      node.children[i].accept(this);
+    }
+    this.transformations.pop();
+    this.inverseTransformations.pop();
     // TODO traverse the graph and build the model matrix
   }
 
@@ -134,9 +132,12 @@ export default class RayVisitor implements Visitor {
   visitSphereNode(node: SphereNode) {
     let toWorld = Matrix.identity();
     let fromWorld = Matrix.identity();
-    toWorld = toWorld.mul(this.transformations[length - 1]);
-    fromWorld = fromWorld.mul(this.inverseTransformations[length - 1]);
     // TODO assign the model matrix and its inverse
+
+    for (let i = 0; i < this.transformations.length; i++) {
+      toWorld = toWorld.mul(this.transformations[i]);
+      fromWorld = this.inverseTransformations[i].mul(fromWorld);
+    }
 
     const ray = new Ray(
       fromWorld.mulVec(this.ray.origin),

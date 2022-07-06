@@ -29,7 +29,6 @@ export class GroupNode extends Node {
    */
   constructor(public transform: Transformation) {
     super();
-    this.transform = transform;
     this.children = new Array() as Array<Node>;
   }
 
@@ -38,9 +37,7 @@ export class GroupNode extends Node {
    * @param visitor The visitor
    */
   accept(visitor: Visitor) {
-    this.children.forEach((child) => {
-      child.accept(visitor);
-    });
+    visitor.visitGroupNode(this);
   }
 
   /**
@@ -65,7 +62,6 @@ export class SphereNode extends Node {
    */
   constructor(public color: Vector) {
     super();
-    this.color = color;
   }
 
   /**

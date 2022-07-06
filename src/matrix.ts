@@ -48,24 +48,11 @@ export default class Matrix {
    * @return The resulting translation matrix
    */
   static translation(translation: Vector): Matrix {
-    return new Matrix([
-      1,
-      0,
-      0,
-      translation.x,
-      0,
-      1,
-      0,
-      translation.y,
-      0,
-      0,
-      1,
-      translation.z,
-      0,
-      0,
-      0,
-      1,
-    ]);
+    let newMatrix = this.identity();
+    newMatrix.setVal(0, 3, translation.x);
+    newMatrix.setVal(1, 3, translation.y);
+    newMatrix.setVal(2, 3, translation.z);
+    return newMatrix;
   }
 
   /**
@@ -75,64 +62,29 @@ export default class Matrix {
    * @return The resulting rotation matrix
    */
   static rotation(axis: Vector, angle: number): Matrix {
-    if (axis.x == 1) {
-      return new Matrix([
-        1,
-        0,
-        0,
-        0,
-        0,
-        Math.cos(angle),
-        -Math.sin(angle),
-        0,
-        0,
-        Math.sin(angle),
-        Math.cos(angle),
-        0,
-        0,
-        0,
-        0,
-        1,
-      ]);
-    } else if (axis.y == 1) {
-      return new Matrix([
-        Math.cos(angle),
-        0,
-        Math.sin(angle),
-        0,
-        0,
-        1,
-        0,
-        0,
-        -Math.sin(angle),
-        0,
-        Math.cos(angle),
-        0,
-        0,
-        0,
-        0,
-        1,
-      ]);
-    } else if (axis.z == 1) {
-      return new Matrix([
-        Math.cos(angle),
-        -Math.sin(angle),
-        0,
-        0,
-        Math.sin(angle),
-        Math.cos(angle),
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-      ]);
+    let newMatrix = this.identity();
+    for (let row = 0; row < 4; row++) {
+      let cos = Math.cos(angle);
+      let sin = Math.sin(angle);
+
+      if (axis.x == 1) {
+        newMatrix.setVal(2, 2, cos);
+        newMatrix.setVal(1, 2, -1 * sin);
+        newMatrix.setVal(2, 1, sin);
+        newMatrix.setVal(1, 1, cos);
+      } else if (axis.y == 1) {
+        newMatrix.setVal(0, 0, cos);
+        newMatrix.setVal(0, 2, sin);
+        newMatrix.setVal(2, 0, -1 * sin);
+        newMatrix.setVal(2, 2, cos);
+      } else if (axis.z == 1) {
+        newMatrix.setVal(0, 0, cos);
+        newMatrix.setVal(0, 1, -1 * sin);
+        newMatrix.setVal(1, 0, sin);
+        newMatrix.setVal(1, 1, cos);
+      }
     }
+    return newMatrix;
   }
 
   /**
@@ -141,24 +93,11 @@ export default class Matrix {
    * @return The resulting scaling matrix
    */
   static scaling(scale: Vector): Matrix {
-    return new Matrix([
-      scale.x,
-      0,
-      0,
-      0,
-      0,
-      scale.y,
-      0,
-      0,
-      0,
-      0,
-      scale.z,
-      0,
-      0,
-      0,
-      0,
-      1,
-    ]);
+    var newMatrix = this.identity();
+    newMatrix.setVal(0, 0, scale.x);
+    newMatrix.setVal(1, 1, scale.y);
+    newMatrix.setVal(2, 2, scale.z);
+    return newMatrix;
   }
 
   /**

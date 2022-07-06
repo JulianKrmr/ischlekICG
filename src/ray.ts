@@ -34,4 +34,6 @@ export default class Ray {
     );
     return new Ray(new Vector(0, 0, 0, 1), direction.normalize());
   }
+
+  //test
 }

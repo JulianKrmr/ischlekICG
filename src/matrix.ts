@@ -1,7 +1,5 @@
 import Vector from "./vector";
 
-//test
-
 /**
  * Class representing a 4x4 Matrix
  */

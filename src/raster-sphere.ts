@@ -18,7 +18,7 @@ export default class RasterSphere {
    */
   normalBuffer: WebGLBuffer;
   // TODO private variable for color buffer
-  colorBuffer: WebGLBuffer;
+  private colorBuffer: WebGLBuffer;
 
   /**
    * The amount of indices
@@ -41,7 +41,7 @@ export default class RasterSphere {
     let vertices = [];
     let indices = [];
     let normals = [];
-    let colors = [color.x, color.y, color.z];
+    let colors = [];
 
     let ringsize = 30;
     for (let ring = 0; ring < ringsize; ring++) {
@@ -54,6 +54,8 @@ export default class RasterSphere {
         vertices.push(x);
         vertices.push(y);
         vertices.push(z);
+
+        colors.push(color.r, color.g, color.b);
 
         let normal = new Vector(x, y, z, 1).sub(center).normalize();
         normals.push(normal.x);
@@ -82,6 +84,7 @@ export default class RasterSphere {
       this.gl.STATIC_DRAW
     );
     this.vertexBuffer = vertexBuffer;
+
     const indexBuffer = gl.createBuffer();
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     this.gl.bufferData(
@@ -90,6 +93,7 @@ export default class RasterSphere {
       this.gl.STATIC_DRAW
     );
     this.indexBuffer = indexBuffer;
+
     const normalBuffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, normalBuffer);
     this.gl.bufferData(

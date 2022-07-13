@@ -1,24 +1,26 @@
-import RasterSphere from './raster-sphere';
-import RasterBox from './raster-box';
-import RasterTextureBox from './raster-texture-box';
-import Vector from './vector';
-import Matrix from './matrix';
-import Visitor from './visitor';
+import RasterSphere from "./raster-sphere";
+import RasterBox from "./raster-box";
+import RasterTextureBox from "./raster-texture-box";
+import Vector from "./vector";
+import Matrix from "./matrix";
+import Visitor from "./visitor";
 import {
-  Node, GroupNode,
-  SphereNode, AABoxNode,
-  TextureBoxNode
-} from './nodes';
-import Shader from './shader';
+  Node,
+  GroupNode,
+  SphereNode,
+  AABoxNode,
+  TextureBoxNode,
+} from "./nodes";
+import Shader from "./shader";
 
 interface Camera {
-  eye: Vector,
-  center: Vector,
-  up: Vector,
-  fovy: number,
-  aspect: number,
-  near: number,
-  far: number
+  eye: Vector;
+  center: Vector;
+  up: Vector;
+  fovy: number;
+  aspect: number;
+  near: number;
+  far: number;
 }
 
 interface Renderable {
@@ -26,11 +28,13 @@ interface Renderable {
 }
 
 /**
- * Class representing a Visitor that uses Rasterisation 
+ * Class representing a Visitor that uses Rasterisation
  * to render a Scenegraph
  */
 export class RasterVisitor implements Visitor {
   // TODO declare instance variables here
+  transformations: Matrix[];
+  inverseTransformations: Matrix[];
 
   /**
    * Creates a new RasterVisitor
@@ -45,6 +49,8 @@ export class RasterVisitor implements Visitor {
     private renderables: WeakMap<Node, Renderable>
   ) {
     // TODO setup
+    this.transformations = [Matrix.identity()];
+    this.inverseTransformations = [Matrix.identity()];
   }
 
   /**
@@ -53,11 +59,7 @@ export class RasterVisitor implements Visitor {
    * @param camera The camera used
    * @param lightPositions The light light positions
    */
-  render(
-    rootNode: Node,
-    camera: Camera | null,
-    lightPositions: Array<Vector>
-  ) {
+  render(rootNode: Node, camera: Camera | null, lightPositions: Array<Vector>) {
     // clear
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
@@ -71,14 +73,14 @@ export class RasterVisitor implements Visitor {
 
   /**
    * The view matrix to transform vertices from
-   * the world coordinate system to the 
+   * the world coordinate system to the
    * view coordinate system
    */
   private lookat: Matrix;
 
   /**
    * The perspective matrix to transform vertices from
-   * the view coordinate system to the 
+   * the view coordinate system to the
    * normalized device coordinate system
    */
   private perspective: Matrix;
@@ -88,10 +90,7 @@ export class RasterVisitor implements Visitor {
    * @param camera The camera used
    */
   setupCamera(camera: Camera) {
-    this.lookat = Matrix.lookat(
-      camera.eye,
-      camera.center,
-      camera.up);
+    this.lookat = Matrix.lookat(camera.eye, camera.center, camera.up);
 
     this.perspective = Matrix.perspective(
       camera.fovy,
@@ -107,6 +106,14 @@ export class RasterVisitor implements Visitor {
    */
   visitGroupNode(node: GroupNode) {
     // TODO
+    this.transformations.push(node.transform.getMatrix());
+    this.inverseTransformations.push(node.transform.getInverseMatrix());
+
+    for (let i = 0; i < node.children.length; i++) {
+      node.children[i].accept(this);
+    }
+    this.transformations.pop();
+    this.inverseTransformations.pop();
   }
 
   /**
@@ -119,6 +126,10 @@ export class RasterVisitor implements Visitor {
     let toWorld = Matrix.identity();
     let fromWorld = Matrix.identity();
     // TODO Calculate the model matrix for the sphere
+    for (let i = 0; i < this.transformations.length; i++) {
+      toWorld = toWorld.mul(this.transformations[i]);
+      fromWorld = this.inverseTransformations[i].mul(fromWorld);
+    }
     shader.getUniformMatrix("M").set(toWorld);
 
     const V = shader.getUniformMatrix("V");
@@ -141,7 +152,16 @@ export class RasterVisitor implements Visitor {
     this.shader.use();
     let shader = this.shader;
     let toWorld = Matrix.identity();
+
+    let fromWorld = Matrix.identity();
+
     // TODO Calculate the model matrix for the box
+
+    for (let i = 0; i < this.transformations.length; i++) {
+      toWorld = toWorld.mul(this.transformations[i]);
+      fromWorld = this.inverseTransformations[i].mul(fromWorld);
+    }
+
     shader.getUniformMatrix("M").set(toWorld);
     let V = shader.getUniformMatrix("V");
     if (V && this.lookat) {
@@ -164,7 +184,14 @@ export class RasterVisitor implements Visitor {
     let shader = this.textureshader;
 
     let toWorld = Matrix.identity();
+    let fromWorld = Matrix.identity();
     // TODO calculate the model matrix for the box
+
+    for (let i = 0; i < this.transformations.length; i++) {
+      toWorld = toWorld.mul(this.transformations[i]);
+      fromWorld = this.inverseTransformations[i].mul(fromWorld);
+    }
+
     shader.getUniformMatrix("M").set(toWorld);
     let P = shader.getUniformMatrix("P");
     if (P && this.perspective) {
@@ -176,15 +203,15 @@ export class RasterVisitor implements Visitor {
   }
 }
 
-/** 
- * Class representing a Visitor that sets up buffers 
- * for use by the RasterVisitor 
+/**
+ * Class representing a Visitor that sets up buffers
+ * for use by the RasterVisitor
  * */
 export class RasterSetupVisitor {
   /**
    * The created render objects
    */
-  public objects: WeakMap<Node, Renderable>
+  public objects: WeakMap<Node, Renderable>;
 
   /**
    * Creates a new RasterSetupVisitor

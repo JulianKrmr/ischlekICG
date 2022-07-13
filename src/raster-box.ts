@@ -14,6 +14,7 @@ export default class RasterBox {
    */
   indexBuffer: WebGLBuffer;
   // TODO private variable for color buffer
+  private colorBuffer: WebGLBuffer;
   /**
    * The amount of indices
    */
@@ -83,8 +84,8 @@ export default class RasterBox {
     ];
 
     let colors = [
-      1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1,
-      0, 0, 1, 1, 0, 0, 1,
+      0, 0, 255, 255, 255, 255, 0, 255, 0, 0, 255, 255, 0, 255, 0, 255, 0, 0, 0,
+      255, 255, 0, 0, 255, 0, 0, 255, 255, 0, 255, 0, 255,
     ];
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -101,11 +102,10 @@ export default class RasterBox {
     this.indexBuffer = indexBuffer;
     this.elements = indices.length;
 
-    // TODO create and fill a buffer for colours
     const colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-    this.vertexBuffer = vertexBuffer;
+    this.colorBuffer = colorBuffer;
   }
 
   /**
@@ -125,7 +125,10 @@ export default class RasterBox {
       0
     );
 
-    // TODO bind colour buffer
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+    const colorLocation = shader.getAttributeLocation("a_color");
+    this.gl.enableVertexAttribArray(colorLocation);
+    this.gl.vertexAttribPointer(colorLocation, 3, this.gl.FLOAT, false, 0, 0);
 
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     this.gl.drawElements(
@@ -136,6 +139,6 @@ export default class RasterBox {
     );
 
     this.gl.disableVertexAttribArray(positionLocation);
-    // TODO disable color vertex attrib array
+    this.gl.disableVertexAttribArray(colorLocation);
   }
 }

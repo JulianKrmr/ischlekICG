@@ -122,7 +122,6 @@ export default class RayVisitor implements Visitor {
     }
     this.transformations.pop();
     this.inverseTransformations.pop();
-    // TODO traverse the graph and build the model matrix
   }
 
   /**
@@ -173,6 +172,11 @@ export default class RayVisitor implements Visitor {
     let toWorld = Matrix.identity();
     let fromWorld = Matrix.identity();
     // TODO assign the model matrix and its inverse
+
+    for (let i = 0; i < this.transformations.length; i++) {
+      toWorld = toWorld.mul(this.transformations[i]);
+      fromWorld = this.inverseTransformations[i].mul(fromWorld);
+    }
 
     const ray = new Ray(
       fromWorld.mulVec(this.ray.origin),

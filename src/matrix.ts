@@ -108,46 +108,27 @@ export default class Matrix {
    * @return The resulting lookat matrix
    */
   static lookat(eye: Vector, center: Vector, up: Vector): Matrix {
+    let result = Matrix.identity();
     var f = center.sub(eye).div(center.sub(eye).length).normalize();
     var s = f.cross(up).normalize();
     var u = s.cross(f).normalize();
-    return new Matrix([
-      s.x,
-      s.y,
-      s.z,
-      0,
-      u.x,
-      u.y,
-      u.z,
-      0,
-      -f.x,
-      -f.y,
-      -f.z,
-      0,
-      0,
-      0,
-      0,
-      1,
-    ]).mul(
-      new Matrix([
-        1,
-        0,
-        0,
-        -eye.x,
-        0,
-        1,
-        0,
-        -eye.y,
-        0,
-        0,
-        1,
-        -eye.z,
-        0,
-        0,
-        0,
-        1,
-      ])
-    );
+
+    result.setVal(0, 0, s.x);
+    result.setVal(0, 1, s.y);
+    result.setVal(0, 2, s.z);
+    result.setVal(1, 0, u.x);
+    result.setVal(1, 1, u.y);
+    result.setVal(1, 2, u.z);
+    result.setVal(2, 0, -f.x);
+    result.setVal(2, 1, -f.y);
+    result.setVal(2, 2, -f.z);
+
+    let helpMatrix = Matrix.identity();
+    helpMatrix.setVal(0, 3, -eye.x);
+    helpMatrix.setVal(1, 3, -eye.y);
+    helpMatrix.setVal(2, 3, -eye.z);
+
+    return result.mul(helpMatrix);
   }
 
   /**

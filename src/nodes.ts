@@ -93,7 +93,7 @@ export class AABoxNode extends Node {
    * @param  {Visitor} visitor - The visitor
    */
   accept(visitor: Visitor) {
-    // TODO
+    visitor.visitAABoxNode(this);
   }
 }
 
@@ -117,6 +117,6 @@ export class TextureBoxNode extends Node {
    * @param visitor The visitor
    */
   accept(visitor: Visitor) {
-    // TODO
+    visitor.visitTextureBoxNode(this);
   }
 }

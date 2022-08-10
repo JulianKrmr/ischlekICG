@@ -34,19 +34,17 @@ export default class Sphere {
       Math.pow(x0.length, 2) +
       Math.pow(this.radius, 2); //calculate the discremenant to determine how many intersections there are
     if (c < 0) {
+      //Keine Intersections
       return null;
     }
 
     const t1 = -x0.dot(ray.direction.normalize()) + Math.sqrt(c); //calculate distance +/- c with p-q Formula
     const t2 = -x0.dot(ray.direction.normalize()) - Math.sqrt(c);
 
-    const closest = Math.min(t1, t2); //closer than methode verwenden?
-    let intersectionPoint = ray.origin.add(ray.direction.mul(closest));
+    const closest = Math.min(t1, t2); //Abstand zur Kugel
+    let intersectionPoint = ray.origin.add(ray.direction.mul(closest)); //Kollisions Punkt
+    let direction = intersectionPoint.sub(this.center).normalize(); //richtung des Normalenvektors
 
-    return new Intersection(
-      closest,
-      intersectionPoint,
-      intersectionPoint.sub(this.center).normalize()
-    );
+    return new Intersection(closest, intersectionPoint, direction);
   }
 }

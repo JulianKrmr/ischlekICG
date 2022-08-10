@@ -20,7 +20,6 @@ export class Node {
  * @extends Node
  */
 export class GroupNode extends Node {
-  // TODO declare instance variables
   children: Node[];
 
   /**

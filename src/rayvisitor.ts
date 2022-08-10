@@ -114,12 +114,23 @@ export default class RayVisitor implements Visitor {
    * @param node The node to visit
    */
   visitGroupNode(node: GroupNode) {
-    this.transformations.push(node.transform.getMatrix());
-    this.inverseTransformations.push(node.transform.getInverseMatrix());
+    this.transformations.push(
+      this.transformations[this.transformations.length - 1].mul(
+        node.transform.getMatrix()
+      )
+    );
+    this.inverseTransformations.push(
+      node.transform
+        .getInverseMatrix()
+        .mul(
+          this.inverseTransformations[this.inverseTransformations.length - 1]
+        )
+    );
 
     for (let i = 0; i < node.children.length; i++) {
       node.children[i].accept(this);
     }
+    //brauchen wir das?
     this.transformations.pop();
     this.inverseTransformations.pop();
   }
@@ -129,14 +140,9 @@ export default class RayVisitor implements Visitor {
    * @param node - The node to visit
    */
   visitSphereNode(node: SphereNode) {
-    let toWorld = Matrix.identity();
-    let fromWorld = Matrix.identity();
-    // TODO assign the model matrix and its inverse
-
-    for (let i = 0; i < this.transformations.length; i++) {
-      toWorld = toWorld.mul(this.transformations[i]);
-      fromWorld = this.inverseTransformations[i].mul(fromWorld);
-    }
+    const toWorld = this.transformations[this.transformations.length - 1];
+    const fromWorld =
+      this.inverseTransformations[this.inverseTransformations.length - 1];
 
     const ray = new Ray(
       fromWorld.mulVec(this.ray.origin),

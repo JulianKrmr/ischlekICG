@@ -30,7 +30,7 @@ export default function phong(
     let s: Vector = light.sub(intersection.point).normalize(); //light vector
     let n: Vector = intersection.normal; //normal vector
     let v: Vector = cameraPosition.sub(intersection.point).normalize(); //camera Vector
-    let r: Vector = intersection.normal.mul(s.dot(n)).mul(2).sub(s);
+    let r: Vector = intersection.normal.mul(s.dot(n)).mul(2).sub(s); //reflection vector
 
     //berechnung diffuse Anteil
     sumOfLightsDiffuse = sumOfLightsDiffuse.add(

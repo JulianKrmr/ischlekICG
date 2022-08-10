@@ -32,6 +32,7 @@ export default class Ray {
       -camera.width / 2 / Math.tan(camera.alpha / 2),
       0
     );
+    // direction calculation follows the formula from the lecture slides (Ray Tracing Algorithm: Page 16)
     return new Ray(new Vector(0, 0, 0, 1), direction.normalize());
   }
 }

@@ -130,7 +130,6 @@ export default class RayVisitor implements Visitor {
     for (let i = 0; i < node.children.length; i++) {
       node.children[i].accept(this);
     }
-    //brauchen wir das?
     this.transformations.pop();
     this.inverseTransformations.pop();
   }

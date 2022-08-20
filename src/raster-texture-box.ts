@@ -125,12 +125,17 @@ export default class RasterTextureBox {
         // Bind the texture coordinates in this.texCoords
         // to their attribute in the shader
         // TODO
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoords);
+        const texCoordLocation = shader.getAttributeLocation("a_texCoord");
+        this.gl.enableVertexAttribArray(texCoordLocation);
+        this.gl.vertexAttribPointer(texCoordLocation, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texBuffer);
         shader.getUniformInt("sampler").set(0);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.elements);
 
         this.gl.disableVertexAttribArray(positionLocation);
+        this.gl.disableVertexAttribArray(texCoordLocation);
         // TODO disable texture vertex attrib array
     }
 }

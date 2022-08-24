@@ -60,7 +60,8 @@ export class RotationNode extends AnimationNode {
   simulate(deltaT: number) {
     if (this.active) {
       //TODO ADD COMMENTS ABOUT THIS PROCESS
-      this.angle = deltaT * Math.PI / 2;
+      this.angle = Math.PI * 4;
+
       const matrix = this.groupNode.transform.getMatrix();
       const inverse = this.groupNode.transform.getInverseMatrix();
       let rotation = new Rotation(this.axis, 0.0001 * this.angle * deltaT);

@@ -1,7 +1,7 @@
-import Vector from './vector';
-import { GroupNode } from './nodes';
-import { Rotation, SQT } from './transformation';
-import Quaternion from './quaternion';
+import Vector from "./vector";
+import { GroupNode } from "./nodes";
+import { Rotation, SQT } from "./transformation";
+import Quaternion from "./quaternion";
 
 /**
  * Class representing an Animation
@@ -17,7 +17,7 @@ class AnimationNode {
    * @param groupNode The GroupNode to attach to
    */
   constructor(public groupNode: GroupNode) {
-    this.active = true;
+    this.active = false;
   }
 
   /**
@@ -26,7 +26,6 @@ class AnimationNode {
   toggleActive() {
     this.active = !this.active;
   }
-
 }
 
 /**
@@ -59,11 +58,21 @@ export class RotationNode extends AnimationNode {
    * @param deltaT The time difference, the animation is advanced by
    */
   simulate(deltaT: number) {
+    if (this.active) {
+      //TODO ADD COMMENTS ABOUT THIS PROCESS
+      this.angle = deltaT * Math.PI / 2;
+      const matrix = this.groupNode.transform.getMatrix();
+      const inverse = this.groupNode.transform.getInverseMatrix();
+      let rotation = new Rotation(this.axis, 0.0001 * this.angle * deltaT);
+      rotation.matrix = matrix.mul(rotation.getMatrix());
+      rotation.inverse = rotation.getInverseMatrix().mul(inverse);
+      this.groupNode.transform = rotation;
+    }
+
     // change the matrix of the attached
     // group node to reflect a rotation
     // TODO
   }
-
 }
 
 /**
@@ -86,7 +95,11 @@ export class SlerpNode extends AnimationNode {
    * @param groupNode The group node to attach to
    * @param axis The axis to rotate around
    */
-  constructor(groupNode: GroupNode, rotation1: Quaternion, rotation2: Quaternion) {
+  constructor(
+    groupNode: GroupNode,
+    rotation1: Quaternion,
+    rotation2: Quaternion
+  ) {
     super(groupNode);
     this.rotations = [rotation1, rotation2];
     this.t = 0;
@@ -99,9 +112,11 @@ export class SlerpNode extends AnimationNode {
   simulate(deltaT: number) {
     if (this.active) {
       this.t += 0.001 * deltaT;
-      const rot = this.rotations[0].slerp(this.rotations[1], (Math.sin(this.t) + 1) / 2);
+      const rot = this.rotations[0].slerp(
+        this.rotations[1],
+        (Math.sin(this.t) + 1) / 2
+      );
       (this.groupNode.transform as SQT).rotation = rot;
     }
   }
-
 }

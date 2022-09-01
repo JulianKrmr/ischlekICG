@@ -1,6 +1,6 @@
 import 'bootstrap';
 import 'bootstrap/scss/bootstrap.scss';
-import Vector from './vector';
+import Vector from './math/vector';
 import {
     GroupNode,
     SphereNode,
@@ -10,14 +10,14 @@ import {
     RasterVisitor,
     RasterSetupVisitor
 } from './rastervisitor';
-import Shader from './shader';
+import Shader from './shader/shader';
 import {
     SlerpNode
 } from './animation-nodes';
-import phongVertexShader from './phong-vertex-perspective-shader.glsl';
-import phongFragmentShader from './phong-fragment-shader.glsl';
-import textureVertexShader from './texture-vertex-perspective-shader.glsl';
-import textureFragmentShader from './texture-fragment-shader.glsl';
+import phongVertexShader from './shader/phong-vertex-perspective-shader.glsl';
+import phongFragmentShader from './shader/phong-fragment-shader.glsl';
+import textureVertexShader from './shader/texture-vertex-perspective-shader.glsl';
+import textureFragmentShader from './shader/texture-fragment-shader.glsl';
 import { SQT } from './transformation';
 import Quaternion from './quaternion';
 

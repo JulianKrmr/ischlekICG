@@ -1,5 +1,5 @@
-import Matrix from "../src/matrix";
-import Vector from "../src/vector";
+import Matrix from "../src/math/matrix";
+import Vector from "../src/math/vector";
 
 const MatAArray = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

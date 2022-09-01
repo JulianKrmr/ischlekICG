@@ -1,4 +1,4 @@
-import Vector from "./vector";
+import Vector from "./math/vector";
 import { GroupNode } from "./nodes";
 import { Rotation, SQT } from "./transformation";
 import Quaternion from "./quaternion";

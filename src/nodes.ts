@@ -1,5 +1,5 @@
 import Visitor from "./visitor";
-import Vector from "./vector";
+import Vector from "./math/vector";
 import { Transformation } from "./transformation";
 
 /**

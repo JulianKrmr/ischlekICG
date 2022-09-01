@@ -1,6 +1,6 @@
 import 'bootstrap';
 import 'bootstrap/scss/bootstrap.scss';
-import Vector from './vector';
+import Vector from './math/vector';
 import {
     GroupNode,
     SphereNode,
@@ -10,9 +10,9 @@ import {
     RasterVisitor,
     RasterSetupVisitor
 } from './rastervisitor';
-import Shader from './shader';
-import perspectiveVertexShader from './perspective-vertex-shader.glsl';
-import fragmentShader from './basic-fragment-shader.glsl'
+import Shader from './shader/shader';
+import perspectiveVertexShader from './shader/perspective-vertex-shader.glsl';
+import fragmentShader from './shader/basic-fragment-shader.glsl';
 import { Scaling, Translation } from './transformation';
 
 window.addEventListener('load', () => {

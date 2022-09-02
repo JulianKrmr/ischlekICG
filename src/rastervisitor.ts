@@ -145,6 +145,11 @@ export class RasterVisitor implements Visitor {
     if (P && this.perspective) {
       P.set(this.perspective);
     }
+
+    const N = shader.getUniformMatrix("N");
+    if (N) {
+      N.set(fromWorld.transpose());
+    }
     // TODO set the normal matrix
     const normalMatrix = fromWorld.transpose();
     normalMatrix.setVal(0, 3, 0);

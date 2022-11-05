@@ -1,21 +1,21 @@
 import 'bootstrap';
 import 'bootstrap/scss/bootstrap.scss';
-import Vector from './math/vector';
+import Vector from '../math/vector';
 import {
     GroupNode,
     SphereNode,
     TextureBoxNode
-} from './nodes';
+} from '../nodes';
 import {
     RasterVisitor,
     RasterSetupVisitor
-} from './rastervisitor';
-import Shader from './shader/shader';
-import phongVertexShader from './shader/phong-vertex-shader.glsl';
-import phongFragmentShader from './shader/phong-fragment-shader.glsl';
-import textureVertexShader from './shader/texture-vertex-shader.glsl';
-import textureFragmentShader from './shader/texture-fragment-shader.glsl';
-import { Rotation, Scaling, Translation } from './transformation';
+} from '../rastervisitor';
+import Shader from '../shader/shader';
+import phongVertexShader from '../shader/phong-vertex-shader.glsl';
+import phongFragmentShader from '../shader/phong-fragment-shader.glsl';
+import textureVertexShader from '../shader/texture-vertex-shader.glsl';
+import textureFragmentShader from '../shader/texture-fragment-shader.glsl';
+import { Rotation, Scaling, Translation } from '../transformation';
 
 window.addEventListener('load', () => {
     const canvas = document.getElementById("rasteriser") as HTMLCanvasElement;

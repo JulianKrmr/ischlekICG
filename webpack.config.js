@@ -23,9 +23,9 @@ for (let exercise of [
   "quaternion",
 ]) {
   if (
-    fs.existsSync(path.resolve(__dirname, `src/${exercise}-boilerplate.ts`))
+    fs.existsSync(path.resolve(__dirname, `src/boilerplate/${exercise}-boilerplate.ts`))
   ) {
-    entries[exercise] = `./src/${exercise}-boilerplate.ts`;
+    entries[exercise] = `/src/boilerplate/${exercise}-boilerplate.ts`;
   }
 }
 

@@ -1,12 +1,12 @@
 import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
-import Vector from "./math/vector";
-import { GroupNode, SphereNode, AABoxNode } from "./nodes";
-import { RasterVisitor, RasterSetupVisitor } from "./rastervisitor";
-import Shader from "./shader/shader";
-import vertexShader from "./shader/basic-vertex-shader.glsl";
-import fragmentShader from "./shader/basic-fragment-shader.glsl";
-import { Scaling, Translation } from "./transformation";
+import Vector from "../math/vector";
+import { GroupNode, SphereNode, AABoxNode } from "../nodes";
+import { RasterVisitor, RasterSetupVisitor } from "../rastervisitor";
+import Shader from "../shader/shader";
+import vertexShader from "../shader/basic-vertex-shader.glsl";
+import fragmentShader from "../shader/basic-fragment-shader.glsl";
+import { Scaling, Translation } from "../transformation";
 
 window.addEventListener("load", () => {
   const canvas = document.getElementById("rasteriser") as HTMLCanvasElement;

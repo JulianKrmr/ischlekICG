@@ -20,7 +20,7 @@ window.addEventListener("load", () => {
   gn.add(gn2);
   const gn3 = new GroupNode(new Scaling(new Vector(0.4, 0.4, 0.4, 0)));
   gn2.add(gn3);
-  gn3.add(new AABoxNode(new Vector(0, 0, 0.3, 1)));
+  gn3.add(new PyramidNode(new Vector(0, 0, 0.3, 1)));
   const lightPositions = [new Vector(1, 1, 1, 1)];
   const camera = {
     origin: new Vector(0, 0, 0, 1),

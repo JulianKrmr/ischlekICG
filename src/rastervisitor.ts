@@ -1,10 +1,9 @@
-import Matrix from "./math/matrix";
+import RasterSphere from "raster-sphere";
+import RasterBox from "raster-box";
+import RasterTextureBox from "raster-texture-box";
 import Vector from "./math/vector";
-import Sphere from "./sphere";
-import Intersection from "./intersection";
-import Ray from "./ray";
-import Visitor from "./visitor";
-import phong from "./phong";
+import Matrix from "./math/matrix";
+import Visitor from "visitor";
 import {
   Node,
   GroupNode,
@@ -12,58 +11,47 @@ import {
   AABoxNode,
   TextureBoxNode,
   PyramidNode,
-} from "./nodes";
-import AABox from "./aabox";
-import { ChildProcess } from "child_process";
-import Pyramid from "./pyramid";
+} from "nodes";
+import Shader from "shader/shader";
+//import RasterPyramid from "raster-pyramid";
 
-const UNIT_SPHERE = new Sphere(
-  new Vector(0, 0, 0, 1),
-  1,
-  new Vector(0, 0, 0, 1)
-);
-const UNIT_AABOX = new AABox(
-  new Vector(-0.5, -0.5, -0.5, 1),
-  new Vector(0.5, 0.5, 0.5, 1),
-  new Vector(0, 0, 0, 1)
-);
-const UNIT_PYRAMID = new Pyramid(
-  new Vector(0, 1, 0, 1),
-  new Vector(0, 0, -0.5, 1),
-  new Vector(-1, 0, 0.5, 1),
-  new Vector(1, 0, 0.5, 1),
-  new Vector(0, 0, 0, 1)
-);
+interface Camera {
+  eye: Vector;
+  center: Vector;
+  up: Vector;
+  fovy: number;
+  aspect: number;
+  near: number;
+  far: number;
+}
+
+interface Renderable {
+  render(shader: Shader): void;
+}
 
 /**
- * Class representing a Visitor that uses
- * Raytracing to render a Scenegraph
+ * Class representing a Visitor that uses Rasterisation
+ * to render a Scenegraph
  */
-export default class RayVisitor implements Visitor {
-  /**
-   * The image data of the context to
-   * set individual pixels
-   */
-  imageData: ImageData;
-
+export class RasterVisitor implements Visitor {
+  // TODO declare instance variables here
   transformations: Matrix[];
   inverseTransformations: Matrix[];
-  intersection: Intersection | null;
-  intersectionColor: Vector;
-  ray: Ray;
-
   /**
-   * Creates a new RayVisitor
-   * @param context The 2D context to render to
-   * @param width The width of the canvas
-   * @param height The height of the canvas
+   * Creates a new RasterVisitor
+   * @param gl The 3D context to render to
+   * @param shader The default shader to use
+   * @param textureshader The texture shader to use
    */
   constructor(
-    private context: CanvasRenderingContext2D,
-    width: number,
-    height: number
+    private gl: WebGL2RenderingContext,
+    private shader: Shader,
+    private textureshader: Shader,
+    private renderables: WeakMap<Node, Renderable>
   ) {
-    this.imageData = context.getImageData(0, 0, width, height);
+    // TODO setup
+    this.transformations = [Matrix.identity()];
+    this.inverseTransformations = [Matrix.identity()];
   }
 
   /**
@@ -72,50 +60,45 @@ export default class RayVisitor implements Visitor {
    * @param camera The camera used
    * @param lightPositions The light light positions
    */
-  render(
-    rootNode: Node,
-    camera: { origin: Vector; width: number; height: number; alpha: number },
-    lightPositions: Array<Vector>
-  ) {
+  render(rootNode: Node, camera: Camera | null, lightPositions: Array<Vector>) {
     // clear
-    let data = this.imageData.data;
-    data.fill(0);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    // raytrace
-    const width = this.imageData.width;
-    const height = this.imageData.height;
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
-        this.ray = Ray.makeRay(x, y, camera);
-        this.transformations = [Matrix.identity()];
-        this.inverseTransformations = [Matrix.identity()];
-
-        this.intersection = null;
-        rootNode.accept(this);
-
-        if (this.intersection) {
-          if (!this.intersectionColor) {
-            data[4 * (width * y + x) + 0] = 0;
-            data[4 * (width * y + x) + 1] = 0;
-            data[4 * (width * y + x) + 2] = 0;
-            data[4 * (width * y + x) + 3] = 255;
-          } else {
-            let color = phong(
-              this.intersectionColor,
-              this.intersection,
-              lightPositions,
-              10,
-              camera.origin
-            );
-            data[4 * (width * y + x) + 0] = color.r * 255;
-            data[4 * (width * y + x) + 1] = color.g * 255;
-            data[4 * (width * y + x) + 2] = color.b * 255;
-            data[4 * (width * y + x) + 3] = 255;
-          }
-        }
-      }
+    if (camera) {
+      this.setupCamera(camera);
     }
-    this.context.putImageData(this.imageData, 0, 0);
+
+    // traverse and render
+    rootNode.accept(this);
+  }
+
+  /**
+   * The view matrix to transform vertices from
+   * the world coordinate system to the
+   * view coordinate system
+   */
+  private lookat: Matrix;
+
+  /**
+   * The perspective matrix to transform vertices from
+   * the view coordinate system to the
+   * normalized device coordinate system
+   */
+  private perspective: Matrix;
+
+  /**
+   * Helper function to setup camera matrices
+   * @param camera The camera used
+   */
+  setupCamera(camera: Camera) {
+    this.lookat = Matrix.lookat(camera.eye, camera.center, camera.up);
+
+    this.perspective = Matrix.perspective(
+      camera.fovy,
+      camera.aspect,
+      camera.near,
+      camera.far
+    );
   }
 
   /**
@@ -123,6 +106,7 @@ export default class RayVisitor implements Visitor {
    * @param node The node to visit
    */
   visitGroupNode(node: GroupNode) {
+    // TODO
     this.transformations.push(
       this.transformations[this.transformations.length - 1].mul(
         node.transform.getMatrix()
@@ -135,7 +119,6 @@ export default class RayVisitor implements Visitor {
           this.inverseTransformations[this.inverseTransformations.length - 1]
         )
     );
-
     for (let i = 0; i < node.children.length; i++) {
       node.children[i].accept(this);
     }
@@ -145,112 +128,209 @@ export default class RayVisitor implements Visitor {
 
   /**
    * Visits a sphere node
-   * @param node - The node to visit
+   * @param node The node to visit
    */
   visitSphereNode(node: SphereNode) {
+    const shader = this.shader;
+    shader.use();
     const toWorld = this.transformations[this.transformations.length - 1];
     const fromWorld =
       this.inverseTransformations[this.inverseTransformations.length - 1];
 
-    const ray = new Ray(
-      fromWorld.mulVec(this.ray.origin),
-      fromWorld.mulVec(this.ray.direction).normalize()
-    );
-    let intersection = UNIT_SPHERE.intersect(ray);
+    shader.getUniformMatrix("M").set(toWorld);
+    shader.getUniformMatrix("M_inverse").set(fromWorld);
 
-    if (intersection) {
-      const intersectionPointWorld = toWorld.mulVec(intersection.point);
-      const intersectionNormalWorld = toWorld
-        .mulVec(intersection.normal)
-        .normalize();
-      intersection = new Intersection(
-        (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
-        intersectionPointWorld,
-        intersectionNormalWorld
-      );
-      if (
-        this.intersection === null ||
-        intersection.closerThan(this.intersection)
-      ) {
-        this.intersection = intersection;
-        this.intersectionColor = node.color;
-      }
+    const V = shader.getUniformMatrix("V");
+    if (V && this.lookat) {
+      V.set(this.lookat);
     }
+    const P = shader.getUniformMatrix("P");
+    if (P && this.perspective) {
+      P.set(this.perspective);
+    }
+
+    const N = shader.getUniformMatrix("N");
+    if (N) {
+      N.set(fromWorld.transpose());
+    }
+    // TODO set the normal matrix
+    const normalMatrix = fromWorld.transpose();
+    normalMatrix.setVal(0, 3, 0);
+    normalMatrix.setVal(1, 3, 0);
+    normalMatrix.setVal(2, 3, 0);
+    normalMatrix.setVal(3, 3, 1);
+    normalMatrix.setVal(3, 0, 0);
+    normalMatrix.setVal(3, 1, 0);
+    normalMatrix.setVal(3, 2, 0);
+    if (normalMatrix && fromWorld) {
+      shader.getUniformMatrix("N").set(normalMatrix);
+    }
+    this.renderables.get(node).render(shader);
   }
 
   /**
    * Visits an axis aligned box node
-   * @param node The node to visit
+   * @param  {AABoxNode} node - The node to visit
    */
   visitAABoxNode(node: AABoxNode) {
+    this.shader.use();
+    let shader = this.shader;
     const toWorld = this.transformations[this.transformations.length - 1];
-    const fromWorld =
-      this.inverseTransformations[this.inverseTransformations.length - 1];
-
-    const ray = new Ray(
-      fromWorld.mulVec(this.ray.origin),
-      fromWorld.mulVec(this.ray.direction).normalize()
-    );
-    let intersection = UNIT_AABOX.intersect(ray);
-
-    if (intersection) {
-      const intersectionPointWorld = toWorld.mulVec(intersection.point);
-      const intersectionNormalWorld = toWorld
-        .mulVec(intersection.normal)
-        .normalize();
-      intersection = new Intersection(
-        (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
-        intersectionPointWorld,
-        intersectionNormalWorld
-      );
-      if (
-        this.intersection === null ||
-        intersection.closerThan(this.intersection)
-      ) {
-        this.intersection = intersection;
-        this.intersectionColor = node.color;
-      }
+    shader.getUniformMatrix("M").set(toWorld);
+    let V = shader.getUniformMatrix("V");
+    if (V && this.lookat) {
+      V.set(this.lookat);
     }
+    let P = shader.getUniformMatrix("P");
+    if (P && this.perspective) {
+      P.set(this.perspective);
+    }
+
+    this.renderables.get(node).render(shader);
   }
 
   /**
-   * Visits an axis aligned box node
-   * @param node The node to visit
+   * Visits a Pyramid node
+   * @param  {PyramidNode} node - The node to visit
    */
   visitPyramidNode(node: PyramidNode) {
+    this.shader.use();
+    let shader = this.shader;
     const toWorld = this.transformations[this.transformations.length - 1];
-    const fromWorld =
-      this.inverseTransformations[this.inverseTransformations.length - 1];
-
-    const ray = new Ray(
-      fromWorld.mulVec(this.ray.origin),
-      fromWorld.mulVec(this.ray.direction).normalize()
-    );
-    let intersection = UNIT_PYRAMID.intersect(ray);
-
-    if (intersection) {
-      const intersectionPointWorld = toWorld.mulVec(intersection.point);
-      const intersectionNormalWorld = toWorld
-        .mulVec(intersection.normal)
-        .normalize();
-      intersection = new Intersection(
-        (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
-        intersectionPointWorld,
-        intersectionNormalWorld
-      );
-      if (
-        this.intersection === null ||
-        intersection.closerThan(this.intersection)
-      ) {
-        this.intersection = intersection;
-        this.intersectionColor = node.color;
-      }
+    shader.getUniformMatrix("M").set(toWorld);
+    let V = shader.getUniformMatrix("V");
+    if (V && this.lookat) {
+      V.set(this.lookat);
     }
+    let P = shader.getUniformMatrix("P");
+    if (P && this.perspective) {
+      P.set(this.perspective);
+    }
+
+    this.renderables.get(node).render(shader);
   }
 
   /**
    * Visits a textured box node
+   * @param  {TextureBoxNode} node - The node to visit
+   */
+  visitTextureBoxNode(node: TextureBoxNode) {
+    this.textureshader.use();
+    let shader = this.textureshader;
+
+    const toWorld = this.transformations[this.transformations.length - 1];
+    shader.getUniformMatrix("M").set(toWorld);
+    let P = shader.getUniformMatrix("P");
+    if (P && this.perspective) {
+      P.set(this.perspective);
+    }
+    shader.getUniformMatrix("V").set(this.lookat);
+
+    this.renderables.get(node).render(shader);
+  }
+}
+
+/**
+ * Class representing a Visitor that sets up buffers
+ * for use by the RasterVisitor
+ * */
+export class RasterSetupVisitor {
+  /**
+   * The created render objects
+   */
+  public objects: WeakMap<Node, Renderable>;
+
+  /**
+   * Creates a new RasterSetupVisitor
+   * @param context The 3D context in which to create buffers
+   */
+  constructor(private gl: WebGL2RenderingContext) {
+    this.objects = new WeakMap();
+  }
+
+  /**
+   * Sets up all needed buffers
+   * @param rootNode The root node of the Scenegraph
+   */
+  setup(rootNode: Node) {
+    // Clear to white, fully opaque
+    this.gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    // Clear everything
+    this.gl.clearDepth(1.0);
+    // Enable depth testing
+    this.gl.enable(this.gl.DEPTH_TEST);
+    this.gl.depthFunc(this.gl.LEQUAL);
+
+    this.gl.enable(this.gl.CULL_FACE);
+    this.gl.cullFace(this.gl.BACK);
+
+    rootNode.accept(this);
+  }
+
+  /**
+   * Visits a group node
    * @param node The node to visit
    */
-  visitTextureBoxNode(node: TextureBoxNode) {}
+  visitGroupNode(node: GroupNode) {
+    for (let child of node.children) {
+      child.accept(this);
+    }
+  }
+
+  /**
+   * Visits a sphere node
+   * @param node - The node to visit
+   */
+  visitSphereNode(node: SphereNode) {
+    this.objects.set(
+      node,
+      new RasterSphere(this.gl, new Vector(0, 0, 0, 1), 1, node.color)
+    );
+  }
+
+  /**
+   * Visits an axis aligned box node
+   * @param  {AABoxNode} node - The node to visit
+   */
+  visitAABoxNode(node: AABoxNode) {
+    this.objects.set(
+      node,
+      new RasterBox(
+        this.gl,
+        new Vector(-0.5, -0.5, -0.5, 1),
+        new Vector(0.5, 0.5, 0.5, 1)
+      )
+    );
+  }
+
+  visitPyramidNode(node: PyramidNode) {
+    this.objects.set(
+      node,
+      new RasterPyramid(
+        this.gl,
+        node.color,
+        new Vector(0, 1, 0, 1),
+        new Vector(0, 0, -0.5, 1),
+        new Vector(-1, 0, 0.5, 1),
+        new Vector(1, 0, 0.5, 1)
+      )
+    );
+  }
+
+  /**
+   * Visits a textured box node. Loads the texture
+   * and creates a uv coordinate buffer
+   * @param  {TextureBoxNode} node - The node to visit
+   */
+  visitTextureBoxNode(node: TextureBoxNode) {
+    this.objects.set(
+      node,
+      new RasterTextureBox(
+        this.gl,
+        new Vector(-0.5, -0.5, -0.5, 1),
+        new Vector(0.5, 0.5, 0.5, 1),
+        node.texture
+      )
+    );
+  }
 }

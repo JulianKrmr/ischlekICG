@@ -1,8 +1,8 @@
 import Matrix from "../math/matrix";
 import Vector from "../math/vector";
-import Sphere from "./objects/sphere";
-import AABox from "./objects/aabox";
-import Pyramid from "./objects/pyramid";
+import Sphere from "../objects/sphere";
+import AABox from "../objects/aabox";
+import Pyramid from "../objects/pyramid";
 
 import Intersection from "../math/intersection";
 import Ray from "../math/ray";

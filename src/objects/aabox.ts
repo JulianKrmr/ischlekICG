@@ -1,7 +1,7 @@
-import Vector from "../../math/vector";
+import Vector from "../math/vector";
 import Ray from "src/math/ray";
 import Intersection from "src/math/intersection";
-import Plane from "../../math/plane";
+import Plane from "../math/plane";
 
 /**
  * Class representing an axis aligned box

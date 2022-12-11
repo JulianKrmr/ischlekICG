@@ -1,6 +1,6 @@
 import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
-import Sphere from "../raytracing/objects/sphere";
+import Sphere from "../objects/sphere";
 import Vector from "../math/vector";
 import Ray from "../math/ray";
 

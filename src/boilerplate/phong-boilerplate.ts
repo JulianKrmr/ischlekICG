@@ -1,7 +1,7 @@
 import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
-import Sphere from "../raytracing/objects/sphere";
+import Sphere from "../objects/sphere";
 import Ray from "../math/ray";
 import Intersection from "../math/intersection";
 import phong from "../phong";

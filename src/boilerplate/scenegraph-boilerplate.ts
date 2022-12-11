@@ -2,8 +2,8 @@ import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
 import { GroupNode, SphereNode, PyramidNode, AABoxNode } from "../nodes";
-import RayVisitor from "../rayvisitor";
-import { Rotation, Scaling, Translation } from "../transformation";
+import RayVisitor from "../raytracing/rayvisitor";
+import { Rotation, Scaling, Translation } from "../math/transformation";
 
 window.addEventListener("load", () => {
   const canvas = document.getElementById("raytracer") as HTMLCanvasElement;

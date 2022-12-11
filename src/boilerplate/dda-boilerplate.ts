@@ -1,6 +1,6 @@
 import 'bootstrap';
 import 'bootstrap/scss/bootstrap.scss';
-import { dda } from '../dda';
+import { dda } from '../irrelevant-exercises/dda';
 
 let canvasDDA: HTMLCanvasElement;
 let ctxDDA: CanvasRenderingContext2D;

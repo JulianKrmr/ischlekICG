@@ -1,7 +1,7 @@
-import Vector from "./math/vector";
-import { GroupNode } from "./nodes";
-import { Rotation, SQT } from "./transformation";
-import Quaternion from "./quaternion";
+import Vector from "../math/vector";
+import { GroupNode } from "../nodes";
+import { Rotation, SQT } from "../math/transformation";
+import Quaternion from "../math/quaternion";
 
 /**
  * Class representing an Animation

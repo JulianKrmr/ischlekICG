@@ -1,9 +1,9 @@
 import RasterSphere from "./raster-sphere";
-import RasterBox from "./raster-box";
+import RasterBox from "./objects/raster-box";
 import RasterTextureBox from "./raster-texture-box";
-import Vector from "./math/vector";
-import Matrix from "./math/matrix";
-import Visitor from "visitor";
+import Vector from "../math/vector";
+import Matrix from "../math/matrix";
+import Visitor from "src/visitor";
 import {
   Node,
   GroupNode,
@@ -11,8 +11,8 @@ import {
   AABoxNode,
   TextureBoxNode,
   PyramidNode,
-} from "./nodes";
-import Shader from "./shader/shader";
+} from "../nodes";
+import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
 
 interface Camera {

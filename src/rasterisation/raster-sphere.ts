@@ -1,5 +1,5 @@
-import Vector from "./math/vector";
-import Shader from "./shader/shader";
+import Vector from "../math/vector";
+import Shader from "../shader/shader";
 
 /**
  * A class creating buffers for a sphere to render it with WebGL

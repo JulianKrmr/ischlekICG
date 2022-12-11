@@ -1,4 +1,4 @@
-import Vector from "./math/vector";
+import Vector from "./vector";
 import Intersection from "./intersection";
 import Ray from "./ray";
 

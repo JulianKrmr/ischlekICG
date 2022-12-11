@@ -1,8 +1,8 @@
 import 'bootstrap';
 import 'bootstrap/scss/bootstrap.scss';
-import Ray from '../ray';
+import Ray from '../math/ray';
 import phong from '../phong';
-import Sphere from '../sphere';
+import Sphere from '../raytracing/objects/sphere';
 import Vector from '../math/vector';
 import Matrix from '../math/matrix';
 

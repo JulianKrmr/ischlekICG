@@ -1,6 +1,6 @@
 import 'bootstrap';
 import 'bootstrap/scss/bootstrap.scss';
-import {bresenham} from '../bresenham';
+import {bresenham} from '../irrelevant-exercises/bresenham';
 
 let canvasExample: HTMLCanvasElement;
 let ctxExample: CanvasRenderingContext2D;

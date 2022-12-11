@@ -1,6 +1,6 @@
 import Visitor from "visitor";
 import Vector from "./math/vector";
-import { Transformation } from "transformation";
+import { Transformation } from "src/math/transformation";
 
 /**
  * Class representing a Node in a Scenegraph

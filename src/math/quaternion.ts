@@ -1,5 +1,5 @@
-import Matrix from "./math/matrix";
-import Vector from "./math/vector";
+import Matrix from "./matrix";
+import Vector from "./vector";
 
 export default class Quaternion {
 

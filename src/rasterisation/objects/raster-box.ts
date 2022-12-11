@@ -1,60 +1,106 @@
-import Vector from "./math/vector";
-import Shader from "./shader/shader";
+import Vector from "../../math/vector";
+import Shader from "../../shader/shader";
 
 /**
- * A class creating buffers for an axis aligned pyramid to render it with WebGL
+ * A class creating buffers for an axis aligned box to render it with WebGL
  */
-export default class RasterPyramid {
+export default class RasterBox {
   /**
-   * The buffer containing the pyramids vertices
+   * The buffer containing the box's vertices
    */
   vertexBuffer: WebGLBuffer;
   /**
    * The indices describing which vertices form a triangle
    */
   indexBuffer: WebGLBuffer;
-
-  private colorBuffer: WebGLBuffer;
+  // TODO private variable for color buffer
+  colorBuffer: WebGLBuffer;
   /**
    * The amount of indices
    */
   elements: number;
 
+  /**
+   * Creates all WebGL buffers for the box
+   *     6 ------- 7
+   *    / |       / |
+   *   3 ------- 2  |
+   *   |  |      |  |
+   *   |  5 -----|- 4
+   *   | /       | /
+   *   0 ------- 1
+   *  looking in negative z axis direction
+   * @param gl The canvas' context
+   * @param minPoint The minimal x,y,z of the box
+   * @param maxPoint The maximal x,y,z of the box
+   */
   constructor(
     private gl: WebGL2RenderingContext,
-    color: Vector, //muss vermutlich ein array werden
-    point1: Vector,
-    point2: Vector,
-    point3: Vector,
-    point4: Vector
+    minPoint: Vector,
+    maxPoint: Vector
   ) {
     this.gl = gl;
-    const p1 = point1;
-    const p2 = point2;
-    const p3 = point3;
-    const p4 = point4;
-
+    const mi = minPoint;
+    const ma = maxPoint;
     let vertices = [
-      p1.x,
-      p1.y,
-      p1.z,
-      p2.x,
-      p2.y,
-      p2.z,
-      p3.x,
-      p3.y,
-      p3.z,
-      p4.x,
-      p4.y,
-      p4.z,
+      mi.x,
+      mi.y,
+      ma.z,
+      ma.x,
+      mi.y,
+      ma.z,
+      ma.x,
+      ma.y,
+      ma.z,
+      mi.x,
+      ma.y,
+      ma.z,
+      ma.x,
+      mi.y,
+      mi.z,
+      mi.x,
+      mi.y,
+      mi.z,
+      mi.x,
+      ma.y,
+      mi.z,
+      ma.x,
+      ma.y,
+      mi.z,
     ];
-    let indices = [0, 1, 2, 0, 2, 3, 0, 1, 3, 1, 2, 3];
+    let indices = [
+      // front
+      0, 1, 2, 2, 3, 0,
+      // back
+      4, 5, 6, 6, 7, 4,
+      // right
+      1, 4, 7, 7, 2, 1,
+      // top
+      3, 2, 7, 7, 6, 3,
+      // left
+      5, 0, 3, 3, 6, 5,
+      // bottom
+      5, 4, 1, 1, 0, 5,
+    ];
 
-    let colors = [];
-    for (let i = 0; i < vertices.length / 3; i++) {
-      //ist das selbe wie vier
-      colors.push(color.r, color.g, color.b);
-    }
+    let colors = [
+      //black
+      0, 0, 0,
+      //white
+      1, 1, 1,
+      //yellow
+      1, 1, 0,
+      //cyan
+      0, 1, 1,
+      //black
+      0, 0, 0,
+      //white
+      1, 1, 1,
+      //yellow
+      1, 1, 0,
+      //cyan
+      0, 1, 1,
+    ];
 
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);

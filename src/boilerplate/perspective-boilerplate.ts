@@ -9,11 +9,11 @@ import {
 import {
     RasterVisitor,
     RasterSetupVisitor
-} from '../rastervisitor';
+} from '../rasterisation/rastervisitor';
 import Shader from '../shader/shader';
 import perspectiveVertexShader from '../shader/perspective-vertex-shader.glsl';
 import fragmentShader from '../shader/basic-fragment-shader.glsl';
-import { Scaling, Translation } from '../transformation';
+import { Scaling, Translation } from '../math/transformation';
 
 window.addEventListener('load', () => {
     const canvas = document.getElementById("rasteriser") as HTMLCanvasElement;

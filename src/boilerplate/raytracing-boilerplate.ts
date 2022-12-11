@@ -1,8 +1,8 @@
 import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
-import Sphere from "../sphere";
+import Sphere from "../raytracing/objects/sphere";
 import Vector from "../math/vector";
-import Ray from "../ray";
+import Ray from "../math/ray";
 
 window.addEventListener("load", (evt) => {
   const canvas = document.getElementById("raytracer") as HTMLCanvasElement;

@@ -9,16 +9,16 @@ import {
 import {
     RasterVisitor,
     RasterSetupVisitor
-} from '../rastervisitor';
+} from '../rasterisation/rastervisitor';
 import Shader from '../shader/shader';
 import {
     RotationNode
-} from '../animation-nodes';
+} from '../raytracing/animation-nodes';
 import phongVertexShader from '../shader/phong-vertex-perspective-shader.glsl';
 import phongFragmentShader from '../shader/phong-fragment-shader.glsl';
 import textureVertexShader from '../shader/texture-vertex-perspective-shader.glsl';
 import textureFragmentShader from '../shader/texture-fragment-shader.glsl';
-import { Rotation, Translation } from '../transformation';
+import { Rotation, Translation } from '../math/transformation';
 
 window.addEventListener('load', () => {
     const canvas = document.getElementById("rasteriser") as HTMLCanvasElement;

@@ -1,4 +1,4 @@
-import Vector from "./math/vector";
+import Vector from "./vector";
 
 /**
  * Class representing a ray

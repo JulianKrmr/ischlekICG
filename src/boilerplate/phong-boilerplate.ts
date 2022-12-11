@@ -1,9 +1,9 @@
 import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
-import Sphere from "../sphere";
-import Ray from "../ray";
-import Intersection from "../intersection";
+import Sphere from "../raytracing/objects/sphere";
+import Ray from "../math/ray";
+import Intersection from "../math/intersection";
 import phong from "../phong";
 
 window.addEventListener("load", () => {

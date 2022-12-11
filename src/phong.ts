@@ -1,5 +1,5 @@
 import Vector from "./math/vector";
-import Intersection from "./intersection";
+import Intersection from "./math/intersection";
 
 /**
  * Calculate the colour of an object at the intersection point according to the Phong Lighting model.

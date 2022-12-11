@@ -15,12 +15,12 @@ window.addEventListener("load", () => {
   sg.add(gn);
   const gn1 = new GroupNode(new Translation(new Vector(1.2, 0.5, 0, 0)));
   gn.add(gn1);
-  gn1.add(new PyramidNode(new Vector(0.4, 0, 0, 1)));
+  gn1.add(new SphereNode(new Vector(0.4, 0, 0, 1)));
   const gn2 = new GroupNode(new Translation(new Vector(-0.8, 1, 1, 0)));
   gn.add(gn2);
   const gn3 = new GroupNode(new Scaling(new Vector(0.4, 0.4, 0.4, 0)));
   gn2.add(gn3);
-  gn3.add(new PyramidNode(new Vector(0, 0, 0.3, 1)));
+  gn3.add(new SphereNode(new Vector(0, 0, 0.3, 1)));
   const lightPositions = [new Vector(1, 1, 1, 1)];
   const camera = {
     origin: new Vector(0, 0, 0, 1),

@@ -13,7 +13,7 @@ import {
   PyramidNode,
 } from "./nodes";
 import Shader from "./shader/shader";
-//import RasterPyramid from "raster-pyramid";
+import RasterPyramid from "./rasterpyramid";
 
 interface Camera {
   eye: Vector;

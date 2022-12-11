@@ -1,7 +1,7 @@
-import Vector from "./math/vector";
-import Ray from "./ray";
-import Intersection from "./intersection";
-import Plane from "./plane";
+import Vector from "math/vector";
+import Ray from "ray";
+import Intersection from "intersection";
+import Plane from "plane";
 
 /**
  * Class representing a Pyramid

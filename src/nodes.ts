@@ -105,7 +105,7 @@ export class PyramidNode extends Node {
    * Creates a pyramid.
    * The box's center is located at the origin
    * with all edges of length 1
-   * @param color The colour of the cube
+   * @param color The colour of the pyramid
    */
   constructor(public color: Vector) {
     super();

@@ -1,7 +1,7 @@
 /**
  * Class representing a vector in 4D space
  */
- export default class Vector {
+export default class Vector {
   /**
    * The variable to hold the vector data
    */
@@ -267,6 +267,6 @@
   get length(): number {
     return Math.sqrt(
       this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w
-    ); 
+    );
   }
 }

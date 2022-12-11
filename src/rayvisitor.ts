@@ -1,10 +1,10 @@
 import Matrix from "./math/matrix";
 import Vector from "./math/vector";
-import Sphere from "./sphere";
-import Intersection from "./intersection";
-import Ray from "./ray";
-import Visitor from "./visitor";
-import phong from "./phong";
+import Sphere from "sphere";
+import Intersection from "intersection";
+import Ray from "ray";
+import Visitor from "visitor";
+import phong from "phong";
 import {
   Node,
   GroupNode,
@@ -12,10 +12,10 @@ import {
   AABoxNode,
   TextureBoxNode,
   PyramidNode,
-} from "./nodes";
-import AABox from "./aabox";
+} from "nodes";
+import AABox from "aabox";
 import { ChildProcess } from "child_process";
-import Pyramid from "./pyramid";
+import Pyramid from "pyramid";
 
 const UNIT_SPHERE = new Sphere(
   new Vector(0, 0, 0, 1),
@@ -28,12 +28,13 @@ const UNIT_AABOX = new AABox(
   new Vector(0, 0, 0, 1)
 );
 const UNIT_PYRAMID = new Pyramid(
-  new Vector(-0.5, -0.5, -0.5, 1),
-  new Vector(0.5, 0.5, 0.5, 1),
-  new Vector(1, 1, 1, 1),
-  new Vector(2, 2, 2, 1),
+  new Vector(0, 1, 0, 1),
+  new Vector(0, 0, -0.5, 1),
+  new Vector(-1, 0, 0.5, 1),
+  new Vector(1, 0, 0.5, 1),
   new Vector(0, 0, 0, 1)
 );
+
 /**
  * Class representing a Visitor that uses
  * Raytracing to render a Scenegraph

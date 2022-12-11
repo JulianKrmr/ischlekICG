@@ -1,6 +1,6 @@
-import Visitor from "./visitor";
+import Visitor from "visitor";
 import Vector from "./math/vector";
-import { Transformation } from "./transformation";
+import { Transformation } from "transformation";
 
 /**
  * Class representing a Node in a Scenegraph
@@ -96,15 +96,8 @@ export class AABoxNode extends Node {
   }
 }
 
-/**
- * Class representing an Axis Aligned Box in the Scenegraph
- * @extends Node
- */
 export class PyramidNode extends Node {
   /**
-   * Creates a pyramid.
-   * The box's center is located at the origin
-   * with all edges of length 1
    * @param color The colour of the pyramid
    */
   constructor(public color: Vector) {

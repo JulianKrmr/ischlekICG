@@ -11,9 +11,11 @@ import {
   SphereNode,
   AABoxNode,
   TextureBoxNode,
+  PyramidNode,
 } from "./nodes";
 import AABox from "./aabox";
 import { ChildProcess } from "child_process";
+import Pyramid from "./pyramid";
 
 const UNIT_SPHERE = new Sphere(
   new Vector(0, 0, 0, 1),
@@ -25,7 +27,13 @@ const UNIT_AABOX = new AABox(
   new Vector(0.5, 0.5, 0.5, 1),
   new Vector(0, 0, 0, 1)
 );
-
+const UNIT_PYRAMID = new Pyramid(
+  new Vector(-0.5, -0.5, -0.5, 1),
+  new Vector(0.5, 0.5, 0.5, 1),
+  new Vector(1, 1, 1, 1),
+  new Vector(2, 2, 2, 1),
+  new Vector(0, 0, 0, 1)
+);
 /**
  * Class representing a Visitor that uses
  * Raytracing to render a Scenegraph
@@ -183,6 +191,41 @@ export default class RayVisitor implements Visitor {
       fromWorld.mulVec(this.ray.direction).normalize()
     );
     let intersection = UNIT_AABOX.intersect(ray);
+
+    if (intersection) {
+      const intersectionPointWorld = toWorld.mulVec(intersection.point);
+      const intersectionNormalWorld = toWorld
+        .mulVec(intersection.normal)
+        .normalize();
+      intersection = new Intersection(
+        (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
+        intersectionPointWorld,
+        intersectionNormalWorld
+      );
+      if (
+        this.intersection === null ||
+        intersection.closerThan(this.intersection)
+      ) {
+        this.intersection = intersection;
+        this.intersectionColor = node.color;
+      }
+    }
+  }
+
+  /**
+   * Visits an axis aligned box node
+   * @param node The node to visit
+   */
+  visitPyramidNode(node: PyramidNode) {
+    const toWorld = this.transformations[this.transformations.length - 1];
+    const fromWorld =
+      this.inverseTransformations[this.inverseTransformations.length - 1];
+
+    const ray = new Ray(
+      fromWorld.mulVec(this.ray.origin),
+      fromWorld.mulVec(this.ray.direction).normalize()
+    );
+    let intersection = UNIT_PYRAMID.intersect(ray);
 
     if (intersection) {
       const intersectionPointWorld = toWorld.mulVec(intersection.point);

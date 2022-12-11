@@ -1,10 +1,13 @@
 import Matrix from "./math/matrix";
 import Vector from "./math/vector";
-import Sphere from "sphere";
-import Intersection from "intersection";
-import Ray from "ray";
-import Visitor from "visitor";
-import phong from "phong";
+import Sphere from "./sphere";
+import AABox from "./aabox";
+import Pyramid from "./pyramid";
+
+import Intersection from "./intersection";
+import Ray from "./ray";
+import Visitor from "./visitor";
+import phong from "./phong";
 import {
   Node,
   GroupNode,
@@ -13,9 +16,7 @@ import {
   TextureBoxNode,
   PyramidNode,
 } from "nodes";
-import AABox from "aabox";
 import { ChildProcess } from "child_process";
-import Pyramid from "pyramid";
 
 const UNIT_SPHERE = new Sphere(
   new Vector(0, 0, 0, 1),

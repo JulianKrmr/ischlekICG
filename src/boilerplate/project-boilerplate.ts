@@ -6,7 +6,7 @@ import Sphere from "../objects/sphere";
 import Ray from "../math/ray";
 import phong from "../phong";
 import {AABoxNode, GroupNode, PyramidNode, SphereNode} from "../nodes";
-import {Scaling, Translation} from "../math/transformation";
+import {Rotation, Scaling, Translation} from "../math/transformation";
 import RayVisitor from "../raytracing/rayvisitor";
 import RasterBox from "../objects/raster-box";
 import {RasterVisitor} from "../rasterisation/rastervisitor";
@@ -35,11 +35,23 @@ window.addEventListener('load', () => {
     });
 
     //scene graph
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
-    const gn1 = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
-    sg.add(gn1);
-    gn1.add(new SphereNode(new Vector(0.5,0,0,0)));
 
+    let gnTranslation = new Translation(new Vector(0,0,0,0));
+    let gnRotation = new Rotation(new Vector(0,0,0,0), 0);
+    let gnScaling = new Scaling(new Vector(1,1,1,0));
+
+    const gn1 = new GroupNode(gnTranslation);
+    const gn2 = new GroupNode(gnRotation);
+    const gn3 = new GroupNode(gnScaling);
+
+    sg.add(gn1);
+    gn1.add(gn2);
+    gn2.add(gn3);
+
+    gn3.add(new SphereNode(new Vector(0.5,0,0,0)));
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     const lightPositions = [
         new Vector(1, 1, -1, 1)
@@ -145,45 +157,36 @@ window.addEventListener('load', () => {
 
 
     //tastatur eingaben
-    let x = 0;
-    let y = 0;
-    let z = 0;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    let translationX = 0;
+    let translationY = 0;
+    let translationZ = 0;
+
+    let translationSize = 0.02;
+    let scaleSize = 0.1;
+    let rotationAmount = 0.1;
 
     function animatePosition(){
-        console.log("animatePosition wurde ausgeführt");
-        let matrix = Matrix.identity();
-        let matrixRotation = matrix.mul(rotation);
-        let matrixTranslation = matrix.mul(translation);
-        let matrixScaling = matrix.mul(scale);
-
-        //gnTranslation.translation = new Vector(x,y,z,0);
-
+        //TODO die rotation und das scaling
+        gnTranslation.translationVector = new Vector(translationX, translationY, translationZ, 0);
         visitor.render(sg, camera, lightPositions);
     }
     window.requestAnimationFrame(animatePosition);
 
 
-
-    let rotationChangeX = 0;
-    let rotationChangeY = 0;
-    let rotationChangeZ = 0;
-    let scaleSize = 0.1;
-    let translationSize = 0.02;
-
-
     window.addEventListener('keydown', function (event) {
         switch (event.key) {
             case "w": //hoch
-
+                translationY += translationSize;
                 break;
             case "a": //runter
-                x += 0.3;
+                translationX -= translationSize;
                 break;
             case "s": //links
-                translation = Matrix.translation(new Vector(-translationSize, 0, 0, 0)).mul(translation);
+                translationY -= translationSize;
                 break;
             case "d": //rechts
-                translation = Matrix.translation(new Vector(translationSize, 0, 0, 0)).mul(translation);
+                translationX += translationSize;
                 break;
             case "e": //vor
                 translation = Matrix.translation(new Vector(0, 0, translationSize, 0)).mul(translation);
@@ -192,16 +195,10 @@ window.addEventListener('load', () => {
                 translation = Matrix.translation(new Vector(0, 0, -translationSize, 0)).mul(translation);
                 break;
             case "x": //geht nicht, um x achse rotieren
-                rotationChangeX ++;
-                rotation = Matrix.rotation(new Vector(1, 0, 0, 0), rotationChangeX);
                 break;
             case "y": //geht nicht, um y achse rotieren
-                rotationChangeY += 0.02;
-                rotation = Matrix.rotation(new Vector(0, 1, 0, 0), rotationChangeY);
                 break;
             case "c": //um z achse rotieren
-                rotationChangeZ ++;
-                rotation = Matrix.rotation(new Vector(0, 0, 1, 0), rotationChangeZ);
                 break;
             case "r": //größer skalieren
                 scale = Matrix.scaling(new Vector(1-scaleSize, 1-scaleSize, 1-scaleSize, 0)).mul(scale);
@@ -209,11 +206,7 @@ window.addEventListener('load', () => {
             case "f": //kleiner skalieren
                 scale = Matrix.scaling(new Vector(1+scaleSize, 1+scaleSize, 1+scaleSize, 0)).mul(scale);
                 break;
-
         }
         window.requestAnimationFrame(animatePosition);
-
     });
-
-
 });

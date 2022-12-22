@@ -16,7 +16,7 @@ window.addEventListener('load', () => {
     //scene graph
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
+    const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
     let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
     let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
     let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
@@ -129,7 +129,7 @@ window.addEventListener('load', () => {
                 translationZ += translationSize;
                 break;
             case "q": //zurück
-                translationZ += translationSize;
+                translationZ -= translationSize;
                 break;
             case "x": //um x achse rotieren, muss noch die achse einstellen können
                 rotationAngleX += rotationAmount;

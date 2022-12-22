@@ -89,13 +89,13 @@ export class Scaling extends MatrixTransformation {
 
 export class SQT extends MatrixTransformation {
     scale: Vector;
-    quaternion: Quaternion;
-    translation: Vector;
+        quaternion: Quaternion;
+        translation: Vector;
 
-    constructor(scale: Vector, rotation: { angle: number, axis: Vector }, translation: Vector) {
-        super(Matrix.identity(), Matrix.identity());
-        this.scale = scale;
-        this.translation = translation;
+        constructor(scale: Vector, rotation: { angle: number, axis: Vector }, translation: Vector) {
+            super(Matrix.identity(), Matrix.identity());
+            this.scale = scale;
+            this.translation = translation;
         this.quaternion = Quaternion.fromAxisAngle(rotation.axis, rotation.angle);
         this.recalculate();
     }

@@ -1,15 +1,13 @@
 import 'bootstrap';
 import 'bootstrap/scss/bootstrap.scss';
 import Vector from "../math/vector";
-import Matrix from "../math/matrix";
-import Sphere from "../objects/sphere";
-import Ray from "../math/ray";
-import phong from "../phong";
 import {AABoxNode, GroupNode, PyramidNode, SphereNode} from "../nodes";
 import {Rotation, Scaling, Translation} from "../math/transformation";
 import RayVisitor from "../raytracing/rayvisitor";
-import RasterBox from "../objects/raster-box";
-import {RasterVisitor} from "../rasterisation/rastervisitor";
+import {RasterSetupVisitor, RasterVisitor} from "../rasterisation/rastervisitor";
+import Shader from "../shader/shader";
+import vertexShader from "../shader/basic-vertex-shader.glsl";
+import fragmentShader from "../shader/basic-fragment-shader.glsl";
 
 window.addEventListener('load', () => {
     const canvas = document.getElementById("scene--canvas") as HTMLCanvasElement;
@@ -29,8 +27,8 @@ window.addEventListener('load', () => {
             //TODO das ist quatsch, muss noch zu Raster visitor gemacht werden
         } else {
             canvas.style.backgroundColor = "white";
-            visitor = new RayVisitor(ctx, canvas.width, canvas.height);
-            //ist nicht der default mode aber der Hintergrund ist trotzdem noch weis am anfang
+           visitor = new RayVisitor(ctx, canvas.width, canvas.height);
+            // ist nicht der default mode aber der Hintergrund ist trotzdem noch weis am anfang
         }
     });
 
@@ -39,18 +37,24 @@ window.addEventListener('load', () => {
     const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
 
     let gnTranslation = new Translation(new Vector(0,0,0,0));
-    let gnRotation = new Rotation(new Vector(0,0,0,0), 0);
+    let gnRotationX = new Rotation(new Vector(1,0,0,0), 0);
+    let gnRotationY = new Rotation(new Vector(0,1,0,0), 0);
+    let gnRotationZ = new Rotation(new Vector(0,0,1,0), 0);
     let gnScaling = new Scaling(new Vector(1,1,1,0));
 
     const gn1 = new GroupNode(gnTranslation);
-    const gn2 = new GroupNode(gnRotation);
-    const gn3 = new GroupNode(gnScaling);
+    const gn2 = new GroupNode(gnRotationX);
+    const gn3 = new GroupNode(gnRotationY);
+    const gn4 = new GroupNode(gnRotationZ);
+    const gn5 = new GroupNode(gnScaling);
 
     sg.add(gn1);
     gn1.add(gn2);
     gn2.add(gn3);
+    gn3.add(gn4);
+    gn4.add(gn5);
 
-    gn3.add(new SphereNode(new Vector(0.5,0,0,0)));
+    gn5.add(new AABoxNode(new Vector(0.5,0,0,0)));
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     const lightPositions = [
@@ -64,96 +68,7 @@ window.addEventListener('load', () => {
         alpha: Math.PI / 3
     }
 
-
-
-    let rotation = Matrix.identity();
-    let translation = Matrix.identity();
-    let scale = Matrix.identity();
-
-    //TODO muss raus und alles wo animate drinn steht
-    function animate() {
-        data.fill(0);
-        let matrix = Matrix.identity();
-        if (useRotationElement.checked) {
-            matrix = matrix.mul(rotation);
-        }
-        if (useTranslationElement.checked) {
-            matrix = matrix.mul(translation);
-        }
-        if (useScaleElement.checked) {
-            matrix = matrix.mul(scale);
-        }
-        const sphere = new Sphere(matrix.mulVec(new Vector(0.1, 0, -1.5, 1)), 0.4, new Vector(.3, 0, 0, 1));
-
-        ctx.putImageData(imageData, 0, 0);
-    }
-    //window.requestAnimationFrame(animate);
-
-    const useRotationElement = document.getElementById("userotation") as HTMLInputElement;
-    useRotationElement.onchange = () => {
-        let range = document.getElementById("rotation") as HTMLInputElement;
-        if (useRotationElement.checked) {
-            range.value = "0";
-            range.oninput = () => {
-                rotation = Matrix.rotation(new Vector(0, 0, 1, 0),
-                    Number(range.value));
-                //window.requestAnimationFrame(animate);
-            }
-            range.disabled = false;
-            range.oninput(new Event("click"));
-        } else {
-            range.disabled = true;
-            rotation = Matrix.identity();
-        }
-       // window.requestAnimationFrame(animate);
-    }
-
-    const useTranslationElement = document.getElementById("usetranslation") as HTMLInputElement;
-    useTranslationElement.onchange = () => {
-        let range = document.getElementById("translation") as HTMLInputElement;
-        if (useTranslationElement.checked) {
-            range.value = "0";
-            range.oninput = () => {
-                translation = Matrix.translation(new Vector(Number(range.value), 0, 0, 0));
-                window.requestAnimationFrame(animate);
-            }
-            range.disabled = false;
-            range.oninput(new Event("click"));
-        } else {
-            range.disabled = true;
-            translation = Matrix.identity();
-        }
-        window.requestAnimationFrame(animate);
-    }
-
-    const useScaleElement = document.getElementById("usescale") as HTMLInputElement;
-    useScaleElement.onchange = () => {
-        let range = document.getElementById("scale") as HTMLInputElement;
-        if (useScaleElement.checked) {
-            range.value = "1";
-            range.oninput = () => {
-                scale = Matrix.scaling(new Vector(
-                    Number(range.value),
-                    Number(range.value),
-                    Number(range.value), 0));
-                window.requestAnimationFrame(animate);
-            }
-            range.disabled = false;
-            range.oninput(new Event("click"));
-        } else {
-            range.disabled = true;
-            scale = Matrix.identity();
-        }
-        window.requestAnimationFrame(animate);
-    }
-
-    const sliders = ["rotation", "translation", "scale"];
-    for (let t of sliders) {
-        const elem = document.getElementById("use" + t) as HTMLInputElement;
-        if (elem.checked) {
-            elem.onchange(new Event("click"));
-        }
-    }
+    window.requestAnimationFrame(animatePosition);
 
 
     //tastatur eingaben
@@ -161,18 +76,26 @@ window.addEventListener('load', () => {
     let translationX = 0;
     let translationY = 0;
     let translationZ = 0;
+    let rotationAngleX = 0;
+    let rotationAngleY = 0;
+    let rotationAngleZ = 0;
+    let scaleX = 1;
+    let scaleY = 1;
+    let scaleZ = 1;
 
-    let translationSize = 0.02;
+    let translationSize = 0.2;
     let scaleSize = 0.1;
-    let rotationAmount = 0.1;
+    let rotationAmount = 30;
 
-    function animatePosition(){
-        //TODO die rotation und das scaling
+    function animatePosition() {
         gnTranslation.translationVector = new Vector(translationX, translationY, translationZ, 0);
-        visitor.render(sg, camera, lightPositions);
-    }
-    window.requestAnimationFrame(animatePosition);
+        gnRotationX.angle = rotationAngleX;
+        gnRotationY.angle = rotationAngleY;
+        gnRotationZ.angle = rotationAngleZ;
+        gnScaling.scale = new Vector(scaleX, scaleY, scaleZ,0);
 
+       visitor.render(sg, camera, lightPositions);
+    }
 
     window.addEventListener('keydown', function (event) {
         switch (event.key) {
@@ -189,24 +112,45 @@ window.addEventListener('load', () => {
                 translationX += translationSize;
                 break;
             case "e": //vor
-                translation = Matrix.translation(new Vector(0, 0, translationSize, 0)).mul(translation);
+                translationZ += translationSize;
                 break;
             case "q": //zurück
-                translation = Matrix.translation(new Vector(0, 0, -translationSize, 0)).mul(translation);
+                translationZ += translationSize;
                 break;
-            case "x": //geht nicht, um x achse rotieren
+            case "x": //um x achse rotieren, muss noch die achse einstellen können
+                rotationAngleX += rotationAmount;
                 break;
-            case "y": //geht nicht, um y achse rotieren
+            case "y": //um y achse rotieren
+                rotationAngleY += rotationAmount;
                 break;
-            case "c": //um z achse rotieren
+            case "c": //um z achse rotieren, muss noch die negativ richtung gemacht werden?
+                rotationAngleZ += rotationAmount;
                 break;
-            case "r": //größer skalieren
-                scale = Matrix.scaling(new Vector(1-scaleSize, 1-scaleSize, 1-scaleSize, 0)).mul(scale);
+            case "r": //X skalieren größer
+                scaleX += scaleSize;
                 break;
-            case "f": //kleiner skalieren
-                scale = Matrix.scaling(new Vector(1+scaleSize, 1+scaleSize, 1+scaleSize, 0)).mul(scale);
+            case "f": //Y skalieren größer
+                scaleY += scaleSize;
+                break;
+            case "v": //Z skalieren größer
+                scaleZ += scaleSize;
+                break;
+            case "t": //X skalieren kleiner
+                scaleX -= scaleSize;
+                break;
+            case "g": //Y skalieren kleiner
+                scaleY -= scaleSize;
+                break;
+            case "b": //Z skalieren kleiner
+                scaleZ -= scaleSize;
                 break;
         }
         window.requestAnimationFrame(animatePosition);
     });
 });
+
+//TODO
+//phong einbinden
+//rastervisitor rein nehmen
+//rotation fixen
+//performacne optimieren

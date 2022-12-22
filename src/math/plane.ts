@@ -67,7 +67,7 @@ export default class Plane {
 
       if (i == 0) {
         startDirection = direction;
-        console.log("startDirection");
+        // console.log("startDirection");
       } else {
         if (startDirection != direction) {
           inside = false;

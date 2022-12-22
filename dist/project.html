@@ -15,13 +15,9 @@
             min-width: 100%;
         }
 
-        #scene--canvas {
-            position: absolute;
-            top: 50%;
-            left: 10px;
-            transform: translateY(-50%);
-            width: 1600px;
-            height: 900px;
+        .canvas {
+            width: 500px;
+            height: 500px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             background-color: #FFFFFF
         }
@@ -32,7 +28,7 @@
             top: 0;
             right: 0;
             bottom: 0;
-            left: 1600px;
+            left: 100px;
             margin: auto;
             width: 200px;
             height: 300px;
@@ -52,26 +48,8 @@
     <script defer></script>
 </head>
 <body>
-<canvas id="scene--canvas" width="900" height="600">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group text-left col-sm-12">
-                    <input class="form-check-input" type="checkbox" id="userotation"></input>
-                    <label class="form-check-label" for="rotation">Rotation</label>
-                </div>
-                <div class="form-group text-left col-sm-12">
-                    <input class="form-check-input" type="checkbox" id="usetranslation"></input>
-                    <label class="form-check-label" for="translation">Translation X</label>
-                </div>
-                <div class="form-group text-left col-sm-12">
-                    <input class="form-check-input" type="checkbox" id="usescale"></input>
-                    <label class="form-check-label" for="scale">Scale</label>
-                </div>
-            </div>
-        </div>
-    </div>
-</canvas>
+<canvas id="ray-canvas" class="canvas" width="50px" height="50px"></canvas>
+<canvas id="raster-canvas" class="canvas" width="50px" height="50px" style="display:none;"></canvas>
 <div id="controls">
     <form id="mode--toggle">
         <label for="rasterization">Rasterization</label>

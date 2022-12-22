@@ -26,8 +26,20 @@ class MatrixTransformation implements Transformation {
 }
 
 export class Translation extends MatrixTransformation {
+    private _translationVector: Vector;
     constructor(translation: Vector) {
         super(Matrix.translation(translation), Matrix.translation(translation.mul(-1)));
+        this._translationVector = translation;
+    }
+
+    set translationVector(tranlation: Vector) {
+        this._translationVector = tranlation;
+        this.recalculate();
+    }
+
+    private recalculate() {
+        this.matrix = Matrix.translation(this._translationVector);
+        this.inverse = Matrix.translation(this._translationVector.mul(-1));//nicht sicher aber muss inverse sein
     }
 }
 
@@ -58,8 +70,20 @@ export class Rotation extends MatrixTransformation {
 }
 
 export class Scaling extends MatrixTransformation {
+    private _scaleVector: Vector;
     constructor(scale: Vector) {
         super(Matrix.scaling(scale), Matrix.scaling(new Vector(1 / scale.x, 1 / scale.y, 1 / scale.z, 0)));
+        this._scaleVector = scale;
+    }
+
+    set scale(scale: Vector) {
+        this._scaleVector = scale;
+        this.recalculate();
+    }
+
+    private recalculate() {
+        this.matrix = Matrix.scaling(this._scaleVector);
+        this.inverse = Matrix.scaling(this._scaleVector.mul(-1));//siehe translation inverse
     }
 }
 

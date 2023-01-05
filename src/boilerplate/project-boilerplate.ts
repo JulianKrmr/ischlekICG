@@ -8,6 +8,7 @@ import {RasterSetupVisitor, RasterVisitor} from "../rasterisation/rastervisitor"
 import Shader from "../shader/shader";
 import vertexShader from "../shader/basic-vertex-shader.glsl";
 import fragmentShader from "../shader/basic-fragment-shader.glsl";
+import Matrix from "../math/matrix";
 
 window.addEventListener('load', () => {
     const modeToggleForm = document.getElementById("mode--toggle") as HTMLFormElement;
@@ -51,11 +52,10 @@ window.addEventListener('load', () => {
 
     //ray
     const rayCanvas = document.getElementById("ray-canvas") as HTMLCanvasElement;
-    const shininess = 30;
+    let shininess = 10;
 
     let rayContext: CanvasRenderingContext2D = rayCanvas.getContext("2d");
     let rayVisitor = new RayVisitor(rayContext, rayCanvas.width, rayCanvas.height, shininess);
-
 
     modeToggleForm.addEventListener("change", (event: Event) => {
         const input = event.target as HTMLInputElement;
@@ -110,6 +110,7 @@ window.addEventListener('load', () => {
         gnScaling.scale = new Vector(scaleX, scaleY, scaleZ, 0);
         rayVisitor.render(sg, camera, lightPositions);
         rasterVisitor.render(sg, null, []);
+        rayVisitor = new RayVisitor(rayContext, rayCanvas.width, rayCanvas.height, shininess); //meh lösung
     }
 
     window.addEventListener('keydown', function (event) {
@@ -162,10 +163,16 @@ window.addEventListener('load', () => {
         }
         window.requestAnimationFrame(animatePosition);
     });
+
+    const shininessElement = document.getElementById("shininess") as HTMLInputElement;
+    shininessElement.onchange = () => {
+        shininessElement.oninput = () => {
+                shininess = Number(shininessElement.value);
+                window.requestAnimationFrame(animatePosition);
+            }
+    }
 });
 
 //TODO
-//phong einbinden
-//rastervisitor rein nehmen
 //rotation fixen
 //performacne optimieren

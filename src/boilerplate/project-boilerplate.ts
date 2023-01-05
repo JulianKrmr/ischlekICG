@@ -16,7 +16,7 @@ window.addEventListener('load', () => {
     //scene graph
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
+    const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
     let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
     let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
     let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
@@ -51,8 +51,10 @@ window.addEventListener('load', () => {
 
     //ray
     const rayCanvas = document.getElementById("ray-canvas") as HTMLCanvasElement;
+    const shininess = 30;
+
     let rayContext: CanvasRenderingContext2D = rayCanvas.getContext("2d");
-    let rayVisitor = new RayVisitor(rayContext, rayCanvas.width, rayCanvas.height);
+    let rayVisitor = new RayVisitor(rayContext, rayCanvas.width, rayCanvas.height, shininess);
 
 
     modeToggleForm.addEventListener("change", (event: Event) => {
@@ -75,7 +77,6 @@ window.addEventListener('load', () => {
     const lightPositions = [
         new Vector(1, 1, -1, 1)
     ];
-    const shininess = 10;
     const camera = {
         origin: new Vector(0, 0, 0, 1),
         width: rayCanvas.width,
@@ -101,7 +102,7 @@ window.addEventListener('load', () => {
     let scaleSize = 0.1;
     let rotationAmount = 30;
 
-    function animatePosition() {
+    function animatePosition() { //könnte man mit dem Objekt parametrisieren damit das für jedes Objekt geht langfristig --> in andere Klasse auslagern?
         gnTranslation.translationVector = new Vector(translationX, translationY, translationZ, 0);
         gnRotationX.angle = rotationAngleX;
         gnRotationY.angle = rotationAngleY;

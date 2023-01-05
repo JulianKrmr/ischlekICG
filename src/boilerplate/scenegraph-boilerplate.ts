@@ -29,7 +29,7 @@ window.addEventListener("load", () => {
     alpha: Math.PI / 3,
   };
 
-  const visitor = new RayVisitor(ctx, canvas.width, canvas.height);
+  const visitor = new RayVisitor(ctx, canvas.width, canvas.height, 10);
 
   let animationHandle: number;
 

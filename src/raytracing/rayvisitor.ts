@@ -52,6 +52,7 @@ export default class RayVisitor implements Visitor {
   intersection: Intersection | null;
   intersectionColor: Vector;
   ray: Ray;
+  shininess: number;
 
   /**
    * Creates a new RayVisitor
@@ -62,9 +63,11 @@ export default class RayVisitor implements Visitor {
   constructor(
     private context: CanvasRenderingContext2D,
     width: number,
-    height: number
+    height: number,
+    shininess: number
   ) {
     this.imageData = context.getImageData(0, 0, width, height);
+    this.shininess = shininess;
   }
 
   /**
@@ -105,7 +108,8 @@ export default class RayVisitor implements Visitor {
               this.intersectionColor,
               this.intersection,
               lightPositions,
-              10,
+              // 10,
+                this.shininess,
               camera.origin
             );
             data[4 * (width * y + x) + 0] = color.r * 255;

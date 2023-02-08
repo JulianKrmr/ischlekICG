@@ -220,12 +220,11 @@ window.addEventListener("load", () => {
     phongValues.ambient = Number(kA.value);
     window.requestAnimationFrame(animate);
   };
+
   const kD = document.getElementById("kDiffuse") as HTMLInputElement;
   kD.onchange = () => {
-    kD.oninput = () => {
-      phongValues.diffuse = Number(kD.value);
-      window.requestAnimationFrame(animate);
-    };
+    phongValues.diffuse = Number(kD.value);
+    window.requestAnimationFrame(animate);
   };
 
   const kS = document.getElementById("kSpecular") as HTMLInputElement;

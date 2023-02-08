@@ -116,7 +116,7 @@ window.addEventListener("load", () => {
     alpha: Math.PI / 3,
   };
 
-  window.requestAnimationFrame(animatePosition);
+  window.requestAnimationFrame(animate);
 
   //tastatur eingaben
   /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,18 +134,7 @@ window.addEventListener("load", () => {
   let scaleSize = 0.1;
   let rotationAmount = 30;
 
-  function animatePosition() {
-    console.log(
-      phongValues.ambient +
-        "\n" +
-        phongValues.diffuse +
-        "\n" +
-        phongValues.specular +
-        "\n" +
-        phongValues.shininess +
-        "\n" +
-        "animatePosition"
-    );
+  function animate() {
     //könnte man mit dem Objekt parametrisieren damit das für jedes Objekt geht langfristig --> in andere Klasse auslagern?
     gnTranslation.translationVector = new Vector(
       translationX,
@@ -157,14 +146,14 @@ window.addEventListener("load", () => {
     gnRotationY.angle = rotationAngleY;
     gnRotationZ.angle = rotationAngleZ;
     gnScaling.scale = new Vector(scaleX, scaleY, scaleZ, 0);
-    rayVisitor.render(sg, camera, lightPositions);
     rasterVisitor.render(sg, null, []);
     rayVisitor = new RayVisitor(
       rayContext,
       rayCanvas.width,
       rayCanvas.height,
       phongValues
-    ); //meh lösung
+    );
+    rayVisitor.render(sg, camera, lightPositions);
   }
 
   window.addEventListener("keydown", function (event) {
@@ -215,7 +204,7 @@ window.addEventListener("load", () => {
         scaleZ -= scaleSize;
         break;
     }
-    window.requestAnimationFrame(animatePosition);
+    window.requestAnimationFrame(animate);
   });
 
   const shininessElement = document.getElementById(
@@ -223,26 +212,26 @@ window.addEventListener("load", () => {
   ) as HTMLInputElement;
   shininessElement.onchange = () => {
     phongValues.shininess = Number(shininessElement.value);
-    window.requestAnimationFrame(animatePosition);
+    window.requestAnimationFrame(animate);
   };
 
   const kA = document.getElementById("kAmbient") as HTMLInputElement;
   kA.onchange = () => {
     phongValues.ambient = Number(kA.value);
-    window.requestAnimationFrame(animatePosition);
+    window.requestAnimationFrame(animate);
   };
   const kD = document.getElementById("kDiffuse") as HTMLInputElement;
   kD.onchange = () => {
     kD.oninput = () => {
       phongValues.diffuse = Number(kD.value);
-      window.requestAnimationFrame(animatePosition);
+      window.requestAnimationFrame(animate);
     };
   };
 
   const kS = document.getElementById("kSpecular") as HTMLInputElement;
   kS.onchange = () => {
     phongValues.specular = Number(kS.value);
-    window.requestAnimationFrame(animatePosition);
+    window.requestAnimationFrame(animate);
   };
 });
 

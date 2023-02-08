@@ -222,40 +222,36 @@ window.addEventListener("load", () => {
     "shininess"
   ) as HTMLInputElement;
   shininessElement.onchange = () => {
-    shininessElement.oninput = () => {
-      phongValues.shininess = Number(shininessElement.value);
-      console.log(
-        phongValues.ambient +
-          "\n" +
-          phongValues.diffuse +
-          "\n" +
-          phongValues.specular +
-          "\n" +
-          phongValues.shininess +
-          "\n" +
-          "shininess"
-      );
-      window.requestAnimationFrame(animatePosition);
-    };
+    phongValues.shininess = Number(shininessElement.value);
+    console.log(
+      phongValues.ambient +
+        "\n" +
+        phongValues.diffuse +
+        "\n" +
+        phongValues.specular +
+        "\n" +
+        phongValues.shininess +
+        "\n" +
+        "shininess"
+    );
+    window.requestAnimationFrame(animatePosition);
   };
 
   const kA = document.getElementById("kAmbient") as HTMLInputElement;
   kA.onchange = () => {
-    kA.oninput = () => {
-      phongValues.ambient = Number(kA.value);
-      console.log(
-        phongValues.ambient +
-          "\n" +
-          phongValues.diffuse +
-          "\n" +
-          phongValues.specular +
-          "\n" +
-          phongValues.shininess +
-          "\n" +
-          "ambient"
-      );
-      window.requestAnimationFrame(animatePosition);
-    };
+    phongValues.ambient = Number(kA.value);
+    console.log(
+      phongValues.ambient +
+        "\n" +
+        phongValues.diffuse +
+        "\n" +
+        phongValues.specular +
+        "\n" +
+        phongValues.shininess +
+        "\n" +
+        "ambient"
+    );
+    window.requestAnimationFrame(animatePosition);
   };
   const kD = document.getElementById("kDiffuse") as HTMLInputElement;
   kD.onchange = () => {
@@ -267,10 +263,8 @@ window.addEventListener("load", () => {
 
   const kS = document.getElementById("kSpecular") as HTMLInputElement;
   kS.onchange = () => {
-    kS.oninput = () => {
-      phongValues.specular = Number(kS.value);
-      window.requestAnimationFrame(animatePosition);
-    };
+    phongValues.specular = Number(kS.value);
+    window.requestAnimationFrame(animatePosition);
   };
 });
 

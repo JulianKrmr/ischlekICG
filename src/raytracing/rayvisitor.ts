@@ -17,6 +17,7 @@ import {
   PyramidNode,
 } from "src/nodes";
 import { ChildProcess } from "child_process";
+import PhongValues from "../boilerplate/project-boilerplate";
 
 const UNIT_SPHERE = new Sphere(
   new Vector(0, 0, 0, 1),
@@ -52,8 +53,7 @@ export default class RayVisitor implements Visitor {
   intersection: Intersection | null;
   intersectionColor: Vector;
   ray: Ray;
-  shininess: number;
-
+  phongValues: PhongValues;
   /**
    * Creates a new RayVisitor
    * @param context The 2D context to render to
@@ -64,10 +64,10 @@ export default class RayVisitor implements Visitor {
     private context: CanvasRenderingContext2D,
     width: number,
     height: number,
-    shininess: number
+    phongValues: PhongValues
   ) {
     this.imageData = context.getImageData(0, 0, width, height);
-    this.shininess = shininess;
+    this.phongValues = phongValues;
   }
 
   /**
@@ -108,8 +108,7 @@ export default class RayVisitor implements Visitor {
               this.intersectionColor,
               this.intersection,
               lightPositions,
-              // 10,
-                this.shininess,
+              this.phongValues,
               camera.origin
             );
             data[4 * (width * y + x) + 0] = color.r * 255;

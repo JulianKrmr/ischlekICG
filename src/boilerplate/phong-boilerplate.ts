@@ -6,6 +6,13 @@ import Ray from "../math/ray";
 import Intersection from "../math/intersection";
 import phong from "../phong";
 
+let phongValues = {
+  ambient: 0.8,
+  diffuse: 0.5,
+  specular: 0.5,
+  shininess: 10,
+};
+
 window.addEventListener("load", () => {
   const canvas = document.getElementById("raytracer") as HTMLCanvasElement;
   const ctx = canvas.getContext("2d");
@@ -16,7 +23,6 @@ window.addEventListener("load", () => {
     new Sphere(new Vector(-0.5, -0.2, -1.7, 1), 0.2, new Vector(0, 0, 0.3, 1)),
   ];
   const lightPositions = [new Vector(1, 1, -1, 1)];
-  let shininess = 10;
   const camera = {
     origin: new Vector(0, 0, 0, 1),
     width: canvas.width,
@@ -53,7 +59,7 @@ window.addEventListener("load", () => {
               Object.assign(Object.create(Vector.prototype), minObj.color),
               minIntersection,
               lightPositions,
-              shininess,
+              phongValues,
               camera.origin
             );
             setPixel(x, y, color);
@@ -69,10 +75,8 @@ window.addEventListener("load", () => {
     "shininess"
   ) as HTMLInputElement;
   shininessElement.onchange = function () {
-    shininess = Number(shininessElement.value);
+    phongValues.shininess = Number(shininessElement.value);
     window.requestAnimationFrame(animate);
   };
-  shininess = Number(shininessElement.value);
-
   window.requestAnimationFrame(animate);
 });

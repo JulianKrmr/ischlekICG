@@ -29,7 +29,12 @@ window.addEventListener("load", () => {
     alpha: Math.PI / 3,
   };
 
-  const visitor = new RayVisitor(ctx, canvas.width, canvas.height, 10);
+  const visitor = new RayVisitor(ctx, canvas.width, canvas.height, {
+    ambient: 0.1,
+    diffuse: 0.9,
+    specular: 0.9,
+    shininess: 10,
+  });
 
   let animationHandle: number;
 

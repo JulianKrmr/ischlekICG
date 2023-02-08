@@ -1,5 +1,6 @@
 import Vector from "./math/vector";
 import Intersection from "./math/intersection";
+import PhongValues from "./boilerplate/project-boilerplate";
 
 /**
  * Calculate the colour of an object at the intersection point according to the Phong Lighting model.
@@ -14,13 +15,14 @@ export default function phong(
   color: Vector,
   intersection: Intersection,
   lightPositions: Array<Vector>,
-  shininess: number,
+  phongValues: PhongValues,
   cameraPosition: Vector
 ): Vector {
   const lightColor = new Vector(0.8, 0.8, 0.8, 0);
-  const kA = 0.8;
-  const kD = 0.5;
-  const kS = 0.5;
+  const kA = phongValues.ambient;
+  const kD = phongValues.diffuse;
+  const kS = phongValues.specular;
+  const shininess = phongValues.shininess;
 
   let sumOfLightsDiffuse: Vector = new Vector(0, 0, 0, 0);
   let sumOfLightsSpecular: Vector = new Vector(0, 0, 0, 0);

@@ -237,39 +237,39 @@ window.addEventListener("load", () => {
       );
       window.requestAnimationFrame(animatePosition);
     };
+  };
 
-    const kA = document.getElementById("kAmbient") as HTMLInputElement;
-    kA.onchange = () => {
-      kA.oninput = () => {
-        phongValues.ambient = Number(kA.value);
-        console.log(
-          phongValues.ambient +
-            "\n" +
-            phongValues.diffuse +
-            "\n" +
-            phongValues.specular +
-            "\n" +
-            phongValues.shininess +
-            "\n" +
-            "ambient"
-        );
-        window.requestAnimationFrame(animatePosition);
-      };
+  const kA = document.getElementById("kAmbient") as HTMLInputElement;
+  kA.onchange = () => {
+    kA.oninput = () => {
+      phongValues.ambient = Number(kA.value);
+      console.log(
+        phongValues.ambient +
+          "\n" +
+          phongValues.diffuse +
+          "\n" +
+          phongValues.specular +
+          "\n" +
+          phongValues.shininess +
+          "\n" +
+          "ambient"
+      );
+      window.requestAnimationFrame(animatePosition);
     };
-    const kD = document.getElementById("kDiffuse") as HTMLInputElement;
-    kD.onchange = () => {
-      kD.oninput = () => {
-        phongValues.diffuse = Number(kD.value);
-        window.requestAnimationFrame(animatePosition);
-      };
+  };
+  const kD = document.getElementById("kDiffuse") as HTMLInputElement;
+  kD.onchange = () => {
+    kD.oninput = () => {
+      phongValues.diffuse = Number(kD.value);
+      window.requestAnimationFrame(animatePosition);
     };
+  };
 
-    const kS = document.getElementById("kSpecular") as HTMLInputElement;
-    kS.onchange = () => {
-      kS.oninput = () => {
-        phongValues.specular = Number(kS.value);
-        window.requestAnimationFrame(animatePosition);
-      };
+  const kS = document.getElementById("kSpecular") as HTMLInputElement;
+  kS.onchange = () => {
+    kS.oninput = () => {
+      phongValues.specular = Number(kS.value);
+      window.requestAnimationFrame(animatePosition);
     };
   };
 });

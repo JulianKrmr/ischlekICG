@@ -30,9 +30,9 @@ window.addEventListener("load", () => {
   };
 
   const visitor = new RayVisitor(ctx, canvas.width, canvas.height, {
-    ambient: 0.1,
-    diffuse: 0.9,
-    specular: 0.9,
+    ambient: 0.8,
+    diffuse: 0.5,
+    specular: 0.5,
     shininess: 10,
   });
 

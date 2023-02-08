@@ -57,7 +57,7 @@ window.addEventListener("load", () => {
             sphere.color,
             intersection,
             lightPositions,
-            { ambient: 0.1, diffuse: 0.9, specular: 0.9, shininess: 10 },
+            { ambient: 0.8, diffuse: 0.5, specular: 0.5, shininess: 10 },
             camera.origin
           );
           setPixel(x, y, color);

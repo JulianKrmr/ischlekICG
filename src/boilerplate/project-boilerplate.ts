@@ -223,34 +223,12 @@ window.addEventListener("load", () => {
   ) as HTMLInputElement;
   shininessElement.onchange = () => {
     phongValues.shininess = Number(shininessElement.value);
-    console.log(
-      phongValues.ambient +
-        "\n" +
-        phongValues.diffuse +
-        "\n" +
-        phongValues.specular +
-        "\n" +
-        phongValues.shininess +
-        "\n" +
-        "shininess"
-    );
     window.requestAnimationFrame(animatePosition);
   };
 
   const kA = document.getElementById("kAmbient") as HTMLInputElement;
   kA.onchange = () => {
     phongValues.ambient = Number(kA.value);
-    console.log(
-      phongValues.ambient +
-        "\n" +
-        phongValues.diffuse +
-        "\n" +
-        phongValues.specular +
-        "\n" +
-        phongValues.shininess +
-        "\n" +
-        "ambient"
-    );
     window.requestAnimationFrame(animatePosition);
   };
   const kD = document.getElementById("kDiffuse") as HTMLInputElement;

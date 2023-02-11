@@ -16,6 +16,7 @@ import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
 import Ray from "../math/ray";
 import Intersection from "../math/intersection";
+import PhongValues from "../boilerplate/project-boilerplate";
 
 interface Camera {
   eye: Vector;
@@ -66,7 +67,7 @@ export class RasterVisitor implements Visitor {
    * @param camera The camera used
    * @param lightPositions The light light positions
    */
-  render(rootNode: Node, camera: Camera | null, lightPositions: Array<Vector>) {
+  render(rootNode: Node, camera: Camera | null, lightPositions: Array<Vector>, phongValues: PhongValues) {
     // clear
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 

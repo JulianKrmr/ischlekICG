@@ -68,7 +68,7 @@ window.addEventListener("load", () => {
   );
   sg.add(transformationNode);
 
-  transformationNode.add(new PyramidNode(new Vector(0.5, 1, 0, 0)));
+  transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -157,7 +157,7 @@ window.addEventListener("load", () => {
 
   function animate() {
     console.log("animate");
-    rasterVisitor.render(sg, rasterCamera, []);
+    rasterVisitor.render(sg, rasterCamera, [], phongValues);
     rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
   }
 

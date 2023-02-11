@@ -56,7 +56,7 @@ window.addEventListener('load', () => {
             Math.sin(timestamp / 1000),
             1
         );
-        visitor.render(sg, camera, []);
+        visitor.render(sg, camera, [], null);
         window.requestAnimationFrame(animate);
     }
 

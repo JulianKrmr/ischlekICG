@@ -293,6 +293,7 @@ export class RasterSetupVisitor {
       node,
       new RasterBox(
         this.gl,
+        node.color,
         new Vector(-0.5, -0.5, -0.5, 1),
         new Vector(0.5, 0.5, 0.5, 1)
       )

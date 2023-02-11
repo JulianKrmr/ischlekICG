@@ -61,7 +61,9 @@ window.addEventListener("load", () => {
   // gn5.add(new PyramidNode(new Vector(0.5, 0, 0, 0)));
 
   const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
-  sg.add(new PyramidNode(new Vector(0.5, 0, 0, 0)));
+  const rotationNode = new GroupNode(new Rotation(new Vector(1, 0, 0, 0), 50));
+  sg.add(rotationNode);
+  rotationNode.add(new PyramidNode(new Vector(0.5, 1, 0, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -166,7 +168,10 @@ window.addEventListener("load", () => {
   let rotationAmount = 30;
 
   function animate() {
-    //
+    // let matrix = sg.transform.getMatrix();
+    // let newTransformation = new Translation(new Vector(1, 0, 0, 0));
+    // newTransformation.matrix = matrix.mul(newTransformation.getMatrix());
+    // sg.transform = newTransformation;
 
     //könnte man mit dem Objekt parametrisieren damit das für jedes Objekt geht langfristig --> in andere Klasse auslagern?
     // gnTranslation.translationVector = new Vector(

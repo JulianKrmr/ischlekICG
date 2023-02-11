@@ -36,6 +36,7 @@ export default class RasterBox {
    */
   constructor(
     private gl: WebGL2RenderingContext,
+    color: Vector,
     minPoint: Vector,
     maxPoint: Vector
   ) {
@@ -83,24 +84,10 @@ export default class RasterBox {
       5, 4, 1, 1, 0, 5,
     ];
 
-    let colors = [
-      //black
-      0, 0, 0,
-      //white
-      1, 1, 1,
-      //yellow
-      1, 1, 0,
-      //cyan
-      0, 1, 1,
-      //black
-      0, 0, 0,
-      //white
-      1, 1, 1,
-      //yellow
-      1, 1, 0,
-      //cyan
-      0, 1, 1,
-    ];
+    let colors = [];
+    for (let i = 0; i < vertices.length / 3; i++) {
+      colors.push(color.r, color.g, color.b);
+    }
 
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);

@@ -29,12 +29,7 @@ window.addEventListener("load", () => {
     alpha: Math.PI / 3,
   };
 
-  const visitor = new RayVisitor(ctx, canvas.width, canvas.height, {
-    ambient: 0.8,
-    diffuse: 0.5,
-    specular: 0.5,
-    shininess: 10,
-  });
+  const visitor = new RayVisitor(ctx, canvas.width, canvas.height);
 
   let animationHandle: number;
 
@@ -51,7 +46,12 @@ window.addEventListener("load", () => {
     lastTimestamp = timestamp;
     gnRotation.angle = animationTime / 2000;
 
-    visitor.render(sg, camera, lightPositions);
+    visitor.render(sg, camera, lightPositions, {
+      ambient: 0.8,
+      diffuse: 0.5,
+      specular: 0.5,
+      shininess: 10,
+    });
     // animationHandle = window.requestAnimationFrame(animate);
   }
 

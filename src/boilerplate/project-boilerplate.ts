@@ -157,6 +157,7 @@ window.addEventListener("load", () => {
   window.requestAnimationFrame(animate);
 
   function animate() {
+    console.log("animate");
     rasterVisitor.render(sg, rasterCamera, []);
     rayVisitor = new RayVisitor(
       rayContext,
@@ -272,8 +273,15 @@ window.addEventListener("load", () => {
     phongValues.specular = Number(kS.value);
     window.requestAnimationFrame(animate);
   };
+
+  //TODO noch für raytracer
+  rasterCanvas.addEventListener("mousedown", (event) => {
+    let mx = event.offsetX;
+    let my = event.offsetY;
+    rasterVisitor.castRayFromMouse(mx, my);
+  });
 });
 
 //TODO
-//rotation fixen
+//rotation fixen bei pyramid
 //performacne optimieren

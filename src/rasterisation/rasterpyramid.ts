@@ -53,18 +53,8 @@ export default class RasterPyramid {
     //alle dreiecke
     let indices = [0, 1, 2, 0, 2, 3, 0, 1, 3, 1, 2, 3];
 
-    let colors = [
-      //black
-      0, 0, 0,
-      //white
-      1, 1, 1,
-      //yellow
-      1, 1, 0,
-      //cyan
-      0, 1, 1,
-    ];
+    let colors = [];
     for (let i = 0; i < vertices.length / 3; i++) {
-      //ist das selbe wie vier
       colors.push(color.r, color.g, color.b);
     }
 

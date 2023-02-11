@@ -34,7 +34,6 @@ interface Renderable {
  * to render a Scenegraph
  */
 export class RasterVisitor implements Visitor {
-  // TODO declare instance variables here
   transformations: Matrix[];
   inverseTransformations: Matrix[];
   /**
@@ -49,7 +48,6 @@ export class RasterVisitor implements Visitor {
     private textureshader: Shader,
     private renderables: WeakMap<Node, Renderable>
   ) {
-    // TODO setup
     this.transformations = [Matrix.identity()];
     this.inverseTransformations = [Matrix.identity()];
   }
@@ -106,7 +104,6 @@ export class RasterVisitor implements Visitor {
    * @param node The node to visit
    */
   visitGroupNode(node: GroupNode) {
-    // TODO
     this.transformations.push(
       this.transformations[this.transformations.length - 1].mul(
         node.transform.getMatrix()
@@ -153,7 +150,6 @@ export class RasterVisitor implements Visitor {
     if (N) {
       N.set(fromWorld.transpose());
     }
-    // TODO set the normal matrix
     const normalMatrix = fromWorld.transpose();
     normalMatrix.setVal(0, 3, 0);
     normalMatrix.setVal(1, 3, 0);

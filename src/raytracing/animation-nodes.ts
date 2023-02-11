@@ -59,7 +59,7 @@ export class RotationNode extends AnimationNode {
    */
   simulate(deltaT: number) {
     if (this.active) {
-      //TODO ADD COMMENTS ABOUT THIS PROCESS
+
       this.angle = Math.PI * 4;
 
       const matrix = this.groupNode.transform.getMatrix();
@@ -69,10 +69,6 @@ export class RotationNode extends AnimationNode {
       rotation.inverse = rotation.getInverseMatrix().mul(inverse);
       this.groupNode.transform = rotation;
     }
-
-    // change the matrix of the attached
-    // group node to reflect a rotation
-    // TODO
   }
 }
 

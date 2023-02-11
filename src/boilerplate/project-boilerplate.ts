@@ -237,6 +237,7 @@ window.addEventListener("load", () => {
     window.requestAnimationFrame(animate);
   });
 
+  //TODO change phong parameters for rasterizer aswell
   const shininessElement = document.getElementById(
     "shininess"
   ) as HTMLInputElement;

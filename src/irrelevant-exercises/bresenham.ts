@@ -8,5 +8,4 @@
  * @param  {number} height         - The height of the canvas
  */
 export function bresenham(data: Uint8ClampedArray, pointA: [number, number], pointB: [number, number], width: number, height: number) {
-    // TODO
 }

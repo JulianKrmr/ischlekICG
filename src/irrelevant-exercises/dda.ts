@@ -13,5 +13,4 @@ export function dda(
     pointB: [number, number],
     width: number, height: number
 ) {
-    // TODO
 }

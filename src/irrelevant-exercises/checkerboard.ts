@@ -10,5 +10,4 @@
  * @param height The height of the canvas
  */
 export function checkerboard(data: Uint8ClampedArray, x: number, y: number, width: number, height: number) {
-    // TODO
 }

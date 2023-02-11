@@ -201,7 +201,6 @@ export default class Vector {
       this.z / other,
       this.w / other
     );
-    // TODO
   }
 
   /**

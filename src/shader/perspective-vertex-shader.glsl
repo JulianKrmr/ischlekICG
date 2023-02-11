@@ -1,5 +1,4 @@
 attribute vec3 a_position;
-// TODO
 uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
@@ -16,7 +15,6 @@ varying vec4 v_position;
 
 void main() {
   gl_Position = P*V * M*vec4(a_position, 1.0);
-  // TODO
   v_position = V * M * vec4(a_position, 1.0);
   v_color = a_color;
   v_normal = normalize((V * N * vec4(a_normal, 0)).xyz);

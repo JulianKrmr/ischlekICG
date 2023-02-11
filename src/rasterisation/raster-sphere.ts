@@ -17,7 +17,7 @@ export default class RasterSphere {
    * The normals on the surface at each vertex location
    */
   normalBuffer: WebGLBuffer;
-  // TODO private variable for color buffer
+
   private colorBuffer: WebGLBuffer;
 
   /**
@@ -104,7 +104,6 @@ export default class RasterSphere {
     this.normalBuffer = normalBuffer;
     this.elements = indices.length;
 
-    // TODO create colorBuffer
     const colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
@@ -127,8 +126,6 @@ export default class RasterSphere {
       0,
       0
     );
-    // TODO bind colour buffer
-    // TODO bind normal buffer
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
     const colorLocation = shader.getAttributeLocation("a_color");
     this.gl.enableVertexAttribArray(colorLocation);
@@ -148,9 +145,9 @@ export default class RasterSphere {
     );
 
     this.gl.disableVertexAttribArray(positionLocation);
-    // TODO disable color vertex attrib array
+
     this.gl.disableVertexAttribArray(colorLocation);
-    // TODO disable normal vertex attrib array
+
     this.gl.disableVertexAttribArray(normalLocation);
   }
 }

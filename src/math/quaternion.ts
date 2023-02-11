@@ -11,7 +11,6 @@ export default class Quaternion {
 
     static fromAxisAngle(axis: Vector, angle: number) {
         //let q = new Quaternion(1, 0, 0, 0);
-        // TODO done
         // https://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
         let q = new Quaternion(axis.x * Math.sin(angle/2), axis.y * Math.sin(angle/2), axis.z * Math.sin(angle/2), Math.cos(angle/2));
         return q;
@@ -19,7 +18,6 @@ export default class Quaternion {
 
     get conjugate(): Quaternion {
         // let q = new Quaternion(1, 0, 0, 0);
-        // TODO done
         let q = new Quaternion( - this.data.x, - this.data.y, - this.data.z, this.data.w);
         return q;
     }
@@ -27,7 +25,6 @@ export default class Quaternion {
     get inverse(): Quaternion {
         let q = this.conjugate;
 
-        // TODO done
         let i = 1/this.norm;
         let v = q.data.mul(i);
 
@@ -59,7 +56,6 @@ export default class Quaternion {
 
     toMatrix(): Matrix {
         let mat = Matrix.identity();
-        // TODO done
         mat.setVal(0, 0, 1-2*(Math.pow(this.data.y, 2) + Math.pow(this.data.z, 2)));
         mat.setVal(0, 1, 2*(this.data.x * this.data.y - this.data.w * this.data.z));
         mat.setVal(0, 2, 2*(this.data.x * this.data.z + this.data.w * this.data.y));

@@ -166,6 +166,7 @@ export class RasterVisitor implements Visitor {
       N.set(fromWorld.transpose());
     }
 
+    //was macht das?
     const normalMatrix = fromWorld.transpose();
     normalMatrix.setVal(0, 3, 0);
     normalMatrix.setVal(1, 3, 0);
@@ -177,6 +178,11 @@ export class RasterVisitor implements Visitor {
     if (normalMatrix && fromWorld) {
       shader.getUniformMatrix("N").set(normalMatrix);
     }
+
+    if (this.mouseRay) {
+      // const intersection = rasterSphere.intersect(this.mouseRay);
+    }
+
     this.renderables.get(node).render(shader);
   }
 

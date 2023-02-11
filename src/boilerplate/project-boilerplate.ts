@@ -156,7 +156,6 @@ window.addEventListener("load", () => {
   window.requestAnimationFrame(animate);
 
   function animate() {
-    console.log("animate");
     rasterVisitor.render(sg, rasterCamera, []);
     rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
   }
@@ -277,4 +276,3 @@ window.addEventListener("load", () => {
 
 //TODO
 //rotation fixen bei pyramid
-//performacne optimieren

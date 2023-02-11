@@ -1,7 +1,7 @@
 import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
-import { AABoxNode, GroupNode, PyramidNode, SphereNode } from "../nodes";
+import { AABoxNode, GroupNode, PyramidNode, SphereNode, TextureBoxNode } from "../nodes";
 import { Rotation, Scaling, Translation } from "../math/transformation";
 import RayVisitor from "../raytracing/rayvisitor";
 import {
@@ -9,10 +9,13 @@ import {
   RasterVisitor,
 } from "../rasterisation/rastervisitor";
 import Shader from "../shader/shader";
-import vertexShader from "../shader/basic-vertex-shader.glsl";
-import fragmentShader from "../shader/basic-fragment-shader.glsl";
 import Matrix from "../math/matrix";
-import perspectiveVertexShader from "../shader/perspective-vertex-shader.glsl";
+
+import phongVertexPerspectiveShader from "../shader/phong-vertex-perspective-shader.glsl";
+import phongFragmentShader from "../shader/phong-fragment-shader.glsl";
+
+import textureVertexShader from "../shader/texture-vertex-perspective-shader.glsl";
+import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 
 export default interface PhongValues {
   ambient: number;
@@ -49,7 +52,9 @@ window.addEventListener("load", () => {
   gn3.add(gn4);
 
   gn4.add(gn5);
+  const cube = new TextureBoxNode('hci-logo.png');
   gn5.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
+  gn5.add(cube)
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -62,18 +67,36 @@ window.addEventListener("load", () => {
   const setupVisitor = new RasterSetupVisitor(rasterContext);
   setupVisitor.setup(sg);
 
-  const shader = new Shader(
+  const phongShader = new Shader(
     rasterContext,
-    perspectiveVertexShader,
-    fragmentShader
+    phongVertexPerspectiveShader,
+    phongFragmentShader
   );
+
+  const textureShader = new Shader(
+    rasterContext,
+    textureVertexShader,
+    textureFragmentShader
+  );
+
   const rasterVisitor = new RasterVisitor(
     rasterContext,
-    shader,
-    null,
+    phongShader,
+    textureShader,
     setupVisitor.objects
   );
-  shader.load();
+
+  let rasterCamera = {
+    eye: new Vector(0, 0, 1, 1),
+    center: new Vector(0, 0, 0, 1),
+    up: new Vector(0, 1, 0, 0),
+    fovy: 60,
+    aspect: rasterCanvas.width / rasterCanvas.height,
+    near: 0.1,
+    far: 100,
+  };
+  phongShader.load();
+  textureShader.load();
 
   //ray
   const rayCanvas = document.getElementById("ray-canvas") as HTMLCanvasElement;
@@ -146,7 +169,7 @@ window.addEventListener("load", () => {
     gnRotationY.angle = rotationAngleY;
     gnRotationZ.angle = rotationAngleZ;
     gnScaling.scale = new Vector(scaleX, scaleY, scaleZ, 0);
-    rasterVisitor.render(sg, null, []);
+    rasterVisitor.render(sg, rasterCamera, []);
     rayVisitor = new RayVisitor(
       rayContext,
       rayCanvas.width,

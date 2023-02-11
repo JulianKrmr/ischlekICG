@@ -1,5 +1,5 @@
 import RasterSphere from "./raster-sphere";
-import RasterBox from "../objects/raster-box";
+import RasterBox from "./raster-box";
 import RasterTextureBox from "./raster-texture-box";
 import Vector from "../math/vector";
 import Matrix from "../math/matrix";

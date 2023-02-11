@@ -92,15 +92,6 @@ window.addEventListener("load", () => {
     setupVisitor.objects
   );
 
-  let rasterCamera = {
-    eye: new Vector(0, 0, 1, 1),
-    center: new Vector(0, 0, 0, 1),
-    up: new Vector(0, 1, 0, 0),
-    fovy: 48,
-    aspect: rasterCanvas.width / rasterCanvas.height,
-    near: 0.1,
-    far: 100,
-  };
   phongShader.load();
   textureShader.load();
 
@@ -138,11 +129,21 @@ window.addEventListener("load", () => {
   });
 
   const lightPositions = [new Vector(1, 1, -1, 1)];
-  const camera = {
+  const rayCamera = {
     origin: new Vector(0, 0, 0, 1),
     width: rayCanvas.width,
     height: rayCanvas.height,
     alpha: Math.PI / 3,
+  };
+
+  let rasterCamera = {
+    eye: new Vector(0, 0, 1, 1),
+    center: new Vector(0, 0, 0, 1),
+    up: new Vector(0, 1, 0, 0),
+    fovy: 48,
+    aspect: rasterCanvas.width / rasterCanvas.height,
+    near: 0.1,
+    far: 100,
   };
 
   window.requestAnimationFrame(animate);
@@ -182,7 +183,7 @@ window.addEventListener("load", () => {
       rayCanvas.height,
       phongValues
     );
-    rayVisitor.render(sg, camera, lightPositions);
+    rayVisitor.render(sg, rayCamera, lightPositions);
   }
 
   window.addEventListener("keydown", function (event) {

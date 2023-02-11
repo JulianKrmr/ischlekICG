@@ -63,11 +63,9 @@ export default class RayVisitor implements Visitor {
   constructor(
     private context: CanvasRenderingContext2D,
     width: number,
-    height: number,
-    phongValues: PhongValues
+    height: number
   ) {
     this.imageData = context.getImageData(0, 0, width, height);
-    this.phongValues = phongValues;
   }
 
   /**
@@ -79,7 +77,8 @@ export default class RayVisitor implements Visitor {
   render(
     rootNode: Node,
     camera: { origin: Vector; width: number; height: number; alpha: number },
-    lightPositions: Array<Vector>
+    lightPositions: Array<Vector>,
+    phongValues: PhongValues
   ) {
     // clear
     let data = this.imageData.data;
@@ -108,7 +107,7 @@ export default class RayVisitor implements Visitor {
               this.intersectionColor,
               this.intersection,
               lightPositions,
-              this.phongValues,
+              phongValues,
               camera.origin
             );
             data[4 * (width * y + x) + 0] = color.r * 255;

@@ -114,11 +114,10 @@ window.addEventListener("load", () => {
   };
 
   let rayContext: CanvasRenderingContext2D = rayCanvas.getContext("2d");
-  let rayVisitor = new RayVisitor(
+  const rayVisitor = new RayVisitor(
     rayContext,
     rayCanvas.width,
-    rayCanvas.height,
-    phongValues
+    rayCanvas.height
   );
 
   modeToggleForm.addEventListener("change", (event: Event) => {
@@ -159,13 +158,7 @@ window.addEventListener("load", () => {
   function animate() {
     console.log("animate");
     rasterVisitor.render(sg, rasterCamera, []);
-    rayVisitor = new RayVisitor(
-      rayContext,
-      rayCanvas.width,
-      rayCanvas.height,
-      phongValues
-    );
-    rayVisitor.render(sg, rayCamera, lightPositions);
+    rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
   }
 
   //tastatur eingaben

@@ -14,6 +14,8 @@ import {
 } from "../nodes";
 import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
+import Ray from "../math/ray";
+import Intersection from "../math/intersection";
 
 interface Camera {
   eye: Vector;
@@ -36,6 +38,12 @@ interface Renderable {
 export class RasterVisitor implements Visitor {
   transformations: Matrix[];
   inverseTransformations: Matrix[];
+
+  mouseRay: Ray;
+
+  //raster objects?
+  objectIntersections: [Intersection, Ray, Node][];
+
   /**
    * Creates a new RasterVisitor
    * @param gl The 3D context to render to
@@ -68,6 +76,11 @@ export class RasterVisitor implements Visitor {
 
     // traverse and render
     rootNode.accept(this);
+
+    //////// TODO ///////////
+    // intersections sortieren
+    // mouse ray auf null setzen
+    // effekt was passiert wenn man geklickt wurde
   }
 
   /**
@@ -128,6 +141,8 @@ export class RasterVisitor implements Visitor {
    * @param node The node to visit
    */
   visitSphereNode(node: SphereNode) {
+    let rasterSphere = this.renderables.get(node) as RasterSphere;
+
     const shader = this.shader;
     shader.use();
     const toWorld = this.transformations[this.transformations.length - 1];
@@ -150,6 +165,7 @@ export class RasterVisitor implements Visitor {
     if (N) {
       N.set(fromWorld.transpose());
     }
+
     const normalMatrix = fromWorld.transpose();
     normalMatrix.setVal(0, 3, 0);
     normalMatrix.setVal(1, 3, 0);
@@ -223,6 +239,16 @@ export class RasterVisitor implements Visitor {
     shader.getUniformMatrix("V").set(this.lookat);
 
     this.renderables.get(node).render(shader);
+  }
+
+  //TODO: Testen
+  castRayFromMouse(x: number, y: number) {
+    let camera = {
+      width: this.gl.canvas.width,
+      height: this.gl.canvas.height,
+      alpha: Math.PI / 3,
+    };
+    this.mouseRay = Ray.makeRay(x, y, camera);
   }
 }
 

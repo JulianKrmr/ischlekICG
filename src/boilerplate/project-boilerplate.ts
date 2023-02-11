@@ -22,6 +22,7 @@ import phongFragmentShader from "../shader/phong-fragment-shader.glsl";
 
 import textureVertexShader from "../shader/texture-vertex-perspective-shader.glsl";
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
+import RasterBox from "../rasterisation/raster-box";
 
 export default interface PhongValues {
   ambient: number;
@@ -60,10 +61,14 @@ window.addEventListener("load", () => {
   // gn4.add(gn5);
   // gn5.add(new PyramidNode(new Vector(0.5, 0, 0, 0)));
 
+  //Root node and transformation
   const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
-  const rotationNode = new GroupNode(new Rotation(new Vector(1, 0, 0, 0), 50));
-  sg.add(rotationNode);
-  rotationNode.add(new PyramidNode(new Vector(0.5, 1, 0, 0)));
+  const transformationNode = new GroupNode(
+    new Rotation(new Vector(1, 0, 0, 0), 0)
+  );
+  sg.add(transformationNode);
+
+  transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -168,22 +173,6 @@ window.addEventListener("load", () => {
   let rotationAmount = 30;
 
   function animate() {
-    // let matrix = sg.transform.getMatrix();
-    // let newTransformation = new Translation(new Vector(1, 0, 0, 0));
-    // newTransformation.matrix = matrix.mul(newTransformation.getMatrix());
-    // sg.transform = newTransformation;
-
-    //könnte man mit dem Objekt parametrisieren damit das für jedes Objekt geht langfristig --> in andere Klasse auslagern?
-    // gnTranslation.translationVector = new Vector(
-    //   translationX,
-    //   translationY,
-    //   translationZ,
-    //   0
-    // );
-    // gnRotationX.angle = rotationAngleX;
-    // gnRotationY.angle = rotationAngleY;
-    // gnRotationZ.angle = rotationAngleZ;
-    // gnScaling.scale = new Vector(scaleX, scaleY, scaleZ, 0);
     rasterVisitor.render(sg, rasterCamera, []);
     rayVisitor = new RayVisitor(
       rayContext,
@@ -194,52 +183,73 @@ window.addEventListener("load", () => {
     rayVisitor.render(sg, rayCamera, lightPositions);
   }
 
+  function rotate(axis: Vector, angle: number, node: GroupNode) {
+    let oldMatrix = node.transform.getMatrix();
+    let newTransformation = new Rotation(axis, angle);
+    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+    node.transform = newTransformation;
+  }
+
+  function tranlate(translation: Vector, node: GroupNode) {
+    let oldMatrix = node.transform.getMatrix();
+    let newTransformation = new Translation(translation);
+    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+    node.transform = newTransformation;
+  }
+
+  function scale(scale: Vector, node: GroupNode) {
+    let oldMatrix = node.transform.getMatrix();
+    let newTransformation = new Scaling(scale);
+    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+    node.transform = newTransformation;
+  }
+
   window.addEventListener("keydown", function (event) {
     switch (event.key) {
       case "w": //hoch
-        translationY += translationSize;
+        tranlate(new Vector(0, translationSize, 0, 0), transformationNode);
         break;
-      case "a": //runter
-        translationX -= translationSize;
+      case "s": //runter
+        tranlate(new Vector(0, -translationSize, 0, 0), transformationNode);
         break;
-      case "s": //links
-        translationY -= translationSize;
+      case "a": //links
+        tranlate(new Vector(-translationSize, 0, 0, 0), transformationNode);
         break;
       case "d": //rechts
-        translationX += translationSize;
+        tranlate(new Vector(translationSize, 0, 0, 0), transformationNode);
         break;
       case "e": //vor
-        translationZ += translationSize;
+        tranlate(new Vector(0, 0, translationSize, 0), transformationNode);
         break;
       case "q": //zurück
-        translationZ -= translationSize;
+        tranlate(new Vector(0, 0, -translationSize, 0), transformationNode);
         break;
-      case "x": //um x achse rotieren, muss noch die achse einstellen können
-        rotationAngleX += rotationAmount;
+      case "x": //um x achse rotieren
+        rotate(new Vector(1, 0, 0, 0), rotationAmount, transformationNode);
         break;
       case "y": //um y achse rotieren
-        rotationAngleY += rotationAmount;
+        rotate(new Vector(0, 1, 0, 0), rotationAmount, transformationNode);
         break;
-      case "c": //um z achse rotieren, muss noch die negativ richtung gemacht werden?
-        rotationAngleZ += rotationAmount;
+      case "c": //um z achse rotieren
+        rotate(new Vector(0, 0, 1, 0), rotationAmount, transformationNode);
         break;
       case "r": //X skalieren größer
-        scaleX += scaleSize;
+        scale(new Vector(1 + scaleSize, 1, 1, 0), transformationNode);
         break;
       case "f": //Y skalieren größer
-        scaleY += scaleSize;
+        scale(new Vector(1, 1 + scaleSize, 1, 0), transformationNode);
         break;
       case "v": //Z skalieren größer
-        scaleZ += scaleSize;
+        scale(new Vector(1, 1, 1 + scaleSize, 0), transformationNode);
         break;
       case "t": //X skalieren kleiner
-        scaleX -= scaleSize;
+        scale(new Vector(1 - scaleSize, 1, 1, 0), transformationNode);
         break;
       case "g": //Y skalieren kleiner
-        scaleY -= scaleSize;
+        scale(new Vector(1, 1 - scaleSize, 1, 0), transformationNode);
         break;
       case "b": //Z skalieren kleiner
-        scaleZ -= scaleSize;
+        scale(new Vector(1, 1, 1 - scaleSize, 0), transformationNode);
         break;
     }
     window.requestAnimationFrame(animate);

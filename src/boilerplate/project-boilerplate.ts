@@ -68,7 +68,7 @@ window.addEventListener("load", () => {
   );
   sg.add(transformationNode);
 
-  transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
+  transformationNode.add(new PyramidNode(new Vector(0.5, 1, 0, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -156,22 +156,6 @@ window.addEventListener("load", () => {
 
   window.requestAnimationFrame(animate);
 
-  //tastatur eingaben
-  /////////////////////////////////////////////////////////////////////////////////////////////////////
-  let translationX = 0;
-  let translationY = 0;
-  let translationZ = 0;
-  let rotationAngleX = 0;
-  let rotationAngleY = 0;
-  let rotationAngleZ = 0;
-  let scaleX = 1;
-  let scaleY = 1;
-  let scaleZ = 1;
-
-  let translationSize = 0.2;
-  let scaleSize = 0.1;
-  let rotationAmount = 30;
-
   function animate() {
     rasterVisitor.render(sg, rasterCamera, []);
     rayVisitor = new RayVisitor(
@@ -183,26 +167,12 @@ window.addEventListener("load", () => {
     rayVisitor.render(sg, rayCamera, lightPositions);
   }
 
-  function rotate(axis: Vector, angle: number, node: GroupNode) {
-    let oldMatrix = node.transform.getMatrix();
-    let newTransformation = new Rotation(axis, angle);
-    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-    node.transform = newTransformation;
-  }
+  //tastatur eingaben
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  function tranlate(translation: Vector, node: GroupNode) {
-    let oldMatrix = node.transform.getMatrix();
-    let newTransformation = new Translation(translation);
-    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-    node.transform = newTransformation;
-  }
-
-  function scale(scale: Vector, node: GroupNode) {
-    let oldMatrix = node.transform.getMatrix();
-    let newTransformation = new Scaling(scale);
-    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-    node.transform = newTransformation;
-  }
+  let translationSize = 0.2;
+  let scaleSize = 0.1;
+  let rotationAmount = 20;
 
   window.addEventListener("keydown", function (event) {
     switch (event.key) {
@@ -254,6 +224,27 @@ window.addEventListener("load", () => {
     }
     window.requestAnimationFrame(animate);
   });
+
+  function rotate(axis: Vector, angle: number, node: GroupNode) {
+    let oldMatrix = node.transform.getMatrix();
+    let newTransformation = new Rotation(axis, angle);
+    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+    node.transform = newTransformation;
+  }
+
+  function tranlate(translation: Vector, node: GroupNode) {
+    let oldMatrix = node.transform.getMatrix();
+    let newTransformation = new Translation(translation);
+    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+    node.transform = newTransformation;
+  }
+
+  function scale(scale: Vector, node: GroupNode) {
+    let oldMatrix = node.transform.getMatrix();
+    let newTransformation = new Scaling(scale);
+    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+    node.transform = newTransformation;
+  }
 
   //TODO change phong parameters for rasterizer aswell
   const shininessElement = document.getElementById(

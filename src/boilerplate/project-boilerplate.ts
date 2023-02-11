@@ -1,7 +1,13 @@
 import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
-import { AABoxNode, GroupNode, PyramidNode, SphereNode, TextureBoxNode } from "../nodes";
+import {
+  AABoxNode,
+  GroupNode,
+  PyramidNode,
+  SphereNode,
+  TextureBoxNode,
+} from "../nodes";
 import { Rotation, Scaling, Translation } from "../math/transformation";
 import RayVisitor from "../raytracing/rayvisitor";
 import {
@@ -52,9 +58,9 @@ window.addEventListener("load", () => {
   gn3.add(gn4);
 
   gn4.add(gn5);
-  const cube = new TextureBoxNode('hci-logo.png');
+  const cube = new TextureBoxNode("hci-logo.png");
   gn5.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
-  gn5.add(cube)
+  gn5.add(cube);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -90,7 +96,7 @@ window.addEventListener("load", () => {
     eye: new Vector(0, 0, 1, 1),
     center: new Vector(0, 0, 0, 1),
     up: new Vector(0, 1, 0, 0),
-    fovy: 60,
+    fovy: 48,
     aspect: rasterCanvas.width / rasterCanvas.height,
     near: 0.1,
     far: 100,

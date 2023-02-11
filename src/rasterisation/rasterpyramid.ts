@@ -34,6 +34,7 @@ export default class RasterPyramid {
     const p3 = point3;
     const p4 = point4;
 
+    //alle eckpunkte
     let vertices = [
       p1.x,
       p1.y,
@@ -48,9 +49,20 @@ export default class RasterPyramid {
       p4.y,
       p4.z,
     ];
+
+    //alle dreiecke
     let indices = [0, 1, 2, 0, 2, 3, 0, 1, 3, 1, 2, 3];
 
-    let colors = [];
+    let colors = [
+      //black
+      0, 0, 0,
+      //white
+      1, 1, 1,
+      //yellow
+      1, 1, 0,
+      //cyan
+      0, 1, 1,
+    ];
     for (let i = 0; i < vertices.length / 3; i++) {
       //ist das selbe wie vier
       colors.push(color.r, color.g, color.b);
@@ -79,7 +91,7 @@ export default class RasterPyramid {
   }
 
   /**
-   * Renders the box
+   * Renders the pyramid
    * @param shader The shader used to render
    */
   render(shader: Shader) {

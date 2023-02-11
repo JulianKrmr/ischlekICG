@@ -39,28 +39,29 @@ window.addEventListener("load", () => {
   //scene graph
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
+  // let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
+  // let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
+  // let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
+  // let gnRotationZ = new Rotation(new Vector(0, 0, 1, 0), 0);
+
+  // let gnScaling = new Scaling(new Vector(1, 1, 1, 0));
+  // const gn1 = new GroupNode(gnTranslation);
+  // const gn2 = new GroupNode(gnRotationX);
+  // const gn3 = new GroupNode(gnRotationY);
+  // const gn4 = new GroupNode(gnRotationZ);
+
+  // const gn5 = new GroupNode(gnScaling);
+  // sg.add(gn1);
+  // gn1.add(gn2);
+  // gn2.add(gn3);
+  // gn3.add(gn4);
+
+  // gn4.add(gn5);
+  // gn5.add(new PyramidNode(new Vector(0.5, 0, 0, 0)));
+
   const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
-  let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
-  let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
-  let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
-  let gnRotationZ = new Rotation(new Vector(0, 0, 1, 0), 0);
-
-  let gnScaling = new Scaling(new Vector(1, 1, 1, 0));
-  const gn1 = new GroupNode(gnTranslation);
-  const gn2 = new GroupNode(gnRotationX);
-  const gn3 = new GroupNode(gnRotationY);
-  const gn4 = new GroupNode(gnRotationZ);
-
-  const gn5 = new GroupNode(gnScaling);
-  sg.add(gn1);
-  gn1.add(gn2);
-  gn2.add(gn3);
-  gn3.add(gn4);
-
-  gn4.add(gn5);
-  const cube = new TextureBoxNode("hci-logo.png");
-  gn5.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
-  gn5.add(cube);
+  sg.add(new PyramidNode(new Vector(0.5, 0, 0, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -165,17 +166,19 @@ window.addEventListener("load", () => {
   let rotationAmount = 30;
 
   function animate() {
+    //
+
     //könnte man mit dem Objekt parametrisieren damit das für jedes Objekt geht langfristig --> in andere Klasse auslagern?
-    gnTranslation.translationVector = new Vector(
-      translationX,
-      translationY,
-      translationZ,
-      0
-    );
-    gnRotationX.angle = rotationAngleX;
-    gnRotationY.angle = rotationAngleY;
-    gnRotationZ.angle = rotationAngleZ;
-    gnScaling.scale = new Vector(scaleX, scaleY, scaleZ, 0);
+    // gnTranslation.translationVector = new Vector(
+    //   translationX,
+    //   translationY,
+    //   translationZ,
+    //   0
+    // );
+    // gnRotationX.angle = rotationAngleX;
+    // gnRotationY.angle = rotationAngleY;
+    // gnRotationZ.angle = rotationAngleZ;
+    // gnScaling.scale = new Vector(scaleX, scaleY, scaleZ, 0);
     rasterVisitor.render(sg, rasterCamera, []);
     rayVisitor = new RayVisitor(
       rayContext,

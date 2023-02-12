@@ -13,6 +13,7 @@ import phongFragmentShader from "../shader/phong-fragment-shader.glsl";
 import textureVertexShader from "../shader/texture-vertex-perspective-shader.glsl";
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 import { Rotation, Translation } from "../math/transformation";
+import PhongValues from "./project-boilerplate";
 
 window.addEventListener("load", () => {
   const canvas = document.getElementById("rasteriser") as HTMLCanvasElement;
@@ -79,9 +80,21 @@ window.addEventListener("load", () => {
 
   let lastTimestamp = performance.now();
 
+  const phongValues: PhongValues = {
+    ambient: 0.3,
+    diffuse: 0.6,
+    specular: 0.7,
+    shininess: 16.0,
+  };
+
+  //   const float shininess = 16.0;
+  // const float kA = 0.3;
+  // const float kD = 0.6;
+  // const float kS = 0.7;
+
   function animate(timestamp: number) {
     simulate(timestamp - lastTimestamp);
-    visitor.render(sg, camera, [], null);
+    visitor.renderWithPhong(sg, camera, [], phongValues);
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
   }

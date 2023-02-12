@@ -144,10 +144,10 @@ window.addEventListener("load", () => {
   };
 
   let rasterCamera = {
-    eye: new Vector(0, 0, 1, 1),
-    center: new Vector(0, 0, 0, 1),
+    eye: new Vector(0, 0, 0, 1),
+    center: new Vector(0, 0, -1, 1),
     up: new Vector(0, 1, 0, 0),
-    fovy: 48,
+    fovy: 60,
     aspect: rasterCanvas.width / rasterCanvas.height,
     near: 0.1,
     far: 100,
@@ -157,7 +157,7 @@ window.addEventListener("load", () => {
 
   function animate() {
     console.log("animate");
-    rasterVisitor.render(sg, rasterCamera, [], phongValues);
+    rasterVisitor.renderWithPhong(sg, rasterCamera, [], phongValues);
     rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
   }
 
@@ -271,7 +271,7 @@ window.addEventListener("load", () => {
   rasterCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    rasterVisitor.castRayFromMouse(mx, my);
+    // rasterVisitor.castRayFromMouse(mx, my);
   });
 });
 

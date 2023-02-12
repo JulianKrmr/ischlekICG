@@ -13,7 +13,7 @@ export default class RasterBox {
    * The indices describing which vertices form a triangle
    */
   indexBuffer: WebGLBuffer;
-
+  // TODO private variable for color buffer
   colorBuffer: WebGLBuffer;
   /**
    * The amount of indices
@@ -36,9 +36,9 @@ export default class RasterBox {
    */
   constructor(
     private gl: WebGL2RenderingContext,
-    color: Vector,
     minPoint: Vector,
-    maxPoint: Vector
+    maxPoint: Vector,
+    color?: Vector
   ) {
     this.gl = gl;
     const mi = minPoint;
@@ -84,9 +84,31 @@ export default class RasterBox {
       5, 4, 1, 1, 0, 5,
     ];
 
-    let colors = [];
-    for (let i = 0; i < vertices.length / 3; i++) {
-      colors.push(color.r, color.g, color.b);
+    let colors = [
+      //black
+      0, 0, 0,
+      //white
+      1, 1, 1,
+      //yellow
+      1, 1, 0,
+      //cyan
+      0, 1, 1,
+      //black
+      0, 0, 0,
+      //white
+      1, 1, 1,
+      //yellow
+      1, 1, 0,
+      //cyan
+      0, 1, 1,
+    ];
+
+    if (color.r != 1) {
+      console.log(color);
+      colors = [];
+      for (let i = 0; i < vertices.length / 3; i++) {
+        colors.push(color.r, color.g, color.b);
+      }
     }
 
     const vertexBuffer = gl.createBuffer();

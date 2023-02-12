@@ -1,3 +1,6 @@
+import Intersection from "../math/intersection";
+import Plane from "../math/plane";
+import Ray from "../math/ray";
 import Vector from "../math/vector";
 import Shader from "../shader/shader";
 
@@ -19,6 +22,9 @@ export default class RasterPyramid {
    * The amount of indices
    */
   elements: number;
+
+  vertices: Array<number>;
+  indices: Array<number>;
 
   constructor(
     private gl: WebGL2RenderingContext,
@@ -49,9 +55,11 @@ export default class RasterPyramid {
       p4.y,
       p4.z,
     ];
+    this.vertices = vertices;
 
     //alle dreiecke
     let indices = [0, 1, 2, 0, 2, 3, 0, 1, 3, 1, 2, 3];
+    this.indices = indices;
 
     let colors = [];
     for (let i = 0; i < vertices.length / 3; i++) {
@@ -112,5 +120,50 @@ export default class RasterPyramid {
 
     this.gl.disableVertexAttribArray(positionLocation);
     this.gl.disableVertexAttribArray(colorLocation);
+  }
+
+  intersect(ray: Ray): Intersection | null {
+    let intersectionMin = null;
+    let intersectionTMin = Infinity;
+
+    //iterate over all triangles of the pyramid
+    for (let i = 0; i < this.indices.length; i += 3) {
+      //get the vertices of the triangle
+      const a = new Vector(
+        this.vertices[this.indices[i] * 3],
+        this.vertices[this.indices[i] * 3 + 1],
+        this.vertices[this.indices[i] * 3 + 2],
+        0
+      );
+      const b = new Vector(
+        this.vertices[this.indices[i + 1] * 3],
+        this.vertices[this.indices[i + 1] * 3 + 1],
+        this.vertices[this.indices[i + 1] * 3 + 2],
+        0
+      );
+      const c = new Vector(
+        this.vertices[this.indices[i + 2] * 3],
+        this.vertices[this.indices[i + 2] * 3 + 1],
+        this.vertices[this.indices[i + 2] * 3 + 2],
+        0
+      );
+
+      //create a plane from the 3 vertices of the pyramid
+      const plane = new Plane(a, b, c);
+      //calculate the intersection of the ray with the plane
+      const intersection = plane.intersect(ray);
+
+      const vertices = [a, b, c];
+      // if the intersection is not null and is inside the triangle, return it
+      if (
+        intersection &&
+        plane.isInside(vertices, intersection.point) &&
+        intersection.t < intersectionTMin
+      ) {
+        intersectionMin = intersection;
+        intersectionTMin = intersection.t;
+      }
+    }
+    return intersectionMin;
   }
 }

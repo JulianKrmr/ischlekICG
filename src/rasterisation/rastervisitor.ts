@@ -205,6 +205,16 @@ export class RasterVisitor implements Visitor {
     }
 
     this.renderables.get(node).render(shader);
+    if (this.mouseRay) {
+      let rasterBox = this.renderables.get(node) as RasterBox;
+      const intersection = rasterBox.intersect(this.mouseRay);
+      if (intersection) {
+        console.log("intersection");
+        console.log(intersection);
+        console.log(this.mouseRay);
+        this.mouseRay = null;
+      }
+    }
   }
 
   /**
@@ -226,6 +236,17 @@ export class RasterVisitor implements Visitor {
     }
 
     this.renderables.get(node).render(shader);
+
+    if (this.mouseRay) {
+      let rasterPyramid = this.renderables.get(node) as RasterPyramid;
+      const intersection = rasterPyramid.intersect(this.mouseRay);
+      if (intersection) {
+        console.log("intersection");
+        console.log(intersection);
+        console.log(this.mouseRay);
+        this.mouseRay = null;
+      }
+    }
   }
 
   /**

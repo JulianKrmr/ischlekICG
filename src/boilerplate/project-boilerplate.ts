@@ -68,7 +68,7 @@ window.addEventListener("load", () => {
   );
   sg.add(transformationNode);
 
-  transformationNode.add(new PyramidNode(new Vector(0.5, 1, 0, 0)));
+  transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -271,6 +271,7 @@ window.addEventListener("load", () => {
     let mx = event.offsetX;
     let my = event.offsetY;
     rasterVisitor.castRayFromMouse(mx, my);
+    animate();
   });
 });
 

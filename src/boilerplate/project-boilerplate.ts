@@ -69,6 +69,7 @@ window.addEventListener("load", () => {
   sg.add(transformationNode);
 
   transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
+  transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -144,10 +145,10 @@ window.addEventListener("load", () => {
   };
 
   let rasterCamera = {
-    eye: new Vector(0, 0, 1, 1),
-    center: new Vector(0, 0, 0, 1),
+    eye: new Vector(0, 0, 0, 1),
+    center: new Vector(0, 0, -1, 1),
     up: new Vector(0, 1, 0, 0),
-    fovy: 48,
+    fovy: 60,
     aspect: rasterCanvas.width / rasterCanvas.height,
     near: 0.1,
     far: 100,
@@ -156,7 +157,8 @@ window.addEventListener("load", () => {
   window.requestAnimationFrame(animate);
 
   function animate() {
-    rasterVisitor.render(sg, rasterCamera, []);
+    console.log("animate");
+    rasterVisitor.renderWithPhong(sg, rasterCamera, [], phongValues);
     rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
   }
 

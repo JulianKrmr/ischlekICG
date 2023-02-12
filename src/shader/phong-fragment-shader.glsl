@@ -6,10 +6,10 @@ varying vec4 v_color;
 varying vec3 v_normal;
 
 const vec4 lightPos = vec4(1.0, 1.0, 1.0, 1.0);
-const float shininess = 16.0;
-const float kA = 0.3;
-const float kD = 0.6;
-const float kS = 0.7;
+uniform float shininess;
+uniform float kA;
+uniform float kD;
+uniform float kS;
 const vec4 cameraPos = vec4(0.0, 0.0, 0.0, 1.0);
 
 

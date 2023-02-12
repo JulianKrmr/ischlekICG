@@ -16,6 +16,7 @@ import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
 import Ray from "../math/ray";
 import Intersection from "../math/intersection";
+import PhongValues from "../boilerplate/project-boilerplate";
 
 interface Camera {
   eye: Vector;
@@ -81,6 +82,41 @@ export class RasterVisitor implements Visitor {
     // intersections sortieren
     // mouse ray auf null setzen
     // effekt was passiert wenn man geklickt wurde
+  }
+  renderWithPhong(
+    rootNode: Node,
+    camera: Camera | null,
+    lightPositions: Array<Vector>,
+    phongValues: PhongValues
+  ) {
+    // clear
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
+    if (camera) {
+      this.setupCamera(camera);
+    }
+    this.passPhongValues(phongValues);
+
+    // traverse and render
+    rootNode.accept(this);
+  }
+
+  passPhongValues(phongValues: PhongValues) {
+    const shader = this.shader;
+    shader.use();
+
+    shader.getUniformFloat("shininess").set(phongValues.shininess);
+    shader.getUniformFloat("kA").set(phongValues.ambient);
+    shader.getUniformFloat("kD").set(phongValues.diffuse);
+    shader.getUniformFloat("kS").set(phongValues.specular);
+
+    const textureShader = this.textureshader;
+    textureShader.use();
+
+    textureShader.getUniformFloat("shininess").set(phongValues.shininess);
+    textureShader.getUniformFloat("kA").set(phongValues.ambient);
+    textureShader.getUniformFloat("kD").set(phongValues.diffuse);
+    textureShader.getUniformFloat("kS").set(phongValues.specular);
   }
 
   /**
@@ -346,9 +382,9 @@ export class RasterSetupVisitor {
       node,
       new RasterBox(
         this.gl,
-        node.color,
         new Vector(-0.5, -0.5, -0.5, 1),
-        new Vector(0.5, 0.5, 0.5, 1)
+        new Vector(0.5, 0.5, 0.5, 1),
+        node.color
       )
     );
   }

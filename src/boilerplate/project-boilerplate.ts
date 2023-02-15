@@ -23,6 +23,7 @@ import phongFragmentShader from "../shader/phong-fragment-shader.glsl";
 import textureVertexShader from "../shader/texture-vertex-perspective-shader.glsl";
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 import RasterBox from "../rasterisation/raster-box";
+import { RotationNode } from "../raytracing/animation-nodes";
 import mouserayVisitor from "../raytracing/mouserayVisitor";
 
 export default interface PhongValues {
@@ -62,16 +63,36 @@ window.addEventListener("load", () => {
   // gn4.add(gn5);
   // gn5.add(new PyramidNode(new Vector(0.5, 0, 0, 0)));
 
-  //Root node and transformation
-  const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
+  // Root node and transformation
+  const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
   const transformationNode = new GroupNode(
-    new Rotation(new Vector(0, 0, 0, 0), 0)
+    new Translation(new Vector(0, 0, -5, 0))
   );
   sg.add(transformationNode);
+  transformationNode.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
 
-  transformationNode.add(new SphereNode(new Vector(0.5, 1, 0, 0)));
-  // translate(new Vector(1, 0, 0, 0), transformationNode);
-  // scale(new Vector(2, 2, 2, 0), transformationNode);
+  // const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
+  // let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
+  // let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
+  // let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
+  // let gnRotationZ = new Rotation(new Vector(0, 0, 1, 0), 0);
+
+  // let gnScaling = new Scaling(new Vector(1, 1, 1, 0));
+  // const gn1 = new GroupNode(gnTranslation);
+  // const gn2 = new GroupNode(gnRotationX);
+  // const gn3 = new GroupNode(gnRotationY);
+  // const gn4 = new GroupNode(gnRotationZ);
+
+  // const gn5 = new GroupNode(gnScaling);
+  // sg.add(gn1);
+  // gn1.add(gn2);
+  // gn2.add(gn3);
+  // gn3.add(gn4);
+
+  // gn4.add(gn5);
+  // gn5.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
+
+  //transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -130,13 +151,16 @@ window.addEventListener("load", () => {
     rayCanvas.height
   );
 
+  // default render method
+  let renderMode = "raytracing";
+
   modeToggleForm.addEventListener("change", (event: Event) => {
     const input = event.target as HTMLInputElement;
-    mode = input.value;
+    renderMode = input.value;
 
-    console.log("Mode toggled: " + mode);
+    console.log("Mode toggled: " + renderMode);
 
-    if (mode === "rasterization") {
+    if (renderMode === "rasterization") {
       rayCanvas.style.display = "none";
       rasterCanvas.style.display = "block";
     } else {
@@ -163,11 +187,20 @@ window.addEventListener("load", () => {
     far: 100,
   };
 
+  let lastTimestamp = performance.now();
+
   window.requestAnimationFrame(animate);
 
-  function animate() {
-    rasterVisitor.renderWithPhong(sg, rasterCamera, [], phongValues);
-    rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
+  function animate(timestamp: number) {
+    if (renderMode == "rasterization") {
+      rasterVisitor.renderWithPhong(sg, rasterCamera, [], phongValues);
+    } else if (renderMode == "raytracing") {
+      rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
+    }
+    //animation1.simulate(timestamp - lastTimestamp);
+
+    lastTimestamp = timestamp;
+    window.requestAnimationFrame(animate);
   }
 
   //tastatur eingaben
@@ -225,56 +258,66 @@ window.addEventListener("load", () => {
         scale(new Vector(1, 1, 1 - scaleSize, 0), transformationNode);
         break;
     }
-    window.requestAnimationFrame(animate);
-  });
 
-  function rotate(axis: Vector, angle: number, node: GroupNode) {
-    let oldMatrix = node.transform.getMatrix();
-    let newTransformation = new Rotation(axis, angle);
-    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-    node.transform = newTransformation;
-  }
+    function rotate(axis: Vector, angle: number, node: GroupNode) {
+      let oldMatrix = node.transform.getMatrix();
+      let oldMatrixInverse = node.transform.getInverseMatrix();
+      let newTransformation = new Rotation(axis, angle);
+      newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+      newTransformation.inverse = oldMatrixInverse.mul(
+        oldMatrixInverse.mul(newTransformation.getInverseMatrix())
+      );
+      node.transform = newTransformation;
+    }
 
-  function translate(translation: Vector, node: GroupNode) {
-    let oldMatrix = node.transform.getMatrix();
-    let newTransformation = new Translation(translation);
-    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-    node.transform = newTransformation;
-  }
+    function tranlate(translation: Vector, node: GroupNode) {
+      let oldMatrix = node.transform.getMatrix();
+      let oldMatrixInverse = node.transform.getInverseMatrix();
+      let newTransformation = new Translation(translation);
+      newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+      newTransformation.inverse = oldMatrixInverse.mul(
+        newTransformation.getInverseMatrix()
+      );
+      node.transform = newTransformation;
+    }
 
-  function scale(scale: Vector, node: GroupNode) {
-    let oldMatrix = node.transform.getMatrix();
-    let newTransformation = new Scaling(scale);
-    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-    node.transform = newTransformation;
-  }
+    function scale(scale: Vector, node: GroupNode) {
+      let oldMatrix = node.transform.getMatrix();
+      let oldMatrixInverse = node.transform.getInverseMatrix();
+      let newTransformation = new Scaling(scale);
+      newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+      newTransformation.inverse = oldMatrixInverse.mul(
+        oldMatrixInverse.mul(newTransformation.getInverseMatrix())
+      );
+      node.transform = newTransformation;
+    }
 
-  //TODO change phong parameters for rasterizer aswell
-  const shininessElement = document.getElementById(
-    "shininess"
-  ) as HTMLInputElement;
-  shininessElement.onchange = () => {
-    phongValues.shininess = Number(shininessElement.value);
-    window.requestAnimationFrame(animate);
-  };
+    //TODO change phong parameters for rasterizer aswell
+    const shininessElement = document.getElementById(
+      "shininess"
+    ) as HTMLInputElement;
+    shininessElement.onchange = () => {
+      phongValues.shininess = Number(shininessElement.value);
+      window.requestAnimationFrame(animate);
+    };
 
-  const kA = document.getElementById("kAmbient") as HTMLInputElement;
-  kA.onchange = () => {
-    phongValues.ambient = Number(kA.value);
-    window.requestAnimationFrame(animate);
-  };
+    const kA = document.getElementById("kAmbient") as HTMLInputElement;
+    kA.onchange = () => {
+      phongValues.ambient = Number(kA.value);
+      window.requestAnimationFrame(animate);
+    };
 
-  const kD = document.getElementById("kDiffuse") as HTMLInputElement;
-  kD.onchange = () => {
-    phongValues.diffuse = Number(kD.value);
-    window.requestAnimationFrame(animate);
-  };
+    const kD = document.getElementById("kDiffuse") as HTMLInputElement;
+    kD.onchange = () => {
+      phongValues.diffuse = Number(kD.value);
+      window.requestAnimationFrame(animate);
+    };
 
-  const kS = document.getElementById("kSpecular") as HTMLInputElement;
-  kS.onchange = () => {
-    phongValues.specular = Number(kS.value);
-    window.requestAnimationFrame(animate);
-  };
+    const kS = document.getElementById("kSpecular") as HTMLInputElement;
+    kS.onchange = () => {
+      phongValues.specular = Number(kS.value);
+      window.requestAnimationFrame(animate);
+    };
 
   //zu einer methode machen die abhängig vom current context wählen kann?
   rasterCanvas.addEventListener("mousedown", (event) => {

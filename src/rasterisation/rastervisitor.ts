@@ -17,6 +17,20 @@ import RasterPyramid from "./rasterpyramid";
 import Ray from "../math/ray";
 import Intersection from "../math/intersection";
 import PhongValues from "../boilerplate/project-boilerplate";
+import AABox from "../objects/aabox";
+import Sphere from "../objects/sphere";
+
+const UNIT_AABOX = new AABox(
+  new Vector(-0.5, -0.5, -0.5, 1),
+  new Vector(0.5, 0.5, 0.5, 1),
+  new Vector(0, 0, 0, 1)
+);
+
+const UNIT_SPHERE = new Sphere(
+  new Vector(0, 0, 0, 1),
+  1,
+  new Vector(0, 0, 0, 1)
+);
 
 interface Camera {
   eye: Vector;
@@ -216,9 +230,26 @@ export class RasterVisitor implements Visitor {
     }
 
     if (this.mouseRay) {
-      // const intersection = rasterSphere.intersect(this.mouseRay);
-    }
+      let rasterSphere = this.renderables.get(node) as RasterSphere;
 
+      const toWorld = this.transformations[this.transformations.length - 1];
+      const fromWorld =
+        this.inverseTransformations[this.inverseTransformations.length - 1];
+
+      const ray = new Ray(
+        fromWorld.mulVec(this.mouseRay.origin),
+        fromWorld.mulVec(this.mouseRay.direction).normalize()
+      );
+      // let intersection = UNIT_SPHERE.intersect(ray);
+      let intersection = rasterSphere.intersect(ray);
+
+      if (intersection) {
+        console.log("intersection");
+        console.log(intersection);
+        console.log(this.mouseRay);
+        this.mouseRay = null;
+      }
+    }
     this.renderables.get(node).render(shader);
   }
 
@@ -243,7 +274,19 @@ export class RasterVisitor implements Visitor {
     this.renderables.get(node).render(shader);
     if (this.mouseRay) {
       let rasterBox = this.renderables.get(node) as RasterBox;
-      const intersection = rasterBox.intersect(this.mouseRay);
+      // const intersection = rasterBox.intersect(this.mouseRay);
+
+      const toWorld = this.transformations[this.transformations.length - 1];
+      const fromWorld =
+        this.inverseTransformations[this.inverseTransformations.length - 1];
+
+      const ray = new Ray(
+        fromWorld.mulVec(this.mouseRay.origin),
+        fromWorld.mulVec(this.mouseRay.direction).normalize()
+      );
+      // let intersection = UNIT_AABOX.intersect(ray);
+      let intersection = rasterBox.intersect(ray);
+
       if (intersection) {
         console.log("intersection");
         console.log(intersection);
@@ -306,6 +349,7 @@ export class RasterVisitor implements Visitor {
 
   //TODO: Testen
   castRayFromMouse(x: number, y: number) {
+    //Kamera ist wahrscheinlich in falschen koordinaten angegeben
     let camera = {
       width: this.gl.canvas.width,
       height: this.gl.canvas.height,

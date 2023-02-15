@@ -1,3 +1,5 @@
+import Intersection from "../math/intersection";
+import Ray from "../math/ray";
 import Vector from "../math/vector";
 import Shader from "../shader/shader";
 
@@ -24,6 +26,8 @@ export default class RasterSphere {
    * The amount of indices
    */
   elements: number;
+  radius: number;
+  center: Vector;
 
   /**
    * Creates all WebGL buffers for the sphere
@@ -42,6 +46,8 @@ export default class RasterSphere {
     let indices = [];
     let normals = [];
     let colors = [];
+    this.center = center;
+    this.radius = radius;
 
     let ringsize = 30;
     for (let ring = 0; ring < ringsize; ring++) {
@@ -149,5 +155,26 @@ export default class RasterSphere {
     this.gl.disableVertexAttribArray(colorLocation);
 
     this.gl.disableVertexAttribArray(normalLocation);
+  }
+
+  intersect(ray: Ray): Intersection | null {
+    const x0 = ray.origin.sub(this.center); //Translate ray about -center
+    const c =
+      Math.pow(x0.dot(ray.direction.normalize()), 2) -
+      Math.pow(x0.length, 2) +
+      Math.pow(this.radius, 2); //calculate the discremenant to determine how many intersections there are
+    if (c < 0) {
+      //Keine Intersections
+      return null;
+    }
+
+    const t1 = -x0.dot(ray.direction.normalize()) + Math.sqrt(c); //calculate distance +/- c with p-q Formula
+    const t2 = -x0.dot(ray.direction.normalize()) - Math.sqrt(c);
+
+    const closest = Math.min(t1, t2); //Abstand zur Kugel
+    let intersectionPoint = ray.origin.add(ray.direction.mul(closest)); //Kollisions Punkt
+    let direction = intersectionPoint.sub(this.center).normalize(); //richtung des Normalenvektors
+
+    return new Intersection(closest, intersectionPoint, direction);
   }
 }

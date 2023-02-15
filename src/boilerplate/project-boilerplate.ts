@@ -64,12 +64,13 @@ window.addEventListener("load", () => {
   //Root node and transformation
   const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
   const transformationNode = new GroupNode(
-    new Rotation(new Vector(1, 0, 0, 0), 0)
+    new Rotation(new Vector(0, 0, 0, 0), 0)
   );
   sg.add(transformationNode);
 
-  transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
-  transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
+  transformationNode.add(new SphereNode(new Vector(0.5, 1, 0, 0)));
+  // translate(new Vector(1, 0, 0, 0), transformationNode);
+  // scale(new Vector(2, 2, 2, 0), transformationNode);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -157,7 +158,6 @@ window.addEventListener("load", () => {
   window.requestAnimationFrame(animate);
 
   function animate() {
-    console.log("animate");
     rasterVisitor.renderWithPhong(sg, rasterCamera, [], phongValues);
     rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
   }
@@ -172,22 +172,22 @@ window.addEventListener("load", () => {
   window.addEventListener("keydown", function (event) {
     switch (event.key) {
       case "w": //hoch
-        tranlate(new Vector(0, translationSize, 0, 0), transformationNode);
+        translate(new Vector(0, translationSize, 0, 0), transformationNode);
         break;
       case "s": //runter
-        tranlate(new Vector(0, -translationSize, 0, 0), transformationNode);
+        translate(new Vector(0, -translationSize, 0, 0), transformationNode);
         break;
       case "a": //links
-        tranlate(new Vector(-translationSize, 0, 0, 0), transformationNode);
+        translate(new Vector(-translationSize, 0, 0, 0), transformationNode);
         break;
       case "d": //rechts
-        tranlate(new Vector(translationSize, 0, 0, 0), transformationNode);
+        translate(new Vector(translationSize, 0, 0, 0), transformationNode);
         break;
       case "e": //vor
-        tranlate(new Vector(0, 0, translationSize, 0), transformationNode);
+        translate(new Vector(0, 0, translationSize, 0), transformationNode);
         break;
       case "q": //zurück
-        tranlate(new Vector(0, 0, -translationSize, 0), transformationNode);
+        translate(new Vector(0, 0, -translationSize, 0), transformationNode);
         break;
       case "x": //um x achse rotieren
         rotate(new Vector(1, 0, 0, 0), rotationAmount, transformationNode);
@@ -227,7 +227,7 @@ window.addEventListener("load", () => {
     node.transform = newTransformation;
   }
 
-  function tranlate(translation: Vector, node: GroupNode) {
+  function translate(translation: Vector, node: GroupNode) {
     let oldMatrix = node.transform.getMatrix();
     let newTransformation = new Translation(translation);
     newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());

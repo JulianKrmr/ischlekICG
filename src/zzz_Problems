@@ -1,1 +1,7 @@
 bei 25, 25 collision bei beiden objekten
+
+
+Object intersections [] ist leer
+nach jeder collision hinzufügen
+
+sortierte liste an intersections

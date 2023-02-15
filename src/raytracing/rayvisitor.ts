@@ -15,7 +15,7 @@ import {
   AABoxNode,
   TextureBoxNode,
   PyramidNode,
-} from "src/nodes";
+} from "../nodes";
 import { ChildProcess } from "child_process";
 import PhongValues from "../boilerplate/project-boilerplate";
 
@@ -54,6 +54,8 @@ export default class RayVisitor implements Visitor {
   intersectionColor: Vector;
   ray: Ray;
   phongValues: PhongValues;
+  //raster objects?
+  objectIntersections: [Intersection, Ray, Node][];
   /**
    * Creates a new RayVisitor
    * @param context The 2D context to render to
@@ -93,10 +95,24 @@ export default class RayVisitor implements Visitor {
         this.transformations = [Matrix.identity()];
         this.inverseTransformations = [Matrix.identity()];
 
+        this.objectIntersections = [];
+
         this.intersection = null;
         rootNode.accept(this);
 
         if (this.intersection) {
+          //sortiert nach t
+          //select closest objects color
+          if (this.objectIntersections.length > 1) {
+            this.objectIntersections.sort((a, b) => a[0].t - b[0].t);
+            if (
+              this.objectIntersections[0][2] instanceof SphereNode ||
+              this.objectIntersections[0][2] instanceof AABoxNode ||
+              this.objectIntersections[0][2] instanceof PyramidNode
+            ) {
+              this.intersectionColor = this.objectIntersections[0][2].color;
+            }
+          }
           if (!this.intersectionColor) {
             data[4 * (width * y + x) + 0] = 0;
             data[4 * (width * y + x) + 1] = 0;
@@ -162,6 +178,7 @@ export default class RayVisitor implements Visitor {
     let intersection = UNIT_SPHERE.intersect(ray);
 
     if (intersection) {
+      this.objectIntersections.push([intersection, ray, node]); //TODO: für alle anderen objekt typen
       const intersectionPointWorld = toWorld.mulVec(intersection.point);
       const intersectionNormalWorld = toWorld
         .mulVec(intersection.normal)
@@ -171,6 +188,8 @@ export default class RayVisitor implements Visitor {
         intersectionPointWorld,
         intersectionNormalWorld
       );
+
+      //kann man das überhaupt erreichen?
       if (
         this.intersection === null ||
         intersection.closerThan(this.intersection)

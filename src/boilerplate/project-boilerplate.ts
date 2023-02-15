@@ -40,59 +40,21 @@ window.addEventListener("load", () => {
 
   let mode: string;
   //scene graph
-  ////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
-  // let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
-  // let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
-  // let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
-  // let gnRotationZ = new Rotation(new Vector(0, 0, 1, 0), 0);
-
-  // let gnScaling = new Scaling(new Vector(1, 1, 1, 0));
-  // const gn1 = new GroupNode(gnTranslation);
-  // const gn2 = new GroupNode(gnRotationX);
-  // const gn3 = new GroupNode(gnRotationY);
-  // const gn4 = new GroupNode(gnRotationZ);
-
-  // const gn5 = new GroupNode(gnScaling);
-  // sg.add(gn1);
-  // gn1.add(gn2);
-  // gn2.add(gn3);
-  // gn3.add(gn4);
-
-  // gn4.add(gn5);
-  // gn5.add(new PyramidNode(new Vector(0.5, 0, 0, 0)));
-
-  // Root node and transformation
   const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
+
   const transformationNode = new GroupNode(
     new Translation(new Vector(0, 0, -5, 0))
   );
   sg.add(transformationNode);
-  transformationNode.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
+  transformationNode.add(new SphereNode(new Vector(0.5, 0, 0, 0)));
 
-  // const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
-  // let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
-  // let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
-  // let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
-  // let gnRotationZ = new Rotation(new Vector(0, 0, 1, 0), 0);
-
-  // let gnScaling = new Scaling(new Vector(1, 1, 1, 0));
-  // const gn1 = new GroupNode(gnTranslation);
-  // const gn2 = new GroupNode(gnRotationX);
-  // const gn3 = new GroupNode(gnRotationY);
-  // const gn4 = new GroupNode(gnRotationZ);
-
-  // const gn5 = new GroupNode(gnScaling);
-  // sg.add(gn1);
-  // gn1.add(gn2);
-  // gn2.add(gn3);
-  // gn3.add(gn4);
-
-  // gn4.add(gn5);
-  // gn5.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
-
-  //transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
+  const secondTransformationNode = new GroupNode(
+    new Translation(new Vector(0, 0.5, -5.3, 0))
+  );
+  sg.add(secondTransformationNode);
+  secondTransformationNode.add(new SphereNode(new Vector(0.5, 1, 0, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster

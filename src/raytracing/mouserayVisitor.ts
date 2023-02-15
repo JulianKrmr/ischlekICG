@@ -15,7 +15,7 @@ import {
   AABoxNode,
   TextureBoxNode,
   PyramidNode,
-} from "src/nodes";
+} from "../nodes";
 import { ChildProcess } from "child_process";
 import PhongValues from "../boilerplate/project-boilerplate";
 
@@ -50,8 +50,8 @@ export default class RayVisitor implements Visitor {
   transformations: Matrix[];
   inverseTransformations: Matrix[];
   intersection: Intersection | null;
-  intersectionColor: Vector;
   ray: Ray;
+  objectIntersections: [Intersection, Ray, Node][];
   phongValues: PhongValues; //evtl raus? falls nicht wieder in constructor rein
   /**
    * Creates a new RayVisitor
@@ -74,27 +74,40 @@ export default class RayVisitor implements Visitor {
     camera: { origin: Vector; width: number; height: number; alpha: number },
     x: number,
     y: number,
-    renderingContext: any
+    renderingContext: any //bisher useless
   ) {
-    // raytrace
+    //bisher useless
     const width = renderingContext.canvas.width;
     const height = renderingContext.canvas.height;
 
-    y = y / 20;
-    x = x / 20;
-
-    console.log(x + " " + y);
+    y = y / 10;
+    x = x / 10;
 
     this.ray = Ray.makeRay(x, y, camera);
     this.transformations = [Matrix.identity()];
     this.inverseTransformations = [Matrix.identity()];
+    this.objectIntersections = [];
 
     this.intersection = null;
     rootNode.accept(this);
 
     if (this.intersection) {
-      console.log("Intersection");
-      console.log(this.intersection);
+      //sortiert nach t
+      //select closest objects color
+      this.objectIntersections.sort((a, b) => a[0].t - b[0].t);
+      console.log(this.objectIntersections);
+      if (
+        this.objectIntersections[0][2] instanceof SphereNode ||
+        this.objectIntersections[0][2] instanceof AABoxNode ||
+        this.objectIntersections[0][2] instanceof PyramidNode
+      ) {
+        this.objectIntersections[0][2].color = new Vector(
+          Math.random(),
+          Math.random(),
+          Math.random(),
+          0
+        );
+      }
     }
   }
 
@@ -139,9 +152,6 @@ export default class RayVisitor implements Visitor {
     let intersection = UNIT_SPHERE.intersect(ray);
 
     if (intersection) {
-      //nur zum testen
-      node.color = new Vector(Math.random(), Math.random(), Math.random(), 1);
-
       const intersectionPointWorld = toWorld.mulVec(intersection.point);
       const intersectionNormalWorld = toWorld
         .mulVec(intersection.normal)
@@ -156,8 +166,8 @@ export default class RayVisitor implements Visitor {
         intersection.closerThan(this.intersection)
       ) {
         this.intersection = intersection;
-        this.intersectionColor = node.color;
       }
+      this.objectIntersections.push([intersection, ray, node]);
     }
   }
 
@@ -191,8 +201,8 @@ export default class RayVisitor implements Visitor {
         intersection.closerThan(this.intersection)
       ) {
         this.intersection = intersection;
-        this.intersectionColor = node.color;
       }
+      this.objectIntersections.push([intersection, ray, node]);
     }
   }
 
@@ -226,8 +236,8 @@ export default class RayVisitor implements Visitor {
         intersection.closerThan(this.intersection)
       ) {
         this.intersection = intersection;
-        this.intersectionColor = node.color;
       }
+      this.objectIntersections.push([intersection, ray, node]);
     }
   }
 

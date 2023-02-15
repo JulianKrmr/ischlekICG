@@ -240,8 +240,8 @@ export class RasterVisitor implements Visitor {
         fromWorld.mulVec(this.mouseRay.origin),
         fromWorld.mulVec(this.mouseRay.direction).normalize()
       );
-      // let intersection = UNIT_SPHERE.intersect(ray);
-      let intersection = rasterSphere.intersect(ray);
+      let intersection = UNIT_SPHERE.intersect(ray);
+      // let intersection = rasterSphere.intersect(ray);
 
       if (intersection) {
         console.log("intersection");

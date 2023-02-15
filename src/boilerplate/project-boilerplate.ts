@@ -23,6 +23,7 @@ import phongFragmentShader from "../shader/phong-fragment-shader.glsl";
 import textureVertexShader from "../shader/texture-vertex-perspective-shader.glsl";
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 import RasterBox from "../rasterisation/raster-box";
+import mouserayVisitor from "../raytracing/mouserayVisitor";
 
 export default interface PhongValues {
   ambient: number;
@@ -116,6 +117,12 @@ window.addEventListener("load", () => {
   };
 
   let rayContext: CanvasRenderingContext2D = rayCanvas.getContext("2d");
+  const mouseRayVisitor = new mouserayVisitor(
+    rayContext,
+    rayCanvas.width,
+    rayCanvas.height
+  );
+
   const rayVisitor = new RayVisitor(
     rayContext,
     rayCanvas.width,
@@ -272,7 +279,14 @@ window.addEventListener("load", () => {
   rasterCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    rasterVisitor.castRayFromMouse(mx, my);
+    mouseRayVisitor.render(sg, rayCamera, lightPositions, phongValues, mx, my);
+    animate();
+  });
+
+  rayCanvas.addEventListener("mousedown", (event) => {
+    let mx = event.offsetX;
+    let my = event.offsetY;
+    mouseRayVisitor.render(sg, rayCamera, lightPositions, phongValues, 25, 25);
     animate();
   });
 });

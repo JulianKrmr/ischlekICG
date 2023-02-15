@@ -62,33 +62,34 @@ window.addEventListener("load", () => {
   // gn4.add(gn5);
   // gn5.add(new PyramidNode(new Vector(0.5, 0, 0, 0)));
 
-  //Root node and transformation
+  // Root node and transformation
+  const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
+  const transformationNode = new GroupNode(
+    new Translation(new Vector(0, 0, -5, 0))
+  );
+  sg.add(transformationNode);
+  transformationNode.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
+
   // const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
-  // const transformationNode = new GroupNode(
-  //   new Rotation(new Vector(1, 0, 0, 0), 0)
-  // );
-  // sg.add(transformationNode);
+  // let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
+  // let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
+  // let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
+  // let gnRotationZ = new Rotation(new Vector(0, 0, 1, 0), 0);
 
-  const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
-  let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
-  let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
-  let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
-  let gnRotationZ = new Rotation(new Vector(0, 0, 1, 0), 0);
+  // let gnScaling = new Scaling(new Vector(1, 1, 1, 0));
+  // const gn1 = new GroupNode(gnTranslation);
+  // const gn2 = new GroupNode(gnRotationX);
+  // const gn3 = new GroupNode(gnRotationY);
+  // const gn4 = new GroupNode(gnRotationZ);
 
-  let gnScaling = new Scaling(new Vector(1, 1, 1, 0));
-  const gn1 = new GroupNode(gnTranslation);
-  const gn2 = new GroupNode(gnRotationX);
-  const gn3 = new GroupNode(gnRotationY);
-  const gn4 = new GroupNode(gnRotationZ);
+  // const gn5 = new GroupNode(gnScaling);
+  // sg.add(gn1);
+  // gn1.add(gn2);
+  // gn2.add(gn3);
+  // gn3.add(gn4);
 
-  const gn5 = new GroupNode(gnScaling);
-  sg.add(gn1);
-  gn1.add(gn2);
-  gn2.add(gn3);
-  gn3.add(gn4);
-
-  gn4.add(gn5);
-  gn5.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
+  // gn4.add(gn5);
+  // gn5.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
 
   //transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
 
@@ -181,19 +182,10 @@ window.addEventListener("load", () => {
 
   function animate(timestamp: number) {
     //animation1.simulate(timestamp - lastTimestamp);
-    console.log("animate");
-    gnTranslation.translationVector = new Vector(
-      translationX,
-      translationY,
-      translationZ,
-      0
-    );
-    gnRotationX.angle = rotationAngleX;
-    gnRotationY.angle = rotationAngleY;
-    gnRotationZ.angle = rotationAngleZ;
-    gnScaling.scale = new Vector(scaleX, scaleY, scaleZ, 0);
+
     rasterVisitor.renderWithPhong(sg, rasterCamera, [], phongValues);
     rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
+
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
   }
@@ -205,168 +197,121 @@ window.addEventListener("load", () => {
   let scaleSize = 0.1;
   let rotationAmount = 20;
 
-  // window.addEventListener("keydown", function (event) {
-  //   switch (event.key) {
-  //     case "w": //hoch
-  //       tranlate(new Vector(0, translationSize, 0, 0), transformationNode);
-  //       break;
-  //     case "s": //runter
-  //       tranlate(new Vector(0, -translationSize, 0, 0), transformationNode);
-  //       break;
-  //     case "a": //links
-  //       tranlate(new Vector(-translationSize, 0, 0, 0), transformationNode);
-  //       break;
-  //     case "d": //rechts
-  //       tranlate(new Vector(translationSize, 0, 0, 0), transformationNode);
-  //       break;
-  //     case "e": //vor
-  //       tranlate(new Vector(0, 0, translationSize, 0), transformationNode);
-  //       break;
-  //     case "q": //zurück
-  //       tranlate(new Vector(0, 0, -translationSize, 0), transformationNode);
-  //       break;
-  //     case "x": //um x achse rotieren
-  //       rotate(new Vector(1, 0, 0, 0), rotationAmount, transformationNode);
-  //       break;
-  //     case "y": //um y achse rotieren
-  //       rotate(new Vector(0, 1, 0, 0), rotationAmount, transformationNode);
-  //       break;
-  //     case "c": //um z achse rotieren
-  //       rotate(new Vector(0, 0, 1, 0), rotationAmount, transformationNode);
-  //       break;
-  //     case "r": //X skalieren größer
-  //       scale(new Vector(1 + scaleSize, 1, 1, 0), transformationNode);
-  //       break;
-  //     case "f": //Y skalieren größer
-  //       scale(new Vector(1, 1 + scaleSize, 1, 0), transformationNode);
-  //       break;
-  //     case "v": //Z skalieren größer
-  //       scale(new Vector(1, 1, 1 + scaleSize, 0), transformationNode);
-  //       break;
-  //     case "t": //X skalieren kleiner
-  //       scale(new Vector(1 - scaleSize, 1, 1, 0), transformationNode);
-  //       break;
-  //     case "g": //Y skalieren kleiner
-  //       scale(new Vector(1, 1 - scaleSize, 1, 0), transformationNode);
-  //       break;
-  //     case "b": //Z skalieren kleiner
-  //       scale(new Vector(1, 1, 1 - scaleSize, 0), transformationNode);
-  //       break;
-  //   }
-  let translationX = 0;
-  let translationY = 0;
-  let translationZ = 0;
-  let rotationAngleX = 0;
-  let rotationAngleY = 0;
-  let rotationAngleZ = 0;
-  let scaleX = 1;
-  let scaleY = 1;
-  let scaleZ = 1;
-
   window.addEventListener("keydown", function (event) {
     switch (event.key) {
       case "w": //hoch
-        translationY += translationSize;
+        tranlate(new Vector(0, translationSize, 0, 0), transformationNode);
         break;
-      case "a": //runter
-        translationX -= translationSize;
+      case "s": //runter
+        tranlate(new Vector(0, -translationSize, 0, 0), transformationNode);
         break;
-      case "s": //links
-        translationY -= translationSize;
+      case "a": //links
+        tranlate(new Vector(-translationSize, 0, 0, 0), transformationNode);
         break;
       case "d": //rechts
-        translationX += translationSize;
+        tranlate(new Vector(translationSize, 0, 0, 0), transformationNode);
         break;
       case "e": //vor
-        translationZ += translationSize;
+        tranlate(new Vector(0, 0, translationSize, 0), transformationNode);
         break;
       case "q": //zurück
-        translationZ += translationSize;
+        tranlate(new Vector(0, 0, -translationSize, 0), transformationNode);
         break;
-      case "x": //um x achse rotieren, muss noch die achse einstellen können
-        rotationAngleX += rotationAmount;
+      case "x": //um x achse rotieren
+        rotate(new Vector(1, 0, 0, 0), rotationAmount, transformationNode);
         break;
       case "y": //um y achse rotieren
-        rotationAngleY += rotationAmount;
+        rotate(new Vector(0, 1, 0, 0), rotationAmount, transformationNode);
         break;
-      case "c": //um z achse rotieren, muss noch die negativ richtung gemacht werden?
-        rotationAngleZ += rotationAmount;
+      case "c": //um z achse rotieren
+        rotate(new Vector(0, 0, 1, 0), rotationAmount, transformationNode);
         break;
       case "r": //X skalieren größer
-        scaleX += scaleSize;
+        scale(new Vector(1 + scaleSize, 1, 1, 0), transformationNode);
         break;
       case "f": //Y skalieren größer
-        scaleY += scaleSize;
+        scale(new Vector(1, 1 + scaleSize, 1, 0), transformationNode);
         break;
       case "v": //Z skalieren größer
-        scaleZ += scaleSize;
+        scale(new Vector(1, 1, 1 + scaleSize, 0), transformationNode);
         break;
       case "t": //X skalieren kleiner
-        scaleX -= scaleSize;
+        scale(new Vector(1 - scaleSize, 1, 1, 0), transformationNode);
         break;
       case "g": //Y skalieren kleiner
-        scaleY -= scaleSize;
+        scale(new Vector(1, 1 - scaleSize, 1, 0), transformationNode);
         break;
       case "b": //Z skalieren kleiner
-        scaleZ -= scaleSize;
+        scale(new Vector(1, 1, 1 - scaleSize, 0), transformationNode);
         break;
     }
-    window.requestAnimationFrame(animate);
-  });
 
-  function rotate(axis: Vector, angle: number, node: GroupNode) {
-    let oldMatrix = node.transform.getMatrix();
-    let newTransformation = new Rotation(axis, angle);
-    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-    node.transform = newTransformation;
-  }
+    function rotate(axis: Vector, angle: number, node: GroupNode) {
+      let oldMatrix = node.transform.getMatrix();
+      let oldMatrixInverse = node.transform.getInverseMatrix();
+      let newTransformation = new Rotation(axis, angle);
+      newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+      newTransformation.inverse = oldMatrixInverse.mul(
+        oldMatrixInverse.mul(newTransformation.getInverseMatrix())
+      );
+      node.transform = newTransformation;
+    }
 
-  function tranlate(translation: Vector, node: GroupNode) {
-    let oldMatrix = node.transform.getMatrix();
-    let newTransformation = new Translation(translation);
-    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-    node.transform = newTransformation;
-  }
+    function tranlate(translation: Vector, node: GroupNode) {
+      let oldMatrix = node.transform.getMatrix();
+      let oldMatrixInverse = node.transform.getInverseMatrix();
+      let newTransformation = new Translation(translation);
+      newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+      newTransformation.inverse = oldMatrixInverse.mul(
+        newTransformation.getInverseMatrix()
+      );
+      node.transform = newTransformation;
+    }
 
-  function scale(scale: Vector, node: GroupNode) {
-    let oldMatrix = node.transform.getMatrix();
-    let newTransformation = new Scaling(scale);
-    newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-    node.transform = newTransformation;
-  }
+    function scale(scale: Vector, node: GroupNode) {
+      let oldMatrix = node.transform.getMatrix();
+      let oldMatrixInverse = node.transform.getInverseMatrix();
+      let newTransformation = new Scaling(scale);
+      newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
+      newTransformation.inverse = oldMatrixInverse.mul(
+        oldMatrixInverse.mul(newTransformation.getInverseMatrix())
+      );
+      node.transform = newTransformation;
+    }
 
-  //TODO change phong parameters for rasterizer aswell
-  const shininessElement = document.getElementById(
-    "shininess"
-  ) as HTMLInputElement;
-  shininessElement.onchange = () => {
-    phongValues.shininess = Number(shininessElement.value);
-    window.requestAnimationFrame(animate);
-  };
+    //TODO change phong parameters for rasterizer aswell
+    const shininessElement = document.getElementById(
+      "shininess"
+    ) as HTMLInputElement;
+    shininessElement.onchange = () => {
+      phongValues.shininess = Number(shininessElement.value);
+      window.requestAnimationFrame(animate);
+    };
 
-  const kA = document.getElementById("kAmbient") as HTMLInputElement;
-  kA.onchange = () => {
-    phongValues.ambient = Number(kA.value);
-    window.requestAnimationFrame(animate);
-  };
+    const kA = document.getElementById("kAmbient") as HTMLInputElement;
+    kA.onchange = () => {
+      phongValues.ambient = Number(kA.value);
+      window.requestAnimationFrame(animate);
+    };
 
-  const kD = document.getElementById("kDiffuse") as HTMLInputElement;
-  kD.onchange = () => {
-    phongValues.diffuse = Number(kD.value);
-    window.requestAnimationFrame(animate);
-  };
+    const kD = document.getElementById("kDiffuse") as HTMLInputElement;
+    kD.onchange = () => {
+      phongValues.diffuse = Number(kD.value);
+      window.requestAnimationFrame(animate);
+    };
 
-  const kS = document.getElementById("kSpecular") as HTMLInputElement;
-  kS.onchange = () => {
-    phongValues.specular = Number(kS.value);
-    window.requestAnimationFrame(animate);
-  };
+    const kS = document.getElementById("kSpecular") as HTMLInputElement;
+    kS.onchange = () => {
+      phongValues.specular = Number(kS.value);
+      window.requestAnimationFrame(animate);
+    };
 
-  //TODO noch für raytracer
-  rasterCanvas.addEventListener("mousedown", (event) => {
-    let mx = event.offsetX;
-    let my = event.offsetY;
-    // rasterVisitor.castRayFromMouse(mx, my);
+    //TODO noch für raytracer
+    rasterCanvas.addEventListener("mousedown", (event) => {
+      let mx = event.offsetX;
+      let my = event.offsetY;
+      // rasterVisitor.castRayFromMouse(mx, my);
+    });
   });
 });
 

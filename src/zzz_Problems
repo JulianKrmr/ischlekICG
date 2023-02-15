@@ -1,11 +1,1 @@
-1. Tastatureingaben gehen nur im rasterizer?
-
-2. Obejekt klickbar machen funktioniert nicht
-   Intersection normals werden nicht aktualisiert wenn ich sachen bewege
-   bereich der klickbar ist hat nichts mit dem eigentlichen objekt zu tun
-
-3. Bein rasterisation geht das Phong shading nur in der Kugel
-
-4. Implement scene graph branch --> warum läuft der raytracer nicht?
-   - Camera nun im Scenegraph, in Rasterization funktionierts schon
-   - Problem: this.ray bzw. this.transformations ist undefined in den ganzen visit methoden, nix hilft
+bei 25, 25 collision bei beiden objekten

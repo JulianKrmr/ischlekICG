@@ -46,26 +46,21 @@ export default class RayVisitor implements Visitor {
    * The image data of the context to
    * set individual pixels
    */
-  imageData: ImageData;
 
   transformations: Matrix[];
   inverseTransformations: Matrix[];
   intersection: Intersection | null;
   intersectionColor: Vector;
   ray: Ray;
-  phongValues: PhongValues;
+  phongValues: PhongValues; //evtl raus? falls nicht wieder in constructor rein
   /**
    * Creates a new RayVisitor
    * @param context The 2D context to render to
    * @param width The width of the canvas
    * @param height The height of the canvas
    */
-  constructor(
-    private context: CanvasRenderingContext2D,
-    width: number,
-    height: number
-  ) {
-    this.imageData = context.getImageData(0, 0, width, height);
+  constructor(width: number, height: number) {
+    // this.imageData = context.getImageData(0, 0, width, height);
   }
 
   /**
@@ -74,17 +69,22 @@ export default class RayVisitor implements Visitor {
    * @param camera The camera used
    * @param lightPositions The light light positions
    */
-  render(
+  click(
     rootNode: Node,
     camera: { origin: Vector; width: number; height: number; alpha: number },
-    lightPositions: Array<Vector>,
-    phongValues: PhongValues,
-    x: number = 0,
-    y: number = 0
+    x: number,
+    y: number,
+    renderingContext: any
   ) {
     // raytrace
-    const width = this.imageData.width;
-    const height = this.imageData.height;
+    const width = renderingContext.canvas.width;
+    const height = renderingContext.canvas.height;
+
+    y = y / 20;
+    x = x / 20;
+
+    console.log(x + " " + y);
+
     this.ray = Ray.makeRay(x, y, camera);
     this.transformations = [Matrix.identity()];
     this.inverseTransformations = [Matrix.identity()];
@@ -93,14 +93,8 @@ export default class RayVisitor implements Visitor {
     rootNode.accept(this);
 
     if (this.intersection) {
-      console.log("Intersection: " + this.intersection.point.toString());
-      let color = phong(
-        this.intersectionColor,
-        this.intersection,
-        lightPositions,
-        phongValues,
-        camera.origin
-      );
+      console.log("Intersection");
+      console.log(this.intersection);
     }
   }
 
@@ -145,6 +139,9 @@ export default class RayVisitor implements Visitor {
     let intersection = UNIT_SPHERE.intersect(ray);
 
     if (intersection) {
+      //nur zum testen
+      node.color = new Vector(Math.random(), Math.random(), Math.random(), 1);
+
       const intersectionPointWorld = toWorld.mulVec(intersection.point);
       const intersectionNormalWorld = toWorld
         .mulVec(intersection.normal)
@@ -240,3 +237,5 @@ export default class RayVisitor implements Visitor {
    */
   visitTextureBoxNode(node: TextureBoxNode) {}
 }
+
+//TODO code cleanen

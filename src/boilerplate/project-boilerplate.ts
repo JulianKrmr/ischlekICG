@@ -81,6 +81,7 @@ window.addEventListener("load", () => {
 
   const rasterContext: WebGL2RenderingContext =
     rasterCanvas.getContext("webgl2");
+  // console.log(rasterContext); //ist 1000?!?!?!?! nicht 800
   const setupVisitor = new RasterSetupVisitor(rasterContext);
   setupVisitor.setup(sg);
 
@@ -117,8 +118,8 @@ window.addEventListener("load", () => {
   };
 
   let rayContext: CanvasRenderingContext2D = rayCanvas.getContext("2d");
+
   const mouseRayVisitor = new mouserayVisitor(
-    rayContext,
     rayCanvas.width,
     rayCanvas.height
   );
@@ -275,20 +276,18 @@ window.addEventListener("load", () => {
     window.requestAnimationFrame(animate);
   };
 
-  //TODO noch für raytracer
+  //zu einer methode machen die abhängig vom current context wählen kann?
   rasterCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    mouseRayVisitor.render(sg, rayCamera, lightPositions, phongValues, mx, my);
-    console.log(mx, my);
+    mouseRayVisitor.click(sg, rayCamera, mx, my, rasterContext);
     animate();
   });
 
   rayCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    console.log(mx, my);
-    mouseRayVisitor.render(sg, rayCamera, lightPositions, phongValues, 25, 25);
+    mouseRayVisitor.click(sg, rayCamera, mx, my, rayContext);
     animate();
   });
 });

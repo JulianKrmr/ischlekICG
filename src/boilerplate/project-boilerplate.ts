@@ -280,12 +280,14 @@ window.addEventListener("load", () => {
     let mx = event.offsetX;
     let my = event.offsetY;
     mouseRayVisitor.render(sg, rayCamera, lightPositions, phongValues, mx, my);
+    console.log(mx, my);
     animate();
   });
 
   rayCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
+    console.log(mx, my);
     mouseRayVisitor.render(sg, rayCamera, lightPositions, phongValues, 25, 25);
     animate();
   });

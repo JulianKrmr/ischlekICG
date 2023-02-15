@@ -23,6 +23,7 @@ import phongFragmentShader from "../shader/phong-fragment-shader.glsl";
 import textureVertexShader from "../shader/texture-vertex-perspective-shader.glsl";
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 import RasterBox from "../rasterisation/raster-box";
+import { RotationNode } from "../raytracing/animation-nodes";
 
 export default interface PhongValues {
   ambient: number;
@@ -62,11 +63,18 @@ window.addEventListener("load", () => {
   // gn5.add(new PyramidNode(new Vector(0.5, 0, 0, 0)));
 
   //Root node and transformation
-  const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
+  const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
   const transformationNode = new GroupNode(
     new Rotation(new Vector(1, 0, 0, 0), 0)
   );
-  sg.add(transformationNode);
+  const gn1 = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
+  const animation1 = new RotationNode(
+    transformationNode,
+    new Vector(0, 1, 0, 0)
+  );
+  animation1.toggleActive();
+  sg.add(gn1);
+  gn1.add(transformationNode);
 
   transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
 
@@ -153,12 +161,17 @@ window.addEventListener("load", () => {
     far: 100,
   };
 
+  let lastTimestamp = performance.now();
+
   window.requestAnimationFrame(animate);
 
-  function animate() {
+  function animate(timestamp: number) {
+    animation1.simulate(timestamp - lastTimestamp);
     console.log("animate");
     rasterVisitor.renderWithPhong(sg, rasterCamera, [], phongValues);
     rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
+    lastTimestamp = timestamp;
+    window.requestAnimationFrame(animate);
   }
 
   //tastatur eingaben

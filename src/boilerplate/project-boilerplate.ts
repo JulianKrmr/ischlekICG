@@ -270,7 +270,7 @@ window.addEventListener("load", () => {
       node.transform = newTransformation;
     }
 
-    function tranlate(translation: Vector, node: GroupNode) {
+    function translate(translation: Vector, node: GroupNode) {
       let oldMatrix = node.transform.getMatrix();
       let oldMatrixInverse = node.transform.getInverseMatrix();
       let newTransformation = new Translation(translation);
@@ -319,19 +319,18 @@ window.addEventListener("load", () => {
       window.requestAnimationFrame(animate);
     };
 
-  //zu einer methode machen die abhängig vom current context wählen kann?
-  rasterCanvas.addEventListener("mousedown", (event) => {
-    let mx = event.offsetX;
-    let my = event.offsetY;
-    mouseRayVisitor.click(sg, rayCamera, mx, my, rasterContext);
-    animate();
-  });
+    //zu einer methode machen die abhängig vom current context wählen kann?
+    rasterCanvas.addEventListener("mousedown", (event) => {
+      let mx = event.offsetX;
+      let my = event.offsetY;
+      mouseRayVisitor.click(sg, rayCamera, mx, my, rasterContext);
+    });
 
-  rayCanvas.addEventListener("mousedown", (event) => {
-    let mx = event.offsetX;
-    let my = event.offsetY;
-    mouseRayVisitor.click(sg, rayCamera, mx, my, rayContext);
-    animate();
+    rayCanvas.addEventListener("mousedown", (event) => {
+      let mx = event.offsetX;
+      let my = event.offsetY;
+      mouseRayVisitor.click(sg, rayCamera, mx, my, rayContext);
+    });
   });
 });
 

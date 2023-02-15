@@ -143,13 +143,16 @@ window.addEventListener("load", () => {
     rayCanvas.height
   );
 
+  // default render method
+  let renderMode = "raytracing";
+
   modeToggleForm.addEventListener("change", (event: Event) => {
     const input = event.target as HTMLInputElement;
-    mode = input.value;
+    renderMode = input.value;
 
-    console.log("Mode toggled: " + mode);
+    console.log("Mode toggled: " + renderMode);
 
-    if (mode === "rasterization") {
+    if (renderMode === "rasterization") {
       rayCanvas.style.display = "none";
       rasterCanvas.style.display = "block";
     } else {
@@ -181,10 +184,12 @@ window.addEventListener("load", () => {
   window.requestAnimationFrame(animate);
 
   function animate(timestamp: number) {
+    if (renderMode == "rasterization") {
+      rasterVisitor.renderWithPhong(sg, rasterCamera, [], phongValues);
+    } else if (renderMode == "raytracing") {
+      rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
+    }
     //animation1.simulate(timestamp - lastTimestamp);
-
-    rasterVisitor.renderWithPhong(sg, rasterCamera, [], phongValues);
-    rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
 
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);

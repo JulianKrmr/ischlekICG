@@ -39,7 +39,6 @@ window.addEventListener("load", () => {
     "mode--toggle"
   ) as HTMLFormElement;
 
-  let mode: string;
   //scene graph
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,20 +47,9 @@ window.addEventListener("load", () => {
   const transformationNode = new GroupNode(
     new Translation(new Vector(0, 0, -5, 0))
   );
+
   sg.add(transformationNode);
-  transformationNode.add(new SphereNode(new Vector(0.5, 0, 0, 0)));
-
-  const secondTransformationNode = new GroupNode(
-    new Translation(new Vector(0, 0.5, -5.3, 0))
-  );
-  sg.add(secondTransformationNode);
-  secondTransformationNode.add(new PyramidNode(new Vector(0.5, 1, 0, 0)));
-
-  const thirdTransformationNode = new GroupNode(
-    new Translation(new Vector(0, 0.5, -7, 0))
-  );
-  sg.add(thirdTransformationNode);
-  thirdTransformationNode.add(new AABoxNode(new Vector(0, 0, 1, 0)));
+  transformationNode.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster

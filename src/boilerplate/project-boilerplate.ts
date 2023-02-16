@@ -24,7 +24,8 @@ import textureVertexShader from "../shader/texture-vertex-perspective-shader.gls
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 import RasterBox from "../rasterisation/raster-box";
 import { RotationNode } from "../raytracing/animation-nodes";
-import mouserayVisitor from "../raytracing/mouserayVisitor";
+import MouserayVisitor from "../raytracing/mouserayVisitor";
+import AABox from "../objects/aabox";
 
 export default interface PhongValues {
   ambient: number;
@@ -54,7 +55,13 @@ window.addEventListener("load", () => {
     new Translation(new Vector(0, 0.5, -5.3, 0))
   );
   sg.add(secondTransformationNode);
-  secondTransformationNode.add(new SphereNode(new Vector(0.5, 1, 0, 0)));
+  secondTransformationNode.add(new PyramidNode(new Vector(0.5, 1, 0, 0)));
+
+  const thirdTransformationNode = new GroupNode(
+    new Translation(new Vector(0, 0.5, -7, 0))
+  );
+  sg.add(thirdTransformationNode);
+  thirdTransformationNode.add(new AABoxNode(new Vector(0, 0, 1, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -102,7 +109,7 @@ window.addEventListener("load", () => {
 
   let rayContext: CanvasRenderingContext2D = rayCanvas.getContext("2d");
 
-  const mouseRayVisitor = new mouserayVisitor(
+  const mouseRayVisitor = new MouserayVisitor(
     rayCanvas.width,
     rayCanvas.height
   );

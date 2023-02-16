@@ -41,7 +41,7 @@ const UNIT_PYRAMID = new Pyramid(
  * Class representing a Visitor that uses
  * Raytracing to render a Scenegraph
  */
-export default class RayVisitor implements Visitor {
+export default class MouserayVisitor implements Visitor {
   /**
    * The image data of the context to
    * set individual pixels
@@ -59,9 +59,9 @@ export default class RayVisitor implements Visitor {
    * @param width The width of the canvas
    * @param height The height of the canvas
    */
-  constructor(width: number, height: number) {
-    // this.imageData = context.getImageData(0, 0, width, height);
-  }
+
+  //May be used to scale to canvas size, currently useless
+  constructor(width: number, height: number) {}
 
   /**
    * Renders the Scenegraph
@@ -69,6 +69,7 @@ export default class RayVisitor implements Visitor {
    * @param camera The camera used
    * @param lightPositions The light light positions
    */
+  //Is triggered by mouseclick, casts a ray (like in rayvisitor) and selects the closest object
   click(
     rootNode: Node,
     camera: { origin: Vector; width: number; height: number; alpha: number },
@@ -76,10 +77,11 @@ export default class RayVisitor implements Visitor {
     y: number,
     renderingContext: any //bisher useless
   ) {
-    //bisher useless
+    //so far useless, may be used to scale to canvas size
     const width = renderingContext.canvas.width;
     const height = renderingContext.canvas.height;
 
+    //To scale to canvas size, has to be changed if canvas size changes
     y = y / 10;
     x = x / 10;
 
@@ -92,15 +94,20 @@ export default class RayVisitor implements Visitor {
     rootNode.accept(this);
 
     if (this.intersection) {
-      //sortiert nach t
-      //select closest objects color
-      this.objectIntersections.sort((a, b) => a[0].t - b[0].t);
-      console.log(this.objectIntersections);
+      //sorts the intersections by t value in ascending order and selects the closest one
+      this.objectIntersections = this.objectIntersections.sort(
+        (a, b) => a[0].t - b[0].t
+      );
       if (
         this.objectIntersections[0][2] instanceof SphereNode ||
         this.objectIntersections[0][2] instanceof AABoxNode ||
         this.objectIntersections[0][2] instanceof PyramidNode
       ) {
+        //das gibt total schwachsinnige werte für t
+        // console.log(this.objectIntersections[0][0].t);
+        // console.log(this.objectIntersections[1][0].t);
+
+        //Selects the node of the closest intersection
         this.objectIntersections[0][2].color = new Vector(
           Math.random(),
           Math.random(),
@@ -148,6 +155,7 @@ export default class RayVisitor implements Visitor {
   visitTextureBoxNode(node: TextureBoxNode) {}
 
   //interface ray object statt any?
+  //visits a node and checks for intersection, pushes intersection and node to array
   visitNode(node: Node, unitObject: any) {
     const toWorld = this.transformations[this.transformations.length - 1];
     const fromWorld =
@@ -160,6 +168,7 @@ export default class RayVisitor implements Visitor {
     let intersection = unitObject.intersect(ray);
 
     if (intersection) {
+      // console.log(intersection);
       const intersectionPointWorld = toWorld.mulVec(intersection.point);
       const intersectionNormalWorld = toWorld
         .mulVec(intersection.normal)
@@ -169,6 +178,7 @@ export default class RayVisitor implements Visitor {
         intersectionPointWorld,
         intersectionNormalWorld
       );
+      //was macht das?
       if (
         this.intersection === null ||
         intersection.closerThan(this.intersection)

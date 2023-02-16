@@ -88,9 +88,17 @@ export class RasterVisitor implements Visitor {
       this.setupCamera(camera);
     }
     this.passPhongValues(phongValues);
+    this.passLightPositions(lightPositions);
 
     // traverse and render
     rootNode.accept(this);
+  }
+  passLightPositions(lightPositions: Array<Vector>) {
+    const shader = this.shader;
+    shader.use();
+    const L = shader.getUniformVec3Array("LightPositions");
+    L.set(lightPositions);
+    shader.getUniformInt("numberOfLights").set(lightPositions.length);
   }
 
   passPhongValues(phongValues: PhongValues) {

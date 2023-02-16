@@ -1,3 +1,6 @@
+import Intersection from "../math/intersection";
+import Plane from "../math/plane";
+import Ray from "../math/ray";
 import Vector from "../math/vector";
 import Shader from "../shader/shader";
 
@@ -19,6 +22,8 @@ export default class RasterBox {
    * The amount of indices
    */
   elements: number;
+  vertices: Array<number>;
+  indices: Array<number>;
 
   /**
    * Creates all WebGL buffers for the box
@@ -69,6 +74,8 @@ export default class RasterBox {
       ma.y,
       mi.z,
     ];
+    this.vertices = vertices;
+
     let indices = [
       // front
       0, 1, 2, 2, 3, 0,
@@ -83,6 +90,7 @@ export default class RasterBox {
       // bottom
       5, 4, 1, 1, 0, 5,
     ];
+    this.indices = indices;
 
     let colors = [
       //black

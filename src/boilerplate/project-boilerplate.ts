@@ -24,6 +24,8 @@ import textureVertexShader from "../shader/texture-vertex-perspective-shader.gls
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 import RasterBox from "../rasterisation/raster-box";
 import { RotationNode } from "../raytracing/animation-nodes";
+import MouserayVisitor from "../raytracing/mouserayVisitor";
+import AABox from "../objects/aabox";
 
 export default interface PhongValues {
   ambient: number;
@@ -39,59 +41,27 @@ window.addEventListener("load", () => {
 
   let mode: string;
   //scene graph
-  ////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
-  // let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
-  // let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
-  // let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
-  // let gnRotationZ = new Rotation(new Vector(0, 0, 1, 0), 0);
-
-  // let gnScaling = new Scaling(new Vector(1, 1, 1, 0));
-  // const gn1 = new GroupNode(gnTranslation);
-  // const gn2 = new GroupNode(gnRotationX);
-  // const gn3 = new GroupNode(gnRotationY);
-  // const gn4 = new GroupNode(gnRotationZ);
-
-  // const gn5 = new GroupNode(gnScaling);
-  // sg.add(gn1);
-  // gn1.add(gn2);
-  // gn2.add(gn3);
-  // gn3.add(gn4);
-
-  // gn4.add(gn5);
-  // gn5.add(new PyramidNode(new Vector(0.5, 0, 0, 0)));
-
-  // Root node and transformation
   const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
+
   const transformationNode = new GroupNode(
     new Translation(new Vector(0, 0, -5, 0))
   );
   sg.add(transformationNode);
   transformationNode.add(new SphereNode(new Vector(0.5, 0, 0, 0)));
 
-  // const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
-  // let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
-  // let gnRotationX = new Rotation(new Vector(1, 0, 0, 0), 0);
-  // let gnRotationY = new Rotation(new Vector(0, 1, 0, 0), 0);
-  // let gnRotationZ = new Rotation(new Vector(0, 0, 1, 0), 0);
+  const secondTransformationNode = new GroupNode(
+    new Translation(new Vector(0, 0.5, -5.3, 0))
+  );
+  sg.add(secondTransformationNode);
+  secondTransformationNode.add(new PyramidNode(new Vector(0.5, 1, 0, 0)));
 
-  // let gnScaling = new Scaling(new Vector(1, 1, 1, 0));
-  // const gn1 = new GroupNode(gnTranslation);
-  // const gn2 = new GroupNode(gnRotationX);
-  // const gn3 = new GroupNode(gnRotationY);
-  // const gn4 = new GroupNode(gnRotationZ);
-
-  // const gn5 = new GroupNode(gnScaling);
-  // sg.add(gn1);
-  // gn1.add(gn2);
-  // gn2.add(gn3);
-  // gn3.add(gn4);
-
-  // gn4.add(gn5);
-  // gn5.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
-
-  //transformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
+  const thirdTransformationNode = new GroupNode(
+    new Translation(new Vector(0, 0.5, -7, 0))
+  );
+  sg.add(thirdTransformationNode);
+  thirdTransformationNode.add(new AABoxNode(new Vector(0, 0, 1, 0)));
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -101,6 +71,7 @@ window.addEventListener("load", () => {
 
   const rasterContext: WebGL2RenderingContext =
     rasterCanvas.getContext("webgl2");
+  // console.log(rasterContext); //ist 1000?!?!?!?! nicht 800
   const setupVisitor = new RasterSetupVisitor(rasterContext);
   setupVisitor.setup(sg);
 
@@ -137,6 +108,12 @@ window.addEventListener("load", () => {
   };
 
   let rayContext: CanvasRenderingContext2D = rayCanvas.getContext("2d");
+
+  const mouseRayVisitor = new MouserayVisitor(
+    rayCanvas.width,
+    rayCanvas.height
+  );
+
   const rayVisitor = new RayVisitor(
     rayContext,
     rayCanvas.width,
@@ -210,22 +187,22 @@ window.addEventListener("load", () => {
   window.addEventListener("keydown", function (event) {
     switch (event.key) {
       case "w": //hoch
-        tranlate(new Vector(0, translationSize, 0, 0), transformationNode);
+        translate(new Vector(0, translationSize, 0, 0), transformationNode);
         break;
       case "s": //runter
-        tranlate(new Vector(0, -translationSize, 0, 0), transformationNode);
+        translate(new Vector(0, -translationSize, 0, 0), transformationNode);
         break;
       case "a": //links
-        tranlate(new Vector(-translationSize, 0, 0, 0), transformationNode);
+        translate(new Vector(-translationSize, 0, 0, 0), transformationNode);
         break;
       case "d": //rechts
-        tranlate(new Vector(translationSize, 0, 0, 0), transformationNode);
+        translate(new Vector(translationSize, 0, 0, 0), transformationNode);
         break;
       case "e": //vor
-        tranlate(new Vector(0, 0, translationSize, 0), transformationNode);
+        translate(new Vector(0, 0, translationSize, 0), transformationNode);
         break;
       case "q": //zurück
-        tranlate(new Vector(0, 0, -translationSize, 0), transformationNode);
+        translate(new Vector(0, 0, -translationSize, 0), transformationNode);
         break;
       case "x": //um x achse rotieren
         rotate(new Vector(1, 0, 0, 0), rotationAmount, transformationNode);
@@ -267,7 +244,7 @@ window.addEventListener("load", () => {
       node.transform = newTransformation;
     }
 
-    function tranlate(translation: Vector, node: GroupNode) {
+    function translate(translation: Vector, node: GroupNode) {
       let oldMatrix = node.transform.getMatrix();
       let oldMatrixInverse = node.transform.getInverseMatrix();
       let newTransformation = new Translation(translation);
@@ -316,15 +293,20 @@ window.addEventListener("load", () => {
       window.requestAnimationFrame(animate);
     };
 
-    //TODO noch für raytracer
+    //zu einer methode machen die abhängig vom current context wählen kann?
     rasterCanvas.addEventListener("mousedown", (event) => {
       let mx = event.offsetX;
       let my = event.offsetY;
-      // rasterVisitor.castRayFromMouse(mx, my);
+      mouseRayVisitor.click(sg, rayCamera, mx, my, rasterContext);
+    });
+
+    rayCanvas.addEventListener("mousedown", (event) => {
+      let mx = event.offsetX;
+      let my = event.offsetY;
+      mouseRayVisitor.click(sg, rayCamera, mx, my, rayContext);
     });
   });
 });
 
 //TODO
 //rotation fixen bei pyramid
-//performacne optimieren

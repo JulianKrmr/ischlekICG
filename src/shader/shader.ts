@@ -1,5 +1,5 @@
-import Matrix from '../math/matrix';
-import Vector from '../math/vector';
+import Matrix from "../math/matrix";
+import Vector from "../math/vector";
 
 // Refer to https://developer.mozilla.org/de/docs/Web/API/WebGL_API/Tutorial/Hinzuf%C3%BCgen_von_2D_Inhalten_in_einen_WebGL-Kontext
 /**
@@ -21,13 +21,21 @@ export default class Shader {
   constructor(
     private gl: WebGL2RenderingContext,
     private vertexShaderSource: string,
-    private fragmentShaderSource: string) {
-  }
+    private fragmentShaderSource: string
+  ) {}
 
   load() {
     const gl = this.gl;
-    const vertexShader = this.getShader(gl, this.vertexShaderSource, gl.VERTEX_SHADER);
-    const fragmentShader = this.getShader(gl, this.fragmentShaderSource, gl.FRAGMENT_SHADER);
+    const vertexShader = this.getShader(
+      gl,
+      this.vertexShaderSource,
+      gl.VERTEX_SHADER
+    );
+    const fragmentShader = this.getShader(
+      gl,
+      this.fragmentShaderSource,
+      gl.FRAGMENT_SHADER
+    );
 
     // Create the shader program
     this.shaderProgram = gl.createProgram();
@@ -37,8 +45,10 @@ export default class Shader {
 
     // If creating the shader program failed, alert
     if (!gl.getProgramParameter(this.shaderProgram, gl.LINK_STATUS)) {
-      alert("Unable to initialize the shader program: " +
-        gl.getProgramInfoLog(this.shaderProgram));
+      alert(
+        "Unable to initialize the shader program: " +
+          gl.getProgramInfoLog(this.shaderProgram)
+      );
     }
   }
 
@@ -69,7 +79,11 @@ export default class Shader {
    * @param source The source code
    * @return The resulting shader part
    */
-  getShader(gl: WebGL2RenderingContext, source: string, type: number): WebGLShader {
+  getShader(
+    gl: WebGL2RenderingContext,
+    source: string,
+    type: number
+  ): WebGLShader {
     const shader = gl.createShader(type);
     // Send the source to the shader object
     gl.shaderSource(shader, source);
@@ -78,7 +92,10 @@ export default class Shader {
 
     // See if it compiled successfully
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      alert("An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader));
+      alert(
+        "An error occurred compiling the shaders: " +
+          gl.getShaderInfoLog(shader)
+      );
       return null;
     }
     return shader;
@@ -90,7 +107,8 @@ export default class Shader {
    * @return The resulting object
    */
   getUniformMatrix(name: string): UniformMatrix {
-    return new UniformMatrix(this.gl,
+    return new UniformMatrix(
+      this.gl,
       this.gl.getUniformLocation(this.shaderProgram, name)
     );
   }
@@ -101,7 +119,15 @@ export default class Shader {
    * @return The resulting object
    */
   getUniformVec3(name: string): UniformVec3 {
-    return new UniformVec3(this.gl,
+    return new UniformVec3(
+      this.gl,
+      this.gl.getUniformLocation(this.shaderProgram, name)
+    );
+  }
+
+  getUniformVec3Array(name: string): UniformVec3Array {
+    return new UniformVec3Array(
+      this.gl,
       this.gl.getUniformLocation(this.shaderProgram, name)
     );
   }
@@ -112,7 +138,8 @@ export default class Shader {
    * @return The resulting object
    */
   getUniformFloat(name: string): UniformFloat {
-    return new UniformFloat(this.gl,
+    return new UniformFloat(
+      this.gl,
       this.gl.getUniformLocation(this.shaderProgram, name)
     );
   }
@@ -123,7 +150,8 @@ export default class Shader {
    * @return The resulting object
    */
   getUniformInt(name: string): UniformInt {
-    return new UniformInt(this.gl,
+    return new UniformInt(
+      this.gl,
       this.gl.getUniformLocation(this.shaderProgram, name)
     );
   }
@@ -137,17 +165,14 @@ class UniformMatrix {
   constructor(
     private gl: WebGL2RenderingContext,
     private position: WebGLUniformLocation
-  ) { }
+  ) {}
 
   /**
    * Sends the given matrix to the GPU
    * @param matrix The matrix to send
    */
   set(matrix: Matrix) {
-    this.gl.uniformMatrix4fv(
-      this.position,
-      false,
-      matrix.data);
+    this.gl.uniformMatrix4fv(this.position, false, matrix.data);
   }
 }
 
@@ -159,16 +184,32 @@ class UniformVec3 {
   constructor(
     private gl: WebGL2RenderingContext,
     private position: WebGLUniformLocation
-  ) { }
+  ) {}
 
   /**
    * Sends the given vector to the GPU as 3dimensional vector
    * @param vec The vector to send
    */
   set(vec: Vector) {
-    this.gl.uniform3f(
-      this.position, vec.x, vec.y, vec.z
-    );
+    this.gl.uniform3f(this.position, vec.x, vec.y, vec.z);
+  }
+}
+class UniformVec3Array {
+  constructor(
+    private gl: WebGL2RenderingContext,
+    private position: WebGLUniformLocation
+  ) {}
+
+  /**
+   * Sends the given vector to the GPU as 3dimensional vector
+   * @param vecs input Vector array
+   */
+  set(vecs: Vector[]) {
+    const vecNumbers = [];
+    for (let vec of vecs) {
+      vecNumbers.push(...[vec.x, vec.y, vec.z]);
+    }
+    this.gl.uniform3fv(this.position, vecNumbers);
   }
 }
 
@@ -180,7 +221,7 @@ class UniformFloat {
   constructor(
     private gl: WebGL2RenderingContext,
     private position: WebGLUniformLocation
-  ) { }
+  ) {}
 
   /**
    * Sends the given float value to the GPU
@@ -199,7 +240,7 @@ class UniformInt {
   constructor(
     private gl: WebGL2RenderingContext,
     private position: WebGLUniformLocation
-  ) { }
+  ) {}
 
   /**
    * Sends the given int value to the GPU

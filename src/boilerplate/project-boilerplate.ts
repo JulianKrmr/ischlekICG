@@ -68,7 +68,7 @@ window.addEventListener("load", () => {
     new Translation(new Vector(0, 0, -5, 0))
   );
   sg.add(transformationNode);
-  transformationNode.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
+  transformationNode.add(new SphereNode(new Vector(0.5, 0, 0, 0)));
 
   // const sg = new GroupNode(new Translation(new Vector(0, 0, -5, 0)));
   // let gnTranslation = new Translation(new Vector(0, 0, 0, 0));
@@ -161,7 +161,7 @@ window.addEventListener("load", () => {
     }
   });
 
-  const lightPositions = [new Vector(1, 1, -1, 1)];
+  const lightPositions = [new Vector(1, 1, -1, 1), new Vector(5, 10, -1, 5)];
   const rayCamera = {
     origin: new Vector(0, 0, 0, 1),
     width: rayCanvas.width,
@@ -185,7 +185,12 @@ window.addEventListener("load", () => {
 
   function animate(timestamp: number) {
     if (renderMode == "rasterization") {
-      rasterVisitor.renderWithPhong(sg, rasterCamera, [], phongValues);
+      rasterVisitor.renderWithPhong(
+        sg,
+        rasterCamera,
+        lightPositions,
+        phongValues
+      );
     } else if (renderMode == "raytracing") {
       rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
     }

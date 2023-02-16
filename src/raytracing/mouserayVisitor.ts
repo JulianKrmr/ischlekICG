@@ -136,116 +136,156 @@ export default class RayVisitor implements Visitor {
     this.inverseTransformations.pop();
   }
 
-  /**
-   * Visits a sphere node
-   * @param node - The node to visit
-   */
-  visitSphereNode(node: SphereNode) {
-    const toWorld = this.transformations[this.transformations.length - 1];
-    const fromWorld =
-      this.inverseTransformations[this.inverseTransformations.length - 1];
-
-    const ray = new Ray(
-      fromWorld.mulVec(this.ray.origin),
-      fromWorld.mulVec(this.ray.direction).normalize()
-    );
-    let intersection = UNIT_SPHERE.intersect(ray);
-
-    if (intersection) {
-      const intersectionPointWorld = toWorld.mulVec(intersection.point);
-      const intersectionNormalWorld = toWorld
-        .mulVec(intersection.normal)
-        .normalize();
-      intersection = new Intersection(
-        (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
-        intersectionPointWorld,
-        intersectionNormalWorld
-      );
-      if (
-        this.intersection === null ||
-        intersection.closerThan(this.intersection)
-      ) {
-        this.intersection = intersection;
-      }
-      this.objectIntersections.push([intersection, ray, node]);
-    }
+  visitSphereNode(node: SphereNode): void {
+    this.visitNode(node, UNIT_SPHERE);
   }
-
-  /**
-   * Visits an axis aligned box node
-   * @param node The node to visit
-   */
-  visitAABoxNode(node: AABoxNode) {
-    const toWorld = this.transformations[this.transformations.length - 1];
-    const fromWorld =
-      this.inverseTransformations[this.inverseTransformations.length - 1];
-
-    const ray = new Ray(
-      fromWorld.mulVec(this.ray.origin),
-      fromWorld.mulVec(this.ray.direction).normalize()
-    );
-    let intersection = UNIT_AABOX.intersect(ray);
-
-    if (intersection) {
-      const intersectionPointWorld = toWorld.mulVec(intersection.point);
-      const intersectionNormalWorld = toWorld
-        .mulVec(intersection.normal)
-        .normalize();
-      intersection = new Intersection(
-        (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
-        intersectionPointWorld,
-        intersectionNormalWorld
-      );
-      if (
-        this.intersection === null ||
-        intersection.closerThan(this.intersection)
-      ) {
-        this.intersection = intersection;
-      }
-      this.objectIntersections.push([intersection, ray, node]);
-    }
+  visitPyramidNode(node: PyramidNode): void {
+    this.visitNode(node, UNIT_PYRAMID);
   }
-
-  /**
-   * Visits an axis aligned box node
-   * @param node The node to visit
-   */
-  visitPyramidNode(node: PyramidNode) {
-    const toWorld = this.transformations[this.transformations.length - 1];
-    const fromWorld =
-      this.inverseTransformations[this.inverseTransformations.length - 1];
-
-    const ray = new Ray(
-      fromWorld.mulVec(this.ray.origin),
-      fromWorld.mulVec(this.ray.direction).normalize()
-    );
-    let intersection = UNIT_PYRAMID.intersect(ray);
-
-    if (intersection) {
-      const intersectionPointWorld = toWorld.mulVec(intersection.point);
-      const intersectionNormalWorld = toWorld
-        .mulVec(intersection.normal)
-        .normalize();
-      intersection = new Intersection(
-        (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
-        intersectionPointWorld,
-        intersectionNormalWorld
-      );
-      if (
-        this.intersection === null ||
-        intersection.closerThan(this.intersection)
-      ) {
-        this.intersection = intersection;
-      }
-      this.objectIntersections.push([intersection, ray, node]);
-    }
+  visitAABoxNode(node: AABoxNode): void {
+    this.visitNode(node, UNIT_AABOX);
   }
-
-  /**
-   * Visits a textured box node
-   * @param node The node to visit
-   */
   visitTextureBoxNode(node: TextureBoxNode) {}
+
+  //interface ray object statt any?
+  visitNode(node: Node, unitObject: any) {
+    const toWorld = this.transformations[this.transformations.length - 1];
+    const fromWorld =
+      this.inverseTransformations[this.inverseTransformations.length - 1];
+
+    const ray = new Ray(
+      fromWorld.mulVec(this.ray.origin),
+      fromWorld.mulVec(this.ray.direction).normalize()
+    );
+    let intersection = unitObject.intersect(ray);
+
+    if (intersection) {
+      const intersectionPointWorld = toWorld.mulVec(intersection.point);
+      const intersectionNormalWorld = toWorld
+        .mulVec(intersection.normal)
+        .normalize();
+      intersection = new Intersection(
+        (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
+        intersectionPointWorld,
+        intersectionNormalWorld
+      );
+      if (
+        this.intersection === null ||
+        intersection.closerThan(this.intersection)
+      ) {
+        this.intersection = intersection;
+      }
+      this.objectIntersections.push([intersection, ray, node]);
+    }
+  }
 }
 
-//TODO code cleanen
+/**
+ * Visits a sphere node
+ * @param node - The node to visit
+ */
+// visitSphereNode(node: SphereNode) {
+//   const toWorld = this.transformations[this.transformations.length - 1];
+//   const fromWorld =
+//     this.inverseTransformations[this.inverseTransformations.length - 1];
+
+//   const ray = new Ray(
+//     fromWorld.mulVec(this.ray.origin),
+//     fromWorld.mulVec(this.ray.direction).normalize()
+//   );
+//   let intersection = UNIT_SPHERE.intersect(ray);
+
+//   if (intersection) {
+//     const intersectionPointWorld = toWorld.mulVec(intersection.point);
+//     const intersectionNormalWorld = toWorld
+//       .mulVec(intersection.normal)
+//       .normalize();
+//     intersection = new Intersection(
+//       (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
+//       intersectionPointWorld,
+//       intersectionNormalWorld
+//     );
+//     if (
+//       this.intersection === null ||
+//       intersection.closerThan(this.intersection)
+//     ) {
+//       this.intersection = intersection;
+//     }
+//     this.objectIntersections.push([intersection, ray, node]);
+//   }
+// }
+
+// /**
+//  * Visits an axis aligned box node
+//  * @param node The node to visit
+//  */
+// visitAABoxNode(node: AABoxNode) {
+//   const toWorld = this.transformations[this.transformations.length - 1];
+//   const fromWorld =
+//     this.inverseTransformations[this.inverseTransformations.length - 1];
+
+//   const ray = new Ray(
+//     fromWorld.mulVec(this.ray.origin),
+//     fromWorld.mulVec(this.ray.direction).normalize()
+//   );
+//   let intersection = UNIT_AABOX.intersect(ray);
+
+//   if (intersection) {
+//     const intersectionPointWorld = toWorld.mulVec(intersection.point);
+//     const intersectionNormalWorld = toWorld
+//       .mulVec(intersection.normal)
+//       .normalize();
+//     intersection = new Intersection(
+//       (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
+//       intersectionPointWorld,
+//       intersectionNormalWorld
+//     );
+//     if (
+//       this.intersection === null ||
+//       intersection.closerThan(this.intersection)
+//     ) {
+//       this.intersection = intersection;
+//     }
+//     this.objectIntersections.push([intersection, ray, node]);
+//   }
+// }
+
+// /**
+//  * Visits an axis aligned box node
+//  * @param node The node to visit
+//  */
+// visitPyramidNode(node: PyramidNode) {
+//   const toWorld = this.transformations[this.transformations.length - 1];
+//   const fromWorld =
+//     this.inverseTransformations[this.inverseTransformations.length - 1];
+
+//   const ray = new Ray(
+//     fromWorld.mulVec(this.ray.origin),
+//     fromWorld.mulVec(this.ray.direction).normalize()
+//   );
+//   let intersection = UNIT_PYRAMID.intersect(ray);
+
+//   if (intersection) {
+//     const intersectionPointWorld = toWorld.mulVec(intersection.point);
+//     const intersectionNormalWorld = toWorld
+//       .mulVec(intersection.normal)
+//       .normalize();
+//     intersection = new Intersection(
+//       (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
+//       intersectionPointWorld,
+//       intersectionNormalWorld
+//     );
+//     if (
+//       this.intersection === null ||
+//       intersection.closerThan(this.intersection)
+//     ) {
+//       this.intersection = intersection;
+//     }
+//     this.objectIntersections.push([intersection, ray, node]);
+//   }
+// }
+
+/**
+ * Visits a textured box node
+ * @param node The node to visit
+ */

@@ -39,7 +39,6 @@ window.addEventListener("load", () => {
     "mode--toggle"
   ) as HTMLFormElement;
 
-  let mode: string;
   //scene graph
   ///////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -12,10 +12,11 @@ export default class RasterBox {
    * The buffer containing the box's vertices
    */
   vertexBuffer: WebGLBuffer;
+
+  normalBuffer: WebGLBuffer;
   /**
    * The indices describing which vertices form a triangle
    */
-  indexBuffer: WebGLBuffer;
   // TODO private variable for color buffer
   colorBuffer: WebGLBuffer;
   /**
@@ -23,7 +24,6 @@ export default class RasterBox {
    */
   elements: number;
   vertices: Array<number>;
-  indices: Array<number>;
 
   /**
    * Creates all WebGL buffers for the box
@@ -49,74 +49,84 @@ export default class RasterBox {
     const mi = minPoint;
     const ma = maxPoint;
     let vertices = [
-      mi.x,
-      mi.y,
-      ma.z,
-      ma.x,
-      mi.y,
-      ma.z,
-      ma.x,
-      ma.y,
-      ma.z,
-      mi.x,
-      ma.y,
-      ma.z,
-      ma.x,
-      mi.y,
-      mi.z,
-      mi.x,
-      mi.y,
-      mi.z,
-      mi.x,
-      ma.y,
-      mi.z,
-      ma.x,
-      ma.y,
-      mi.z,
-    ];
+      // front
+      mi.x, mi.y, ma.z,
+      ma.x, mi.y, ma.z,
+      ma.x, ma.y, ma.z,
+      ma.x, ma.y, ma.z,
+      mi.x, ma.y, ma.z,
+      mi.x, mi.y, ma.z,
+      // back
+      ma.x, mi.y, mi.z,
+      mi.x, mi.y, mi.z,
+      mi.x, ma.y, mi.z,
+      mi.x, ma.y, mi.z,
+      ma.x, ma.y, mi.z,
+      ma.x, mi.y, mi.z,
+      // right
+      ma.x, mi.y, ma.z,
+      ma.x, mi.y, mi.z,
+      ma.x, ma.y, mi.z,
+      ma.x, ma.y, mi.z,
+      ma.x, ma.y, ma.z,
+      ma.x, mi.y, ma.z,
+      // top
+      mi.x, ma.y, ma.z,
+      ma.x, ma.y, ma.z,
+      ma.x, ma.y, mi.z,
+      ma.x, ma.y, mi.z,
+      mi.x, ma.y, mi.z,
+      mi.x, ma.y, ma.z,
+      // left
+      mi.x, mi.y, mi.z,
+      mi.x, mi.y, ma.z,
+      mi.x, ma.y, ma.z,
+      mi.x, ma.y, ma.z,
+      mi.x, ma.y, mi.z,
+      mi.x, mi.y, mi.z,
+      // bottom
+      mi.x, mi.y, mi.z,
+      ma.x, mi.y, mi.z,
+      ma.x, mi.y, ma.z,
+      ma.x, mi.y, ma.z,
+      mi.x, mi.y, ma.z,
+      mi.x, mi.y, mi.z
+  ];
+
     this.vertices = vertices;
 
-    let indices = [
-      // front
-      0, 1, 2, 2, 3, 0,
-      // back
-      4, 5, 6, 6, 7, 4,
-      // right
-      1, 4, 7, 7, 2, 1,
-      // top
-      3, 2, 7, 7, 6, 3,
-      // left
-      5, 0, 3, 3, 6, 5,
-      // bottom
-      5, 4, 1, 1, 0, 5,
-    ];
-    this.indices = indices;
 
-    let colors = [
-      //black
-      0, 0, 0,
-      //white
-      1, 1, 1,
-      //yellow
-      1, 1, 0,
-      //cyan
-      0, 1, 1,
-      //black
-      0, 0, 0,
-      //white
-      1, 1, 1,
-      //yellow
-      1, 1, 0,
-      //cyan
-      0, 1, 1,
+
+    let normals = [
+      // Front
+      0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+      0.0, 0.0, 1.0,
+
+      // Back
+      0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0,
+      -1.0, 0.0, 0.0, -1.0,
+
+      // Right
+      1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+      1.0, 0.0, 0.0,
+
+      // Top
+      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+      0.0, 1.0, 0.0,
+
+      // Left
+      -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0,
+      0.0, -1.0, 0.0, 0.0,
+
+      // Bottom
+      0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0,
+      0.0, 0.0, -1.0, 0.0,
     ];
 
-    if (color.r != 1) {
-      console.log(color);
-      colors = [];
-      for (let i = 0; i < vertices.length / 3; i++) {
-        colors.push(color.r, color.g, color.b);
-      }
+    this.elements = vertices.length / 3;
+    const colors = []
+    for (let i = 0; i < this.elements; i++) {
+        colors.push(...[color.x, color.y, color.z])
     }
 
     const vertexBuffer = gl.createBuffer();
@@ -124,16 +134,14 @@ export default class RasterBox {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     this.vertexBuffer = vertexBuffer;
 
-    const indexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(
-      gl.ELEMENT_ARRAY_BUFFER,
-      new Uint16Array(indices),
-      gl.STATIC_DRAW
+    const normalBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, normalBuffer);
+    this.gl.bufferData(
+      this.gl.ARRAY_BUFFER,
+      new Float32Array(normals),
+      this.gl.STATIC_DRAW
     );
-    this.indexBuffer = indexBuffer;
-
-    this.elements = indices.length;
+    this.normalBuffer = normalBuffer;
 
     const colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
@@ -163,15 +171,15 @@ export default class RasterBox {
     this.gl.enableVertexAttribArray(colorLocation);
     this.gl.vertexAttribPointer(colorLocation, 3, this.gl.FLOAT, false, 0, 0);
 
-    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-    this.gl.drawElements(
-      this.gl.TRIANGLES,
-      this.elements,
-      this.gl.UNSIGNED_SHORT,
-      0
-    );
+    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.normalBuffer);
+    const normalLocation = shader.getAttributeLocation("a_normal");
+    this.gl.enableVertexAttribArray(normalLocation);
+    this.gl.vertexAttribPointer(normalLocation, 3, this.gl.FLOAT, false, 0, 0);
+
+    this.gl.drawArrays(this.gl.TRIANGLES, 0, this.elements);
 
     this.gl.disableVertexAttribArray(positionLocation);
     this.gl.disableVertexAttribArray(colorLocation);
+    this.gl.disableVertexAttribArray(normalLocation);
   }
 }

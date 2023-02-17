@@ -1,7 +1,8 @@
 import Vector from "../math/vector";
 import { GroupNode } from "../nodes";
-import { Rotation, SQT } from "../math/transformation";
+import { Rotation, SQT, Translation } from "../math/transformation";
 import Quaternion from "../math/quaternion";
+import { translate } from "../boilerplate/project-boilerplate";
 
 /**
  * Class representing an Animation
@@ -59,9 +60,7 @@ export class RotationNode extends AnimationNode {
    */
   simulate(deltaT: number) {
     if (this.active) {
-
       this.angle = Math.PI * 4;
-
       const matrix = this.groupNode.transform.getMatrix();
       const inverse = this.groupNode.transform.getInverseMatrix();
       let rotation = new Rotation(this.axis, 0.0001 * this.angle * deltaT);
@@ -114,6 +113,49 @@ export class SlerpNode extends AnimationNode {
         (Math.sin(this.t) + 1) / 2
       );
       (this.groupNode.transform as SQT).rotation = rot;
+    }
+  }
+}
+/**
+ * Class representing a Jumping Animation
+ * @extends AnimationNode
+ */
+export class JumperNode extends AnimationNode {
+  distanceToGoal: number; //wie weit soll er springen
+  speed: number; //wie schnell soll er springen??? vlt weg lassen
+  direction: Vector;
+  up: boolean = true;
+  distanceCovered: number = 0;
+
+  constructor(groupNode: GroupNode, direction: Vector, speed?: number) {
+    super(groupNode);
+    this.distanceToGoal = direction.length;
+    this.direction = direction;
+    if (speed) {
+      this.speed = speed;
+    } else {
+      this.speed = 0.001;
+    }
+  }
+
+  simulate(deltaT: number) {
+    if (this.active) {
+      if (this.up) {
+        //wenn up true ist, wird die translate methode ausgeführt, aber für speed * deltaT
+        //und distanceCovered wird immer erhöht, um zu schauen wann man im Ziel ist
+        translate(this.direction.mul(this.speed * deltaT), this.groupNode); //warum geht das nicht mit speed?
+        this.distanceCovered += this.direction.mul(this.speed).length * deltaT; //ist das richtig?
+        if (this.distanceCovered >= this.distanceToGoal) {
+          this.up = false;
+        }
+      } else {
+        //wenn up false ist, wird die translate methode ausgeführt, aber für -1 * speed * deltaT, um rückwärts zu laufen
+        translate(this.direction.mul(-1 * this.speed * deltaT), this.groupNode);
+        this.distanceCovered -= this.direction.mul(this.speed).length * deltaT; //ist das richtig?
+        if (this.distanceCovered <= 0) {
+          this.active = false; // macht den node im moment einfach aus, may need to change
+        }
+      }
     }
   }
 }

@@ -103,7 +103,9 @@ export default class RayVisitor implements Visitor {
         if (this.intersection) {
           //If the ray intersects with more than one object, sort the intersections by t-value and select the closest one
           if (this.objectIntersections.length > 1) {
-            this.objectIntersections.sort((a, b) => a[0].t - b[0].t);
+            this.objectIntersections = this.objectIntersections.sort(
+              (a, b) => a[0].t - b[0].t
+            );
             if (
               this.objectIntersections[0][2] instanceof SphereNode ||
               this.objectIntersections[0][2] instanceof AABoxNode ||

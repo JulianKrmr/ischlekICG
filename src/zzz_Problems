@@ -1,7 +1,9 @@
-bei 25, 25 collision bei beiden objekten
+Pyramide geht weder zu rotieren noch zu phongFragmentShader
+
+Klickbarkeit ist nur so halb richtig
+
+Rotierbarkeit im raytracing geht nicht
 
 
-Object intersections [] ist leer
-nach jeder collision hinzufügen
 
-sortierte liste an intersections
+

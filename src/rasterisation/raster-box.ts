@@ -49,157 +49,90 @@ export default class RasterBox {
     const mi = minPoint;
     const ma = maxPoint;
     let vertices = [
-      // 6*6 = 36 vertices because every side needs 6 vertices (2 triangles)
+      // front
+      mi.x, mi.y, ma.z,
+      ma.x, mi.y, ma.z,
+      ma.x, ma.y, ma.z,
+      ma.x, ma.y, ma.z,
+      mi.x, ma.y, ma.z,
+      mi.x, mi.y, ma.z,
+      // back
+      ma.x, mi.y, mi.z,
+      mi.x, mi.y, mi.z,
+      mi.x, ma.y, mi.z,
+      mi.x, ma.y, mi.z,
+      ma.x, ma.y, mi.z,
+      ma.x, mi.y, mi.z,
+      // right
+      ma.x, mi.y, ma.z,
+      ma.x, mi.y, mi.z,
+      ma.x, ma.y, mi.z,
+      ma.x, ma.y, mi.z,
+      ma.x, ma.y, ma.z,
+      ma.x, mi.y, ma.z,
+      // top
+      mi.x, ma.y, ma.z,
+      ma.x, ma.y, ma.z,
+      ma.x, ma.y, mi.z,
+      ma.x, ma.y, mi.z,
+      mi.x, ma.y, mi.z,
+      mi.x, ma.y, ma.z,
+      // left
+      mi.x, mi.y, mi.z,
+      mi.x, mi.y, ma.z,
+      mi.x, ma.y, ma.z,
+      mi.x, ma.y, ma.z,
+      mi.x, ma.y, mi.z,
+      mi.x, mi.y, mi.z,
+      // bottom
+      mi.x, mi.y, mi.z,
+      ma.x, mi.y, mi.z,
+      ma.x, mi.y, ma.z,
+      ma.x, mi.y, ma.z,
+      mi.x, mi.y, ma.z,
+      mi.x, mi.y, mi.z
+  ];
 
-      // front 012 023
-      mi.x,
-      mi.y,
-      ma.z, // 0
-      ma.x,
-      mi.y,
-      ma.z, // 1
-      ma.x,
-      ma.y,
-      ma.z, // 2
-      mi.x,
-      mi.y,
-      ma.z, // 0
-      ma.x,
-      ma.y,
-      ma.z, // 2
-      mi.x,
-      ma.y,
-      ma.z, // 3
-
-      // back 456 467
-      ma.x,
-      mi.y,
-      mi.z,
-      mi.x,
-      mi.y,
-      mi.z,
-      mi.x,
-      ma.y,
-      mi.z,
-      ma.x,
-      mi.y,
-      mi.z,
-      mi.x,
-      ma.y,
-      mi.z,
-      ma.x,
-      ma.y,
-      mi.z,
-
-      // right 147 172
-      ma.x,
-      mi.y,
-      ma.z,
-      ma.x,
-      mi.y,
-      mi.z,
-      ma.x,
-      ma.y,
-      mi.z,
-      ma.x,
-      mi.y,
-      ma.z,
-      ma.x,
-      ma.y,
-      mi.z,
-      ma.x,
-      ma.y,
-      ma.z,
-
-      // bottom 541 510
-      mi.x,
-      mi.y,
-      mi.z,
-      ma.x,
-      mi.y,
-      mi.z,
-      ma.x,
-      mi.y,
-      ma.z,
-      mi.x,
-      mi.y,
-      mi.z,
-      ma.x,
-      mi.y,
-      ma.z,
-      mi.x,
-      mi.y,
-      ma.z,
-
-      // top 327 375
-      mi.x,
-      ma.y,
-      ma.z,
-      ma.x,
-      ma.y,
-      ma.z,
-      ma.x,
-      ma.y,
-      mi.z,
-      mi.x,
-      ma.y,
-      ma.z,
-      ma.x,
-      ma.y,
-      mi.z,
-      mi.x,
-      ma.y,
-      mi.z,
-
-      // left 503 536
-      mi.x,
-      mi.y,
-      mi.z,
-      mi.x,
-      mi.y,
-      ma.z,
-      mi.x,
-      ma.y,
-      ma.z,
-      mi.x,
-      mi.y,
-      mi.z,
-      mi.x,
-      ma.y,
-      ma.z,
-      mi.x,
-      ma.y,
-      mi.z,
-    ];
     this.vertices = vertices;
 
-    let colors = this.createColorArray(color);
+
 
     let normals = [
-      // facing front
-      0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+      // Front
+      0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+      0.0, 0.0, 1.0,
 
-      // facing back
-      0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
+      // Back
+      0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0,
+      -1.0, 0.0, 0.0, -1.0,
 
-      // facing right
-      1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+      // Right
+      1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+      1.0, 0.0, 0.0,
 
-      // facing bottom
-      0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
+      // Top
+      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+      0.0, 1.0, 0.0,
 
-      // facing top
-      0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+      // Left
+      -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0,
+      0.0, -1.0, 0.0, 0.0,
 
-      // facing left
-      -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
+      // Bottom
+      0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0,
+      0.0, 0.0, -1.0, 0.0,
     ];
+
+    this.elements = vertices.length / 3;
+    const colors = []
+    for (let i = 0; i < this.elements; i++) {
+        colors.push(...[color.x, color.y, color.z])
+    }
 
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     this.vertexBuffer = vertexBuffer;
-    this.elements = vertices.length / 3;
 
     const normalBuffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, normalBuffer);
@@ -248,160 +181,5 @@ export default class RasterBox {
     this.gl.disableVertexAttribArray(positionLocation);
     this.gl.disableVertexAttribArray(colorLocation);
     this.gl.disableVertexAttribArray(normalLocation);
-  }
-
-  createColorArray(color: Vector) {
-
-    return [
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-    ];
   }
 }

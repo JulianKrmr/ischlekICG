@@ -23,7 +23,11 @@ import phongFragmentShader from "../shader/phong-fragment-shader.glsl";
 import textureVertexShader from "../shader/texture-vertex-perspective-shader.glsl";
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 import RasterBox from "../rasterisation/raster-box";
-import { JumperNode, RotationNode } from "../raytracing/animation-nodes";
+import {
+  JumperNode,
+  RotationNode,
+  ScalerNode,
+} from "../raytracing/animation-nodes";
 import MouserayVisitor from "../raytracing/mouserayVisitor";
 import AABox from "../objects/aabox";
 
@@ -45,23 +49,31 @@ window.addEventListener("load", () => {
   const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
 
   const transformationNode = new GroupNode(
-    new Translation(new Vector(0, 0, -5, 0))
+    new Translation(new Vector(0, 0, -10, 0))
   );
   sg.add(transformationNode);
-  transformationNode.add(new SphereNode(new Vector(0.5, 0, 0, 0)));
+  transformationNode.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
 
   const secondTransformationNode = new GroupNode(
-    new Translation(new Vector(0, 0.5, -5.3, 0))
+    new Translation(new Vector(0, 0, -4, 0))
   );
   sg.add(secondTransformationNode);
-  secondTransformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
+  // secondTransformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
+  scale(new Vector(1, 1, 1, 0), secondTransformationNode);
 
-  //create a rotation node
-  const animation1 = new JumperNode(
-    secondTransformationNode,
-    new Vector(1, 0, 0, 0),
+  // create a rotation node
+  const animation1 = new ScalerNode(
+    transformationNode,
+    new Vector(1, 2, 1, 0),
     0.001
   );
+
+  // const animation1 = new JumperNode(
+  //   transformationNode,
+  //   new Vector(2, 1, 1, 0),
+  //   0.002
+  // );
+
   animation1.toggleActive();
 
   // const thirdTransformationNode = new GroupNode(
@@ -181,7 +193,6 @@ window.addEventListener("load", () => {
     animation1.simulate(timestamp - lastTimestamp);
 
     lastTimestamp = timestamp;
-    console.log(lastTimestamp - timestamp);
     window.requestAnimationFrame(animate);
   }
 
@@ -238,6 +249,9 @@ window.addEventListener("load", () => {
         break;
       case "b": //Z skalieren kleiner
         scale(new Vector(1, 1, 1 - scaleSize, 0), transformationNode);
+        break;
+      case "m": //Z skalieren kleiner
+        scale(new Vector(1, 1, 1, 0), transformationNode);
         break;
     }
   });

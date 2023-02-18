@@ -2,7 +2,7 @@ import Vector from "../math/vector";
 import { GroupNode } from "../nodes";
 import { Rotation, SQT, Translation } from "../math/transformation";
 import Quaternion from "../math/quaternion";
-import { translate } from "../boilerplate/project-boilerplate";
+import { scale, translate } from "../boilerplate/project-boilerplate";
 
 /**
  * Class representing an Animation
@@ -122,7 +122,7 @@ export class SlerpNode extends AnimationNode {
  */
 export class JumperNode extends AnimationNode {
   distanceToGoal: number; //wie weit soll er springen
-  speed: number; //wie schnell soll er springen??? vlt weg lassen
+  speed: number; //wie schnell soll er springen?
   direction: Vector;
   up: boolean = true;
   distanceCovered: number = 0;
@@ -143,17 +143,63 @@ export class JumperNode extends AnimationNode {
       if (this.up) {
         //wenn up true ist, wird die translate methode ausgeführt, aber für speed * deltaT
         //und distanceCovered wird immer erhöht, um zu schauen wann man im Ziel ist
-        translate(this.direction.mul(this.speed * deltaT), this.groupNode); //warum geht das nicht mit speed?
-        this.distanceCovered += this.direction.mul(this.speed).length * deltaT; //ist das richtig?
+        translate(this.direction.mul(this.speed * deltaT), this.groupNode);
+        this.distanceCovered += this.direction.mul(this.speed).length * deltaT;
         if (this.distanceCovered >= this.distanceToGoal) {
           this.up = false;
         }
       } else {
         //wenn up false ist, wird die translate methode ausgeführt, aber für -1 * speed * deltaT, um rückwärts zu laufen
         translate(this.direction.mul(-1 * this.speed * deltaT), this.groupNode);
-        this.distanceCovered -= this.direction.mul(this.speed).length * deltaT; //ist das richtig?
+        this.distanceCovered -= this.direction.mul(this.speed).length * deltaT;
         if (this.distanceCovered <= 0) {
-          this.active = false; // macht den node im moment einfach aus, may need to change
+          this.up = true;
+        }
+      }
+    }
+  }
+}
+
+export class ScalerNode extends AnimationNode {
+  distanceToGoal: number; //Wie weit muss er insgesamt skalieren?
+  scaling: Vector; //Ziel skalierung
+  firstHalf: boolean = true; //aktiv in welche richtung es geht
+  distanceCovered: number = 0; //wie viel von der Skalierung hat er schon geschaff
+  speed: number; //wie schnell skalieren
+
+  constructor(groupNode: GroupNode, scaling: Vector, speed?: number) {
+    super(groupNode);
+    this.scaling = scaling.sub(new Vector(1, 1, 1, 0));
+    this.distanceToGoal = this.scaling.length;
+    if (speed) {
+      this.speed = speed;
+    } else {
+      this.speed = 0.001;
+    }
+  }
+
+  simulate(deltaT: number) {
+    if (this.active) {
+      if (this.firstHalf) {
+        //   wenn firsthalf true ist, wird die scale methode ausgeführt, aber für speed * deltaT
+        //   und distanceCovered wird immer erhöht, um zu schauen wann man im Ziel ist
+        scale(
+          new Vector(1, 1, 1, 0).add(this.scaling.mul(this.speed).mul(deltaT)),
+          this.groupNode
+        );
+        this.distanceCovered += this.scaling.length * deltaT * this.speed;
+        if (this.distanceCovered >= this.distanceToGoal) {
+          this.firstHalf = false;
+        }
+      } else {
+        //wenn fistHalf false ist, wird die scale methode ausgeführt, aber für -1 * speed * deltaT, um rückwärts zu laufen
+        scale(
+          new Vector(1, 1, 1, 0).sub(this.scaling.mul(this.speed).mul(deltaT)),
+          this.groupNode
+        );
+        this.distanceCovered -= this.scaling.length * deltaT * this.speed;
+        if (this.distanceCovered <= 0) {
+          this.firstHalf = true;
         }
       }
     }

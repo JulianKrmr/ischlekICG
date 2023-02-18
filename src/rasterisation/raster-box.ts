@@ -1,6 +1,3 @@
-import Intersection from "../math/intersection";
-import Plane from "../math/plane";
-import Ray from "../math/ray";
 import Vector from "../math/vector";
 import Shader from "../shader/shader";
 
@@ -123,11 +120,9 @@ export default class RasterBox {
       0.0, 0.0, -1.0, 0.0,
     ];
 
-    this.elements = vertices.length / 3;
-    const colors = []
-    for (let i = 0; i < this.elements; i++) {
-        colors.push(...[color.x, color.y, color.z])
-    }
+    const colors = this.createColors(color, new Vector(1.0, 0.0, 0.0, 0.0))
+
+    this.elements = vertices.length / 3
 
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -181,5 +176,52 @@ export default class RasterBox {
     this.gl.disableVertexAttribArray(positionLocation);
     this.gl.disableVertexAttribArray(colorLocation);
     this.gl.disableVertexAttribArray(normalLocation);
+  }
+
+  createColors(color1: Vector, color2: Vector){
+    // add the colors for every vertex
+    return [
+            color1.r, color1.g, color1.b, color1.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color2.r, color2.g, color2.b, color2.a,
+
+            color1.r, color1.g, color1.b, color1.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color2.r, color2.g, color2.b, color2.a,
+
+            color1.r, color1.g, color1.b, color1.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color2.r, color2.g, color2.b, color2.a,
+
+            color1.r, color1.g, color1.b, color1.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color1.r, color1.g, color1.b, color1.a,
+
+            color2.r, color2.g, color2.b, color2.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color2.r, color2.g, color2.b, color2.a,
+
+            color1.r, color1.g, color1.b, color1.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color1.r, color1.g, color1.b, color1.a,
+            color2.r, color2.g, color2.b, color2.a,
+            color2.r, color2.g, color2.b, color2.a,
+    ]
   }
 }

@@ -122,6 +122,8 @@ export default class RasterBox {
 
     const colors = this.createColors(color, new Vector(1.0, 0.0, 0.0, 0.0))
 
+    this.elements = vertices.length / 3
+
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);

@@ -19,6 +19,7 @@ import {
 } from "../nodes";
 import { ChildProcess } from "child_process";
 import PhongValues from "../boilerplate/project-boilerplate";
+import CustomShape from "../objects/customShape";
 
 const UNIT_SPHERE = new Sphere(
   new Vector(0, 0, 0, 1),
@@ -160,12 +161,7 @@ export default class MouserayVisitor implements Visitor {
   visitCustomShapeNode(node: CustomShapeNode): void {
     this.visitNode(
       node,
-      new CustomShapeNode(
-        node.vertices,
-        node.indices,
-        new Vector(0, 0, 0, 1),
-        node.parent
-      )
+      new CustomShape(node.vertices, node.indices, new Vector(0, 0, 0, 1))
     );
   }
 

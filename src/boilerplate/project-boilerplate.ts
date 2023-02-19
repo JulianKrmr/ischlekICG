@@ -49,21 +49,16 @@ window.addEventListener("load", () => {
   const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
 
   const transformationNode = new GroupNode(
-    new Translation(new Vector(0, 0, -10, 0))
+    new Translation(new Vector(0, 0, -5, 0))
   );
   sg.add(transformationNode);
-  transformationNode.add(
-    new AABoxNode(
-      new Vector(1.0, 0, 0, 0),
-    )
-  );
+  transformationNode.add(new AABoxNode(new Vector(1.0, 0, 0, 0)));
 
   const secondTransformationNode = new GroupNode(
-    new Translation(new Vector(0, 0, -4, 0))
+    new Translation(new Vector(2, 0, -4, 0))
   );
   sg.add(secondTransformationNode);
-  // secondTransformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
-  scale(new Vector(1, 1, 1, 0), secondTransformationNode);
+  secondTransformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
 
   // create a rotation node
   // const animation1 = new ScalerNode(
@@ -78,7 +73,7 @@ window.addEventListener("load", () => {
     0.002
   );
 
-  animation1.toggleActive();
+  // animation1.toggleActive();
 
   // const thirdTransformationNode = new GroupNode(
   //   new Translation(new Vector(0, 0.5, -7, 0))
@@ -210,7 +205,7 @@ window.addEventListener("load", () => {
   window.addEventListener("keydown", function (event) {
     switch (event.key) {
       case "w": //hoch
-        translate(new Vector(0, translationSize, 0, 0), transformationNode);
+        translate(new Vector(0, translationSize, 0, 0));
         break;
       case "s": //runter
         translate(new Vector(0, -translationSize, 0, 0), transformationNode);

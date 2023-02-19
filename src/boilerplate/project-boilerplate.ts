@@ -52,7 +52,13 @@ window.addEventListener("load", () => {
     new Translation(new Vector(0, 0, -10, 0))
   );
   sg.add(transformationNode);
-  transformationNode.add(new PyramidNode(new Vector(1,1,1,1), new Vector(1,0,0,1), new Vector(0,0, 0.8, 1)));
+  transformationNode.add(
+    new PyramidNode(
+      new Vector(1, 1, 1, 1),
+      new Vector(1, 0, 0, 1),
+      new Vector(0, 0, 0.8, 1)
+    )
+  );
 
   const secondTransformationNode = new GroupNode(
     new Translation(new Vector(0, 0, -4, 0))
@@ -62,17 +68,17 @@ window.addEventListener("load", () => {
   scale(new Vector(1, 1, 1, 0), secondTransformationNode);
 
   // create a rotation node
-  const animation1 = new ScalerNode(
-    transformationNode,
-    new Vector(1, 2, 1, 0),
-    0.001
-  );
-
-  // const animation1 = new JumperNode(
+  // const animation1 = new ScalerNode(
   //   transformationNode,
-  //   new Vector(2, 1, 1, 0),
-  //   0.002
+  //   new Vector(1, 2, 1, 0),
+  //   0.001
   // );
+
+  const animation1 = new JumperNode(
+    transformationNode,
+    new Vector(2, 1, 1, 0),
+    0.002
+  );
 
   animation1.toggleActive();
 

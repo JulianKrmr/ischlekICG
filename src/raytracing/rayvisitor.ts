@@ -34,7 +34,8 @@ const UNIT_PYRAMID = new Pyramid(
   new Vector(-0.5, 0, 0.5, 1),
   new Vector(0.5, 0, -0.5, 1),
   new Vector(0.5, 0, 0.5, 1),
-  new Vector(0, 1, 0, 1)
+  new Vector(0, 1, 0, 1),
+  new Vector(0, 0, 0, 1)
 );
 
 /**

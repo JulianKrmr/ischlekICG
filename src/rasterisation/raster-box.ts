@@ -166,7 +166,7 @@ export default class RasterBox {
     this.gl.enableVertexAttribArray(colorLocation);
     this.gl.vertexAttribPointer(colorLocation, 3, this.gl.FLOAT, false, 0, 0);
 
-    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.normalBuffer);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.normalBuffer);
     const normalLocation = shader.getAttributeLocation("a_normal");
     this.gl.enableVertexAttribArray(normalLocation);
     this.gl.vertexAttribPointer(normalLocation, 3, this.gl.FLOAT, false, 0, 0);

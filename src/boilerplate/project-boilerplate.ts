@@ -53,10 +53,8 @@ window.addEventListener("load", () => {
   );
   sg.add(transformationNode);
   transformationNode.add(
-    new PyramidNode(
-      new Vector(1, 1, 1, 1),
-      new Vector(1, 0, 0, 1),
-      new Vector(0, 0, 0.8, 1)
+    new AABoxNode(
+      new Vector(1.0, 0, 0, 0),
     )
   );
 

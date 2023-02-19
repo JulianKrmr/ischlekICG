@@ -103,7 +103,8 @@ export default class MouserayVisitor implements Visitor {
       if (
         this.objectIntersections[0][2] instanceof SphereNode ||
         this.objectIntersections[0][2] instanceof AABoxNode ||
-        this.objectIntersections[0][2] instanceof PyramidNode
+        this.objectIntersections[0][2] instanceof PyramidNode ||
+        this.objectIntersections[0][2] instanceof CustomShapeNode
       ) {
         //das gibt total schwachsinnige werte für t
         // console.log(this.objectIntersections[0][0].t);
@@ -116,6 +117,7 @@ export default class MouserayVisitor implements Visitor {
           Math.random(),
           0
         );
+        return this.objectIntersections[0][2];
       }
     }
   }

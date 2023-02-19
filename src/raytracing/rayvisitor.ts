@@ -111,7 +111,8 @@ export default class RayVisitor implements Visitor {
             if (
               this.objectIntersections[0][2] instanceof SphereNode ||
               this.objectIntersections[0][2] instanceof AABoxNode ||
-              this.objectIntersections[0][2] instanceof PyramidNode
+              this.objectIntersections[0][2] instanceof PyramidNode ||
+              this.objectIntersections[0][2] instanceof CustomShapeNode
             ) {
               this.intersectionColor = this.objectIntersections[0][2].color;
               this.intersection = this.objectIntersections[0][0];

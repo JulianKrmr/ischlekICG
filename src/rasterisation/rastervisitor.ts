@@ -11,6 +11,7 @@ import {
   AABoxNode,
   TextureBoxNode,
   PyramidNode,
+  CustomShapeNode,
 } from "../nodes";
 import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
@@ -262,7 +263,8 @@ export class RasterVisitor implements Visitor {
     this.shader.use();
     let shader = this.shader;
     const toWorld = this.transformations[this.transformations.length - 1];
-    const fromWorld = this.inverseTransformations[this.inverseTransformations.length -1]
+    const fromWorld =
+      this.inverseTransformations[this.inverseTransformations.length - 1];
 
     shader.getUniformMatrix("M").set(toWorld);
     let V = shader.getUniformMatrix("V");
@@ -274,8 +276,8 @@ export class RasterVisitor implements Visitor {
       P.set(this.perspective);
     }
 
-    let normal = fromWorld.transpose()
-    normal.setVal(0,3,0)
+    let normal = fromWorld.transpose();
+    normal.setVal(0, 3, 0);
     normal.setVal(1, 3, 0);
     normal.setVal(2, 3, 0);
     normal.setVal(3, 0, 0);
@@ -285,7 +287,7 @@ export class RasterVisitor implements Visitor {
 
     const N = shader.getUniformMatrix("N");
     if (N) {
-        N.set(normal);
+      N.set(normal);
     }
 
     this.renderables.get(node).render(shader);
@@ -309,6 +311,8 @@ export class RasterVisitor implements Visitor {
 
     this.renderables.get(node).render(shader);
   }
+
+  visitCustomShapeNode(node: CustomShapeNode) {}
 }
 
 /**
@@ -390,7 +394,7 @@ export class RasterSetupVisitor {
       node,
       new RasterPyramid(
         this.gl,
-        new Vector(0,0,0,1),
+        new Vector(0, 0, 0, 1),
         node.area,
         node.color,
         node.color2
@@ -414,4 +418,5 @@ export class RasterSetupVisitor {
       )
     );
   }
+  visitCustomShapeNode(node: CustomShapeNode) {}
 }

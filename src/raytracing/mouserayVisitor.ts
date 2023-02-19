@@ -15,6 +15,7 @@ import {
   AABoxNode,
   TextureBoxNode,
   PyramidNode,
+  CustomShapeNode,
 } from "../nodes";
 import { ChildProcess } from "child_process";
 import PhongValues from "../boilerplate/project-boilerplate";
@@ -154,6 +155,17 @@ export default class MouserayVisitor implements Visitor {
     this.visitNode(node, UNIT_AABOX);
   }
   visitTextureBoxNode(node: TextureBoxNode) {}
+  visitCustomShapeNode(node: CustomShapeNode): void {
+    this.visitNode(
+      node,
+      new CustomShapeNode(
+        node.vertices,
+        node.indices,
+        new Vector(0, 0, 0, 1),
+        node.parent
+      )
+    );
+  }
 
   //interface ray object statt any?
   //visits a node and checks for intersection, pushes intersection and node to array

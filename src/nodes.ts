@@ -59,7 +59,7 @@ export class SphereNode extends Node {
    * with radius 1.
    * @param color The colour of the Sphere
    */
-  constructor(public color: Vector) {
+  constructor(public color: Vector, public parent?: GroupNode) {
     super();
   }
 
@@ -83,7 +83,7 @@ export class AABoxNode extends Node {
    * with all edges of length 1
    * @param color The colour of the cube
    */
-  constructor(public color: Vector) {
+  constructor(public color: Vector, public parent?: GroupNode) {
     super();
   }
 
@@ -100,7 +100,12 @@ export class PyramidNode extends Node {
   /**
    * @param color The colour of the pyramid
    */
-  constructor(public area: Vector ,public color?: Vector, public color2?: Vector) {
+  constructor(
+    public area: Vector,
+    public color?: Vector,
+    public color2?: Vector,
+    public parent?: GroupNode
+  ) {
     super();
   }
 
@@ -124,7 +129,7 @@ export class TextureBoxNode extends Node {
    * with all edges of length 1
    * @param texture The image filename for the texture
    */
-  constructor(public texture: string) {
+  constructor(public texture: string, public parent?: GroupNode) {
     super();
   }
 
@@ -134,5 +139,19 @@ export class TextureBoxNode extends Node {
    */
   accept(visitor: Visitor) {
     visitor.visitTextureBoxNode(this);
+  }
+}
+
+export class CustomShapeNode extends Node {
+  constructor(
+    public vertices: Vector[],
+    public indices: number[],
+    public color: Vector,
+    public parent?: GroupNode
+  ) {
+    super();
+  }
+  accept(visitor: Visitor): void {
+    visitor.visitCustomShapeNode(this);
   }
 }

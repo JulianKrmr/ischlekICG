@@ -15,6 +15,7 @@ import {
   AABoxNode,
   TextureBoxNode,
   PyramidNode,
+  CustomShapeNode,
 } from "../nodes";
 import { ChildProcess } from "child_process";
 import PhongValues from "../boilerplate/project-boilerplate";
@@ -177,6 +178,17 @@ export default class RayVisitor implements Visitor {
     this.visitNode(node, UNIT_AABOX);
   }
   visitTextureBoxNode(node: TextureBoxNode) {} //TODO
+  visitCustomShapeNode(node: CustomShapeNode): void {
+    this.visitNode(
+      node,
+      new CustomShapeNode(
+        node.vertices,
+        node.indices,
+        new Vector(0, 0, 0, 1),
+        node.parent
+      )
+    );
+  }
 
   visitNode(node: SphereNode | PyramidNode | AABoxNode, unitObject: any) {
     const toWorld = this.transformations[this.transformations.length - 1];

@@ -4,6 +4,7 @@ import {
   AABoxNode,
   TextureBoxNode,
   PyramidNode,
+  CustomShapeNode,
 } from "./nodes";
 
 export default interface Visitor {
@@ -12,4 +13,5 @@ export default interface Visitor {
   visitAABoxNode(node: AABoxNode): void;
   visitPyramidNode(node: PyramidNode): void;
   visitTextureBoxNode(node: TextureBoxNode): void;
+  visitCustomShapeNode(node: CustomShapeNode): void;
 }

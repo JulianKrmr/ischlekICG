@@ -52,7 +52,7 @@ window.addEventListener("load", () => {
     new Translation(new Vector(0, 0, -10, 0))
   );
   sg.add(transformationNode);
-  transformationNode.add(new AABoxNode(new Vector(0.5, 0, 0, 0)));
+  transformationNode.add(new PyramidNode(new Vector(1,1,1,1), new Vector(1,0,0,1), new Vector(0,0, 0.8, 1)));
 
   const secondTransformationNode = new GroupNode(
     new Translation(new Vector(0, 0, -4, 0))

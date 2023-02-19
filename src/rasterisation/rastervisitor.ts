@@ -262,6 +262,8 @@ export class RasterVisitor implements Visitor {
     this.shader.use();
     let shader = this.shader;
     const toWorld = this.transformations[this.transformations.length - 1];
+    const fromWorld = this.inverseTransformations[this.inverseTransformations.length -1]
+
     shader.getUniformMatrix("M").set(toWorld);
     let V = shader.getUniformMatrix("V");
     if (V && this.lookat) {
@@ -270,6 +272,20 @@ export class RasterVisitor implements Visitor {
     let P = shader.getUniformMatrix("P");
     if (P && this.perspective) {
       P.set(this.perspective);
+    }
+
+    let normal = fromWorld.transpose()
+    normal.setVal(0,3,0)
+    normal.setVal(1, 3, 0);
+    normal.setVal(2, 3, 0);
+    normal.setVal(3, 0, 0);
+    normal.setVal(3, 1, 0);
+    normal.setVal(3, 2, 0);
+    normal.setVal(3, 3, 1);
+
+    const N = shader.getUniformMatrix("N");
+    if (N) {
+        N.set(normal);
     }
 
     this.renderables.get(node).render(shader);
@@ -374,11 +390,10 @@ export class RasterSetupVisitor {
       node,
       new RasterPyramid(
         this.gl,
+        new Vector(0,0,0,1),
+        node.area,
         node.color,
-        new Vector(0, 1, 0, 1),
-        new Vector(0, 0, -0.5, 1),
-        new Vector(-1, 0, 0.5, 1),
-        new Vector(1, 0, 0.5, 1)
+        node.color2
       )
     );
   }

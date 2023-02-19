@@ -100,7 +100,7 @@ export class PyramidNode extends Node {
   /**
    * @param color The colour of the pyramid
    */
-  constructor(public color: Vector) {
+  constructor(public area: Vector ,public color?: Vector, public color2?: Vector) {
     super();
   }
 

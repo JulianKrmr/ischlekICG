@@ -57,18 +57,17 @@ export default class AABox {
   intersect(ray: Ray): Intersection | null {
     let intersectionMin = null;
     let intersectionTMin = Infinity;
-    for (let i = 0; i < this.indices.length; i += 4) {
+    for (let i = 0; i < this.indices.length; i += 3) {
       const a = this.vertices[this.indices[i]];
       const b = this.vertices[this.indices[i + 1]];
       const c = this.vertices[this.indices[i + 2]];
-      const d = this.vertices[this.indices[i + 3]];
 
       //create a plane from the 3 vertices of the box
       const plane = new Plane(a, b, c);
       //calculate the intersection of the ray with the plane
       const intersection = plane.intersect(ray);
 
-      const vertices = [a, b, c, d];
+      const vertices = [a, b, c];
       // if the intersection is not null and is inside the box, return it
       if (
         intersection &&

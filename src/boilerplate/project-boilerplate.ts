@@ -3,6 +3,7 @@ import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
 import {
   AABoxNode,
+  CustomShapeNode,
   GroupNode,
   PyramidNode,
   SphereNode,
@@ -43,6 +44,10 @@ window.addEventListener("load", () => {
     "mode--toggle"
   ) as HTMLFormElement;
 
+  let selectedNode: SphereNode | PyramidNode | AABoxNode | CustomShapeNode =
+    null;
+  let selectedGroupNode: GroupNode = null;
+
   //scene graph
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,13 +57,36 @@ window.addEventListener("load", () => {
     new Translation(new Vector(0, 0, -5, 0))
   );
   sg.add(transformationNode);
-  transformationNode.add(new AABoxNode(new Vector(1.0, 0, 0, 0)));
+  transformationNode.add(
+    new AABoxNode(new Vector(1.0, 0, 0, 0), transformationNode)
+  );
 
   const secondTransformationNode = new GroupNode(
     new Translation(new Vector(2, 0, -4, 0))
   );
   sg.add(secondTransformationNode);
-  secondTransformationNode.add(new AABoxNode(new Vector(0.5, 1, 0, 0)));
+
+  let vertices = [
+    new Vector(-0.5, -0.5, -0.5, 1),
+    new Vector(-0.5, -0.5, 0.5, 1),
+    new Vector(-0.5, 0.5, -0.5, 1),
+    new Vector(-0.5, 0.5, 0.5, 1),
+    new Vector(0.5, -0.5, -0.5, 1),
+    new Vector(0.5, -0.5, 0.5, 1),
+    new Vector(0.5, 0.5, -0.5, 1),
+    new Vector(0.5, 0.5, 0.5, 1),
+  ];
+  let indices = [
+    0, 1, 2, 3, 1, 5, 6, 2, 4, 0, 3, 7, 3, 2, 6, 7, 5, 4, 7, 6, 0, 4, 5, 1,
+  ];
+  secondTransformationNode.add(
+    new CustomShapeNode(
+      vertices,
+      indices,
+      new Vector(0.5, 1, 0, 0),
+      secondTransformationNode
+    )
+  );
 
   // create a rotation node
   // const animation1 = new ScalerNode(
@@ -205,52 +233,52 @@ window.addEventListener("load", () => {
   window.addEventListener("keydown", function (event) {
     switch (event.key) {
       case "w": //hoch
-        translate(new Vector(0, translationSize, 0, 0));
+        translate(new Vector(0, translationSize, 0, 0), selectedGroupNode);
         break;
       case "s": //runter
-        translate(new Vector(0, -translationSize, 0, 0), transformationNode);
+        translate(new Vector(0, -translationSize, 0, 0), selectedGroupNode);
         break;
       case "a": //links
-        translate(new Vector(-translationSize, 0, 0, 0), transformationNode);
+        translate(new Vector(-translationSize, 0, 0, 0), selectedGroupNode);
         break;
       case "d": //rechts
-        translate(new Vector(translationSize, 0, 0, 0), transformationNode);
+        translate(new Vector(translationSize, 0, 0, 0), selectedGroupNode);
         break;
       case "e": //vor
-        translate(new Vector(0, 0, translationSize, 0), transformationNode);
+        translate(new Vector(0, 0, translationSize, 0), selectedGroupNode);
         break;
       case "q": //zurück
-        translate(new Vector(0, 0, -translationSize, 0), transformationNode);
+        translate(new Vector(0, 0, -translationSize, 0), selectedGroupNode);
         break;
       case "x": //um x achse rotieren
-        rotate(new Vector(1, 0, 0, 0), rotationAmount, transformationNode);
+        rotate(new Vector(1, 0, 0, 0), rotationAmount, selectedGroupNode);
         break;
       case "y": //um y achse rotieren
-        rotate(new Vector(0, 1, 0, 0), rotationAmount, transformationNode);
+        rotate(new Vector(0, 1, 0, 0), rotationAmount, selectedGroupNode);
         break;
       case "c": //um z achse rotieren
-        rotate(new Vector(0, 0, 1, 0), rotationAmount, transformationNode);
+        rotate(new Vector(0, 0, 1, 0), rotationAmount, selectedGroupNode);
         break;
       case "r": //X skalieren größer
-        scale(new Vector(1 + scaleSize, 1, 1, 0), transformationNode);
+        scale(new Vector(1 + scaleSize, 1, 1, 0), selectedGroupNode);
         break;
       case "f": //Y skalieren größer
-        scale(new Vector(1, 1 + scaleSize, 1, 0), transformationNode);
+        scale(new Vector(1, 1 + scaleSize, 1, 0), selectedGroupNode);
         break;
       case "v": //Z skalieren größer
-        scale(new Vector(1, 1, 1 + scaleSize, 0), transformationNode);
+        scale(new Vector(1, 1, 1 + scaleSize, 0), selectedGroupNode);
         break;
       case "t": //X skalieren kleiner
-        scale(new Vector(1 - scaleSize, 1, 1, 0), transformationNode);
+        scale(new Vector(1 - scaleSize, 1, 1, 0), selectedGroupNode);
         break;
       case "g": //Y skalieren kleiner
-        scale(new Vector(1, 1 - scaleSize, 1, 0), transformationNode);
+        scale(new Vector(1, 1 - scaleSize, 1, 0), selectedGroupNode);
         break;
       case "b": //Z skalieren kleiner
-        scale(new Vector(1, 1, 1 - scaleSize, 0), transformationNode);
+        scale(new Vector(1, 1, 1 - scaleSize, 0), selectedGroupNode);
         break;
       case "m": //Z skalieren kleiner
-        scale(new Vector(1, 1, 1, 0), transformationNode);
+        scale(new Vector(1, 1, 1, 0), selectedGroupNode);
         break;
     }
   });
@@ -286,13 +314,19 @@ window.addEventListener("load", () => {
   rasterCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    mouseRayVisitor.click(sg, rayCamera, mx, my, rasterContext);
+    selectedNode = mouseRayVisitor.click(sg, rayCamera, mx, my, rasterContext);
+    if (selectedNode != null) {
+      selectedGroupNode = selectedNode.parent;
+    }
   });
 
   rayCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    mouseRayVisitor.click(sg, rayCamera, mx, my, rayContext);
+    selectedNode = mouseRayVisitor.click(sg, rayCamera, mx, my, rayContext);
+    if (selectedNode != null) {
+      selectedGroupNode = selectedNode.parent;
+    }
   });
 });
 export function rotate(axis: Vector, angle: number, node: GroupNode) {

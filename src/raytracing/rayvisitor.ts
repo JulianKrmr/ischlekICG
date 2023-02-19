@@ -179,7 +179,7 @@ export default class RayVisitor implements Visitor {
     this.visitNode(node, UNIT_AABOX);
   }
   visitTextureBoxNode(node: TextureBoxNode) {} //TODO
-  visitCustomShapeNode(node: CustomShapeNode): void {
+  visitCustomShapeNode(node: CustomShapeNode) {
     this.visitNode(
       node,
       new CustomShapeNode(
@@ -191,7 +191,10 @@ export default class RayVisitor implements Visitor {
     );
   }
 
-  visitNode(node: SphereNode | PyramidNode | AABoxNode, unitObject: any) {
+  visitNode(
+    node: SphereNode | PyramidNode | AABoxNode | CustomShapeNode,
+    unitObject: any
+  ) {
     const toWorld = this.transformations[this.transformations.length - 1];
     const fromWorld =
       this.inverseTransformations[this.inverseTransformations.length - 1];

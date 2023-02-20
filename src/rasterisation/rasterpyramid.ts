@@ -77,28 +77,28 @@ export default class RasterPyramid {
     this.indices = indices;
 
     let colors = [
-      color1.r, color1.g, color1.b, color1.a,
-      color1.r, color1.g, color1.b, color1.a,
-      color2.r, color2.g, color2.b, color2.a,
+      color1.r, color1.g, color1.b,
+      color1.r, color1.g, color1.b,
+      color2.r, color2.g, color2.b,
 
-      color1.r, color1.g, color1.b, color1.a,
-      color1.r, color1.g, color1.b, color1.a,
-      color2.r, color2.g, color2.b, color2.a,
+      color1.r, color1.g, color1.b,
+      color1.r, color1.g, color1.b,
+      color2.r, color2.g, color2.b,
 
-      color1.r, color1.g, color1.b, color1.a,
-      color1.r, color1.g, color1.b, color1.a,
-      color2.r, color2.g, color2.b, color2.a,
+      color1.r, color1.g, color1.b,
+      color1.r, color1.g, color1.b,
+      color2.r, color2.g, color2.b,
 
-      color1.r, color1.g, color1.b, color1.a,
-      color1.r, color1.g, color1.b, color1.a,
-      color2.r, color2.g, color2.b, color2.a,
+      color1.r, color1.g, color1.b,
+      color1.r, color1.g, color1.b,
+      color2.r, color2.g, color2.b,
 
-      color1.r, color1.g, color1.b, color1.a,
-      color1.r, color1.g, color1.b, color1.a,
-      color1.r, color1.g, color1.b, color1.a,
-      color1.r, color1.g, color1.b, color1.a,
-      color1.r, color1.g, color1.b, color1.a,
-      color1.r, color1.g, color1.b, color1.a,
+      color1.r, color1.g, color1.b,
+      color1.r, color1.g, color1.b,
+      color1.r, color1.g, color1.b,
+      color1.r, color1.g, color1.b,
+      color1.r, color1.g, color1.b,
+      color1.r, color1.g, color1.b,
   ]
 
   let point0 = new Vector(mi.x, mi.y, ma.z, 1);

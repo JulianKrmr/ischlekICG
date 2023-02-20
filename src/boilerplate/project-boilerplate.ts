@@ -77,42 +77,8 @@ window.addEventListener("load", () => {
     new Vector(0.5, 0.5, 0.5, 1),
   ];
   let indices = [
-    0,
-    1,
-    2,
-    0,
-    2,
-    3, //front
-    1,
-    5,
-    6,
-    1,
-    6,
-    2, //right
-    5,
-    4,
-    7,
-    5,
-    7,
-    6, //back
-    4,
-    0,
-    3,
-    4,
-    3,
-    7, //left
-    3,
-    2,
-    6,
-    3,
-    6,
-    7, //top
-    4,
-    5,
-    1,
-    4,
-    1,
-    0, //bottom
+    0, 1, 2, 0, 2, 3, 1, 5, 6, 1, 6, 2, 5, 4, 7, 5, 7, 6, 4, 0, 3, 4, 3, 7, 3,
+    2, 6, 3, 6, 7, 4, 5, 1, 4, 1, 0,
   ];
   secondTransformationNode.add(
     new CustomShapeNode(

@@ -261,8 +261,8 @@ export default class RasterBox {
       colors.push(
         color1.r, color1.g, color1.b,
         color1.r, color1.g, color1.b,
-        color2.r, color2.g, color2.b,
         color1.r, color1.g, color1.b,
+        color2.r, color2.g, color2.b,
         color2.r, color2.g, color2.b,
         color2.r, color2.g, color2.b,
       );

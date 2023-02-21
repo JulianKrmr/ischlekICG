@@ -47,52 +47,122 @@ export default class RasterBox {
     const ma = maxPoint;
     let vertices = [
       // front
-      mi.x, mi.y, ma.z,
-      ma.x, mi.y, ma.z,
-      ma.x, ma.y, ma.z,
-      ma.x, ma.y, ma.z,
-      mi.x, ma.y, ma.z,
-      mi.x, mi.y, ma.z,
+      mi.x,
+      mi.y,
+      ma.z,
+      ma.x,
+      mi.y,
+      ma.z,
+      ma.x,
+      ma.y,
+      ma.z,
+      ma.x,
+      ma.y,
+      ma.z,
+      mi.x,
+      ma.y,
+      ma.z,
+      mi.x,
+      mi.y,
+      ma.z,
       // back
-      ma.x, mi.y, mi.z,
-      mi.x, mi.y, mi.z,
-      mi.x, ma.y, mi.z,
-      mi.x, ma.y, mi.z,
-      ma.x, ma.y, mi.z,
-      ma.x, mi.y, mi.z,
+      ma.x,
+      mi.y,
+      mi.z,
+      mi.x,
+      mi.y,
+      mi.z,
+      mi.x,
+      ma.y,
+      mi.z,
+      mi.x,
+      ma.y,
+      mi.z,
+      ma.x,
+      ma.y,
+      mi.z,
+      ma.x,
+      mi.y,
+      mi.z,
       // right
-      ma.x, mi.y, ma.z,
-      ma.x, mi.y, mi.z,
-      ma.x, ma.y, mi.z,
-      ma.x, ma.y, mi.z,
-      ma.x, ma.y, ma.z,
-      ma.x, mi.y, ma.z,
+      ma.x,
+      mi.y,
+      ma.z,
+      ma.x,
+      mi.y,
+      mi.z,
+      ma.x,
+      ma.y,
+      mi.z,
+      ma.x,
+      ma.y,
+      mi.z,
+      ma.x,
+      ma.y,
+      ma.z,
+      ma.x,
+      mi.y,
+      ma.z,
       // top
-      mi.x, ma.y, ma.z,
-      ma.x, ma.y, ma.z,
-      ma.x, ma.y, mi.z,
-      ma.x, ma.y, mi.z,
-      mi.x, ma.y, mi.z,
-      mi.x, ma.y, ma.z,
+      mi.x,
+      ma.y,
+      ma.z,
+      ma.x,
+      ma.y,
+      ma.z,
+      ma.x,
+      ma.y,
+      mi.z,
+      ma.x,
+      ma.y,
+      mi.z,
+      mi.x,
+      ma.y,
+      mi.z,
+      mi.x,
+      ma.y,
+      ma.z,
       // left
-      mi.x, mi.y, mi.z,
-      mi.x, mi.y, ma.z,
-      mi.x, ma.y, ma.z,
-      mi.x, ma.y, ma.z,
-      mi.x, ma.y, mi.z,
-      mi.x, mi.y, mi.z,
+      mi.x,
+      mi.y,
+      mi.z,
+      mi.x,
+      mi.y,
+      ma.z,
+      mi.x,
+      ma.y,
+      ma.z,
+      mi.x,
+      ma.y,
+      ma.z,
+      mi.x,
+      ma.y,
+      mi.z,
+      mi.x,
+      mi.y,
+      mi.z,
       // bottom
-      mi.x, mi.y, mi.z,
-      ma.x, mi.y, mi.z,
-      ma.x, mi.y, ma.z,
-      ma.x, mi.y, ma.z,
-      mi.x, mi.y, ma.z,
-      mi.x, mi.y, mi.z
-  ];
+      mi.x,
+      mi.y,
+      mi.z,
+      ma.x,
+      mi.y,
+      mi.z,
+      ma.x,
+      mi.y,
+      ma.z,
+      ma.x,
+      mi.y,
+      ma.z,
+      mi.x,
+      mi.y,
+      ma.z,
+      mi.x,
+      mi.y,
+      mi.z,
+    ];
 
     this.vertices = vertices;
-
-
 
     let normals = [
       // Front
@@ -120,9 +190,16 @@ export default class RasterBox {
       0.0, 0.0, -1.0, 0.0,
     ];
 
-    const colors = this.createColors(color, new Vector(1.0, 0.0, 0.0, 0.0))
+    const colors = this.createColors(
+      color,
+      new Vector(0.0, 1.0, 0.0, 0.0),
+      vertices.length
+    );
 
-    this.elements = vertices.length / 3
+    console.log("lenght colors: " + colors.length)
+    console.log("amountOfVertices: " + vertices.length)
+
+    this.elements = vertices.length / 3;
 
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -178,50 +255,18 @@ export default class RasterBox {
     this.gl.disableVertexAttribArray(normalLocation);
   }
 
-  createColors(color1: Vector, color2: Vector){
-    // add the colors for every vertex
-    return [
-            color1.r, color1.g, color1.b,
-            color1.r, color1.g, color1.b,
-            color2.r, color2.g, color2.b,
-            color1.r, color1.g, color1.b,
-            color2.r, color2.g, color2.b, 
-            color2.r, color2.g, color2.b,
-
-            color1.r, color1.g, color1.b, 
-            color1.r, color1.g, color1.b, 
-            color2.r, color2.g, color2.b,
-            color1.r, color1.g, color1.b, 
-            color2.r, color2.g, color2.b, 
-            color2.r, color2.g, color2.b, 
-
-            color1.r, color1.g, color1.b, 
-            color1.r, color1.g, color1.b,
-            color2.r, color2.g, color2.b, 
-            color1.r, color1.g, color1.b, 
-            color2.r, color2.g, color2.b, 
-            color2.r, color2.g, color2.b, 
-
-            color1.r, color1.g, color1.b, 
-            color1.r, color1.g, color1.b, 
-            color1.r, color1.g, color1.b, 
-            color1.r, color1.g, color1.b, 
-            color1.r, color1.g, color1.b, 
-            color1.r, color1.g, color1.b, 
-
-            color2.r, color2.g, color2.b, 
-            color2.r, color2.g, color2.b, 
-            color2.r, color2.g, color2.b, 
-            color2.r, color2.g, color2.b, 
-            color2.r, color2.g, color2.b,
-            color2.r, color2.g, color2.b, 
-
-            color1.r, color1.g, color1.b,
-            color1.r, color1.g, color1.b, 
-            color2.r, color2.g, color2.b, 
-            color1.r, color1.g, color1.b,
-            color2.r, color2.g, color2.b, 
-            color2.r, color2.g, color2.b,
-    ]
+  createColors(color1: Vector, color2: Vector, amountOfIndices: number) {
+    let colors = [];
+    for (let i = 0; i < amountOfIndices; i = i + 18) {
+      colors.push(
+        color1.r, color1.g, color1.b,
+        color1.r, color1.g, color1.b,
+        color2.r, color2.g, color2.b,
+        color1.r, color1.g, color1.b,
+        color2.r, color2.g, color2.b,
+        color2.r, color2.g, color2.b,
+      );
+    }
+    return colors;
   }
 }

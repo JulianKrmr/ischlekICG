@@ -115,7 +115,7 @@ window.addEventListener("load", () => {
     windowTranslation.add(windowScaling);
     sg.add(windowTranslation);
 
-    const windowTopBar = new AABoxNode(new Vector(1.0, 0.1, 0, 1), new Vector(1.0, 0.1, 0, 1));
+    const windowTopBar = new AABoxNode(new Vector(0.2, 0.2, 0.2, 0.2), new Vector(0.2, 0.2, 0.2, 0.2));
     const windowTopBarScaling = new GroupNode(
       new Scaling(new Vector(4, 0.3, 1.1, 0))
     );

@@ -103,7 +103,11 @@ export class AABoxNode extends Node {
    * with all edges of length 1
    * @param color The colour of the cube
    */
-  constructor(public color: Vector, public color2: Vector, public parent?: GroupNode) {
+  constructor(
+    public color: Vector,
+    public color2: Vector,
+    public parent?: GroupNode
+  ) {
     super();
   }
 

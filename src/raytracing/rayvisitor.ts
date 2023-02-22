@@ -16,6 +16,7 @@ import {
   TextureBoxNode,
   PyramidNode,
   CustomShapeNode,
+  CameraNode,
 } from "../nodes";
 import { ChildProcess } from "child_process";
 import PhongValues from "../boilerplate/project-boilerplate";
@@ -221,6 +222,7 @@ export default class RayVisitor implements Visitor {
       }
     }
   }
+  visitCameraNode(node: CameraNode) {}
 
   /**
    * Visits a sphere node

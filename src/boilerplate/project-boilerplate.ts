@@ -3,6 +3,7 @@ import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
 import {
   AABoxNode,
+  CameraNode,
   CustomShapeNode,
   GroupNode,
   PyramidNode,
@@ -51,43 +52,43 @@ window.addEventListener("load", () => {
   //scene graph
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
+  // const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
 
   const transformationNode = new GroupNode(
     new Translation(new Vector(0, 0, -5, 0))
   );
-  sg.add(transformationNode);
-  transformationNode.add(
-    new AABoxNode(new Vector(1.0, 0, 0, 0), transformationNode)
-  );
+  // sg.add(transformationNode);
+  // transformationNode.add(
+  //   new AABoxNode(new Vector(1.0, 0, 0, 0), transformationNode)
+  // );
 
-  const secondTransformationNode = new GroupNode(
-    new Translation(new Vector(2, 0, -4, 0))
-  );
-  sg.add(secondTransformationNode);
+  // const secondTransformationNode = new GroupNode(
+  //   new Translation(new Vector(2, 0, -4, 0))
+  // );
+  // sg.add(secondTransformationNode);
 
-  let vertices = [
-    new Vector(-0.5, -0.5, -0.5, 1),
-    new Vector(0.5, -0.5, -0.5, 1),
-    new Vector(0.5, 0.5, -0.5, 1),
-    new Vector(-0.5, 0.5, -0.5, 1),
-    new Vector(-0.5, -0.5, 0.5, 1),
-    new Vector(0.5, -0.5, 0.5, 1),
-    new Vector(0.5, 0.5, 0.5, 1),
-    new Vector(-0.5, 0.5, 0.5, 1),
-  ];
-  let indices = [
-    0, 1, 2, 0, 2, 3, 1, 5, 6, 1, 6, 2, 5, 4, 6, 4, 7, 6, 0, 3, 7, 0, 7, 4, 3,
-    2, 6, 3, 6, 7, 5, 4, 0, 5, 0, 1,
-  ];
-  secondTransformationNode.add(
-    new CustomShapeNode(
-      vertices,
-      indices,
-      new Vector(0.5, 1, 0, 0),
-      secondTransformationNode
-    )
-  );
+  // let vertices = [
+  //   new Vector(-0.5, -0.5, -0.5, 1),
+  //   new Vector(0.5, -0.5, -0.5, 1),
+  //   new Vector(0.5, 0.5, -0.5, 1),
+  //   new Vector(-0.5, 0.5, -0.5, 1),
+  //   new Vector(-0.5, -0.5, 0.5, 1),
+  //   new Vector(0.5, -0.5, 0.5, 1),
+  //   new Vector(0.5, 0.5, 0.5, 1),
+  //   new Vector(-0.5, 0.5, 0.5, 1),
+  // ];
+  // let indices = [
+  //   0, 1, 2, 0, 2, 3, 1, 5, 6, 1, 6, 2, 5, 4, 6, 4, 7, 6, 0, 3, 7, 0, 7, 4, 3,
+  //   2, 6, 3, 6, 7, 5, 4, 0, 5, 0, 1,
+  // ];
+  // secondTransformationNode.add(
+  //   new CustomShapeNode(
+  //     vertices,
+  //     indices,
+  //     new Vector(0.5, 1, 0, 0),
+  //     secondTransformationNode
+  //   )
+  // );
 
   // create a rotation node
   // const animation1 = new ScalerNode(
@@ -95,6 +96,123 @@ window.addEventListener("load", () => {
   //   new Vector(1, 2, 1, 0),
   //   0.001
   // );
+  let sg = new GroupNode(new Translation(new Vector(0, 0, -15, 0)));
+
+  const camera1 = new CameraNode(true);
+  const cameraTranslation = new GroupNode(
+    new Translation(new Vector(0, 0, 12, 0))
+  );
+  cameraTranslation.add(camera1);
+  sg.add(cameraTranslation);
+
+  const createWindow = (xTranslation: number) => {
+    const window = new AABoxNode(new Vector(0.7, 0.5, 0.0, 1), new Vector(0.7, 0.5, 0.0, 1));
+    const windowScaling = new GroupNode(new Scaling(new Vector(4, 5, 1, 0)));
+    const windowTranslation = new GroupNode(
+      new Translation(new Vector(xTranslation, 0.5, 0, 0))
+    );
+    windowScaling.add(window);
+    windowTranslation.add(windowScaling);
+    sg.add(windowTranslation);
+
+    const windowTopBar = new AABoxNode(new Vector(1.0, 0.1, 0, 1), new Vector(1.0, 0.1, 0, 1));
+    const windowTopBarScaling = new GroupNode(
+      new Scaling(new Vector(4, 0.3, 1.1, 0))
+    );
+    const windowTopBarTranslation = new GroupNode(
+      new Translation(new Vector(0, 2.6, 0, 0))
+    );
+    windowTopBarScaling.add(windowTopBar);
+    windowTopBarTranslation.add(windowTopBarScaling);
+    windowTranslation.add(windowTopBarTranslation);
+
+    const windowScene = new AABoxNode(new Vector(1, 1, 1, 1), new Vector(1, 1, 1, 1));
+    const windowSceneScaling = new GroupNode(
+      new Scaling(new Vector(3.7, 4.2, 1.1, 0))
+    );
+    const windowSceneTranslation = new GroupNode(
+      new Translation(new Vector(0, -0.2, 0, 0))
+    );
+    windowSceneScaling.add(windowScene);
+    windowSceneTranslation.add(windowSceneScaling);
+    windowTranslation.add(windowSceneTranslation);
+
+    return windowSceneTranslation;
+  };
+
+  const leftWindowSceneTranslation = createWindow(-2.2);
+  const rightWindowSceneTranslation = createWindow(2.2);
+
+  const pyramid = new PyramidNode(new Vector(1.0, 1.0, 1.0, 1), new Vector(0.5, 0.1, 0.3, 1), new Vector(0.5, 0.1, 0.3, 1));
+  const pyramidScaling = new GroupNode(
+    new Scaling(new Vector(0.5, 0.5, 0.5, 0))
+  );
+  const pyramidTranslation = new GroupNode(
+    new Translation(new Vector(-1, 1, 1, 0))
+  );
+  pyramidScaling.add(pyramid);
+  pyramidTranslation.add(pyramidScaling);
+  leftWindowSceneTranslation.add(pyramidTranslation);
+
+  const sphere = new SphereNode(new Vector(0.5, 0.1, 0.3, 1));
+  const sphereScaling = new GroupNode(
+    new Scaling(new Vector(0.5, 0.5, 0.5, 0))
+  );
+  const sphereTranslation = new GroupNode(
+    new Translation(new Vector(0, 0, 1, 0))
+  );
+  sphereScaling.add(sphere);
+  sphereTranslation.add(sphereScaling);
+  leftWindowSceneTranslation.add(sphereTranslation);
+
+  const aabox = new AABoxNode(new Vector(0.5, 0.1, 0.3, 1), new Vector(0.5, 0.1, 0.3, 1));
+  const aaboxScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 0)));
+  const aaboxTranslation = new GroupNode(
+    new Translation(new Vector(1, -1, 1, 0))
+  );
+  aaboxScaling.add(aabox);
+  aaboxTranslation.add(aaboxScaling);
+  leftWindowSceneTranslation.add(aaboxTranslation);
+
+  // texture only comes after first traversal; cube just stays black now
+  const textureBox = new TextureBoxNode("hci-logo.png");
+  const textureBoxScaling = new GroupNode(
+    new Scaling(new Vector(0.5, 0.5, 0.5, 0))
+  );
+  const textureBoxTranslation = new GroupNode(
+    new Translation(new Vector(1, -1, 1, 0))
+  );
+  textureBoxScaling.add(textureBox);
+  textureBoxTranslation.add(textureBoxScaling);
+  rightWindowSceneTranslation.add(textureBoxTranslation);
+
+  const createTaskbarIcon = (xPos: number) => {
+    const taskbarIcon = new AABoxNode(new Vector(2, 0.1, 0, 1), new Vector(2, 0.1, 0, 1));
+    const taskbarIconScaling = new GroupNode(
+      new Scaling(new Vector(1, 1, 1.1, 0))
+    );
+    const taskbarIconTranslation = new GroupNode(
+      new Translation(new Vector(xPos, 0, 0, 0))
+    );
+    taskbarIconScaling.add(taskbarIcon);
+    taskbarIconTranslation.add(taskbarIconScaling);
+    return taskbarIconTranslation;
+  };
+
+  const taskbar = new AABoxNode(new Vector(0.5, 0.5, 0.5, 1), new Vector(0.5, 0.5, 0.5, 1));
+  const taskbarScaling = new GroupNode(new Scaling(new Vector(8.5, 1, 1, 0)));
+  const taskbarTranslation = new GroupNode(
+    new Translation(new Vector(0, -3, 0, 0))
+  );
+  taskbarScaling.add(taskbar);
+  taskbarTranslation.add(taskbarScaling);
+  sg.add(taskbarTranslation);
+
+  const leftTaskbarIcon = createTaskbarIcon(-3.5);
+  taskbarTranslation.add(leftTaskbarIcon);
+
+  const rightTaskbarIcon = createTaskbarIcon(-2.2);
+  taskbarTranslation.add(rightTaskbarIcon);
 
   const animation1 = new JumperNode(
     transformationNode,
@@ -187,7 +305,7 @@ window.addEventListener("load", () => {
 
   const lightPositions = [new Vector(1, 1, -1, 1), new Vector(5, 10, -1, 5)];
   const rayCamera = {
-    origin: new Vector(0, 0, 0, 1),
+    origin: new Vector(0, 0, -15, 1),
     width: rayCanvas.width,
     height: rayCanvas.height,
     alpha: Math.PI / 3,

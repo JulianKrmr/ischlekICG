@@ -12,6 +12,7 @@ import {
   TextureBoxNode,
   PyramidNode,
   CustomShapeNode,
+  CameraNode,
 } from "../nodes";
 import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
@@ -148,6 +149,8 @@ export class RasterVisitor implements Visitor {
       camera.far
     );
   }
+
+  visitCameraNode(node: CameraNode) {}
 
   /**
    * Visits a group node
@@ -419,4 +422,6 @@ export class RasterSetupVisitor {
     );
   }
   visitCustomShapeNode(node: CustomShapeNode) {}
+
+  visitCameraNode(node: CameraNode) {}
 }

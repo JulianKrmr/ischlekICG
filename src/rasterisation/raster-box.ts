@@ -40,7 +40,8 @@ export default class RasterBox {
     private gl: WebGL2RenderingContext,
     minPoint: Vector,
     maxPoint: Vector,
-    color?: Vector
+    color?: Vector,
+    color2?: Vector
   ) {
     this.gl = gl;
     const mi = minPoint;
@@ -192,7 +193,7 @@ export default class RasterBox {
 
     const colors = this.createColors(
       color,
-      new Vector(0.0, 1.0, 0.0, 0.0),
+      new Vector(1.0, 1.0, 1.0, 1.0),
       vertices.length
     );
 
@@ -265,6 +266,8 @@ export default class RasterBox {
         color2.r, color2.g, color2.b,
         color2.r, color2.g, color2.b,
         color2.r, color2.g, color2.b,
+
+
       );
     }
     return colors;

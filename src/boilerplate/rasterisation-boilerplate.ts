@@ -25,7 +25,7 @@ window.addEventListener("load", () => {
   gn3.add(sphere1);
   const gn2 = new GroupNode(new Translation(new Vector(-0.2, -0.2, 0, 0)));
   sg.add(gn2);
-  const cube = new AABoxNode(new Vector(1, 1, 1, 1));
+  const cube = new AABoxNode(new Vector(1, 1, 1, 1), new Vector(1, 1, 1, 1));
   gn2.add(cube);
 
   // setup for rendering

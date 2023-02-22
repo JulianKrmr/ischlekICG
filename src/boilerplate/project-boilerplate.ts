@@ -242,14 +242,23 @@ window.addEventListener("load", () => {
   const rightTaskbarIcon = createTaskbarIcon(-2.2);
   taskbarTranslation.add(rightTaskbarIcon);
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////
   const transformationNode = new GroupNode(
-    new Translation(new Vector(0, 0, -5, 0))
+    new Translation(new Vector(0, 5, -5, 0))
+  );
+  transformationNode.add(
+    new AABoxNode(
+      new Vector(0, 0, 1, 0),
+      new Vector(0, 0, 1, 0),
+      transformationNode
+    )
   );
   const animation1 = new JumperNode(
     transformationNode,
     new Vector(2, 1, 1, 0),
     0.002
   );
+  // sg.add(transformationNode);
 
   // animation1.toggleActive();
 

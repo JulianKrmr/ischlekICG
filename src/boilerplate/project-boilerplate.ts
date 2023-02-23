@@ -5,7 +5,7 @@ import {
   AABoxNode,
   CameraNode,
   CustomShapeNode,
-  GroupNode,
+  GroupNode, LightNode,
   PyramidNode,
   SphereNode,
   TextureBoxNode,
@@ -38,6 +38,24 @@ export default interface PhongValues {
   diffuse: number;
   specular: number;
   shininess: number;
+}
+
+export interface CameraRaytracer {
+  origin: Vector,
+  width: number,
+  height: number,
+  alpha: number,
+  toWorld: Matrix
+}
+
+export interface CameraRasteriser {
+  eye: Vector,
+  center: Vector,
+  up: Vector,
+  fovy: number,
+  aspect: number,
+  near: number,
+  far: number
 }
 
 window.addEventListener("load", () => {
@@ -101,6 +119,11 @@ window.addEventListener("load", () => {
   );
   cameraTranslation.add(camera1);
   sg.add(cameraTranslation);
+
+  const light1 = new LightNode();
+  const lightTranslation = new GroupNode(new Translation(new Vector(-1, -2, 9, 0)));
+  lightTranslation.add(light1);
+  sg.add(lightTranslation);
 
   const createWindow = (xTranslation: number) => {
     const windowScaling = new GroupNode(new Scaling(new Vector(4, 5, 1, 0)));
@@ -343,23 +366,23 @@ window.addEventListener("load", () => {
     }
   });
 
-  const lightPositions = [new Vector(1, 1, -1, 1), new Vector(5, 10, -1, 5)];
-  const rayCamera = {
-    origin: new Vector(0, 0, -15, 1),
-    width: rayCanvas.width,
-    height: rayCanvas.height,
-    alpha: Math.PI / 3,
-  };
-
-  let rasterCamera = {
-    eye: new Vector(0, 0, 0, 1),
-    center: new Vector(0, 0, -1, 1),
-    up: new Vector(0, 1, 0, 0),
-    fovy: 60,
-    aspect: rasterCanvas.width / rasterCanvas.height,
-    near: 0.1,
-    far: 100,
-  };
+  // const lightPositions = [new Vector(1, 1, -1, 1), new Vector(5, 10, -1, 5)];
+  // const rayCamera = {
+  //   origin: new Vector(0, 0, -15, 1),
+  //   width: rayCanvas.width,
+  //   height: rayCanvas.height,
+  //   alpha: Math.PI / 3,
+  // };
+  //
+  // let rasterCamera = {
+  //   eye: new Vector(0, 0, 0, 1),
+  //   center: new Vector(0, 0, -1, 1),
+  //   up: new Vector(0, 1, 0, 0),
+  //   fovy: 60,
+  //   aspect: rasterCanvas.width / rasterCanvas.height,
+  //   near: 0.1,
+  //   far: 100,
+  // };
 
   let lastTimestamp = performance.now();
 
@@ -369,12 +392,12 @@ window.addEventListener("load", () => {
     if (renderMode == "rasterization") {
       rasterVisitor.renderWithPhong(
         sg,
-        rasterCamera,
-        lightPositions,
+        null,
+        null,
         phongValues
       );
     } else if (renderMode == "raytracing") {
-      rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
+      rayVisitor.render(sg, null, null, phongValues);
     }
     animation1.simulate(timestamp - lastTimestamp);
 
@@ -473,7 +496,7 @@ window.addEventListener("load", () => {
   rasterCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    selectedNode = mouseRayVisitor.click(sg, rayCamera, mx, my, rasterContext);
+    selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
     }
@@ -482,7 +505,7 @@ window.addEventListener("load", () => {
   rayCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    selectedNode = mouseRayVisitor.click(sg, rayCamera, mx, my, rayContext);
+    selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
     }

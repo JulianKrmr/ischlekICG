@@ -16,10 +16,10 @@ import {
   TextureBoxNode,
   PyramidNode,
   CustomShapeNode,
-  CameraNode,
+  CameraNode, LightNode,
 } from "../nodes";
 import { ChildProcess } from "child_process";
-import PhongValues from "../boilerplate/project-boilerplate";
+import PhongValues, {CameraRaytracer} from "../boilerplate/project-boilerplate";
 import CustomShape from "../objects/customShape";
 
 const UNIT_SPHERE = new Sphere(
@@ -57,6 +57,8 @@ export default class RayVisitor implements Visitor {
   intersection: Intersection | null;
   intersectionColor: Vector;
   ray: Ray;
+  camera: CameraRaytracer;
+  lightPositions: Array<Vector>;
   phongValues: PhongValues;
   //raster objects?
   objectIntersections: [Intersection, Ray, Node][];
@@ -95,13 +97,26 @@ export default class RayVisitor implements Visitor {
     const height = this.imageData.height;
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
-        this.ray = Ray.makeRay(x, y, camera);
-        this.transformations = [Matrix.identity()];
-        this.inverseTransformations = [Matrix.identity()];
 
+        this.transformations = [];
+        this.inverseTransformations = [];
         this.objectIntersections = [];
-
+        this.transformations.push(Matrix.identity());
+        this.inverseTransformations.push(Matrix.identity());
+        this.lightPositions = [];
         this.intersection = null;
+        let toWorld = this.transformations[this.transformations.length - 1];
+
+        let cameraRaytracer = {
+          origin: toWorld.mulVec(new Vector(0, 0, 0, 1)),
+          width: 100,
+          height: 100,
+          alpha: Math.PI / 3,
+          toWorld: toWorld
+        }
+        this.camera = cameraRaytracer;
+        this.ray = Ray.makeRay(x, y, this.camera);
+
         rootNode.accept(this);
 
         if (this.intersection) {
@@ -130,9 +145,9 @@ export default class RayVisitor implements Visitor {
             let color = phong(
               this.intersectionColor,
               this.intersection,
-              lightPositions,
+              this.lightPositions,
               phongValues,
-              camera.origin
+              this.camera.origin
             );
             data[4 * (width * y + x) + 0] = color.r * 255;
             data[4 * (width * y + x) + 1] = color.g * 255;
@@ -223,6 +238,11 @@ export default class RayVisitor implements Visitor {
     }
   }
   visitCameraNode(node: CameraNode) {}
+
+  visitLightNode(node: LightNode): void {
+    let toWorld = this.transformations[this.transformations.length - 1];
+    this.lightPositions.push(toWorld.mulVec(new Vector(0, 0, 0, 1)));
+  }
 
   /**
    * Visits a sphere node

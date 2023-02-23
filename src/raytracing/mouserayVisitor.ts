@@ -16,7 +16,7 @@ import {
   TextureBoxNode,
   PyramidNode,
   CustomShapeNode,
-  CameraNode,
+  CameraNode, LightNode,
 } from "../nodes";
 import { ChildProcess } from "child_process";
 import PhongValues from "../boilerplate/project-boilerplate";
@@ -166,6 +166,8 @@ export default class MouserayVisitor implements Visitor {
     );
   }
   visitCameraNode(node: CameraNode) {}
+
+  visitLightNode(node: LightNode) {}
 
   //interface ray object statt any?
   //visits a node and checks for intersection, pushes intersection and node to array

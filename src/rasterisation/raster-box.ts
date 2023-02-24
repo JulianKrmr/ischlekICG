@@ -191,14 +191,7 @@ export default class RasterBox {
       0.0, 0.0, -1.0, 0.0,
     ];
 
-    const colors = this.createColors(
-      color,
-      color2,
-      vertices.length
-    );
-
-    console.log("lenght colors: " + colors.length)
-    console.log("amountOfVertices: " + vertices.length)
+    const colors = this.createColors(color, color2, vertices.length);
 
     this.elements = vertices.length / 3;
 
@@ -260,14 +253,24 @@ export default class RasterBox {
     let colors = [];
     for (let i = 0; i < amountOfIndices; i = i + 18) {
       colors.push(
-        color1.r, color1.g, color1.b,
-        color1.r, color1.g, color1.b,
-        color1.r, color1.g, color1.b,
-        color2.r, color2.g, color2.b,
-        color2.r, color2.g, color2.b,
-        color2.r, color2.g, color2.b,
-
-
+        color1.r,
+        color1.g,
+        color1.b,
+        color1.r,
+        color1.g,
+        color1.b,
+        color1.r,
+        color1.g,
+        color1.b,
+        color2.r,
+        color2.g,
+        color2.b,
+        color2.r,
+        color2.g,
+        color2.b,
+        color2.r,
+        color2.g,
+        color2.b
       );
     }
     return colors;

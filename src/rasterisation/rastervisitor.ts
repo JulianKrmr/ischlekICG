@@ -12,7 +12,8 @@ import {
   TextureBoxNode,
   PyramidNode,
   CustomShapeNode,
-  CameraNode, LightNode,
+  CameraNode,
+  LightNode,
 } from "../nodes";
 import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
@@ -72,10 +73,6 @@ export class RasterVisitor implements Visitor {
   render(rootNode: Node, camera: Camera | null, lightPositions: Array<Vector>) {
     // clear
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-
-    if (camera) {
-      this.setupCamera(camera);
-    }
 
     // traverse and render
     rootNode.accept(this);
@@ -183,7 +180,7 @@ export class RasterVisitor implements Visitor {
         fovy: 60,
         aspect: 500 / 500,
         near: 0.1,
-        far: 100
+        far: 100,
       };
       this.cameraToWorld = toWorld;
       this.setupCamera(cameraRasteriser);
@@ -469,5 +466,5 @@ export class RasterSetupVisitor {
   visitCustomShapeNode(node: CustomShapeNode) {}
 
   visitCameraNode(node: CameraNode) {}
-  visitLightNode(node: LightNode){}
+  visitLightNode(node: LightNode) {}
 }

@@ -230,7 +230,11 @@ window.addEventListener("load", () => {
   const textureBoxTranslation = new GroupNode(
     new Translation(new Vector(1, -1, 1, 0))
   );
-  const textureBox = new TextureBoxNode("hci-logo.png", textureBoxScaling, "brickwall-normal.jpg");
+  const textureBox = new TextureBoxNode(
+    "hci-logo.png",
+    textureBoxScaling,
+    "brickwall-normal.jpg"
+  );
 
   textureBoxScaling.add(textureBox);
   textureBoxTranslation.add(textureBoxScaling);

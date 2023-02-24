@@ -65,6 +65,8 @@ export default class RayVisitor implements Visitor {
   phongValues: PhongValues;
   //raster objects?
   objectIntersections: [Intersection, Ray, Node][];
+  x: number;
+  y: number;
   /**
    * Creates a new RayVisitor
    * @param context The 2D context to render to
@@ -100,6 +102,8 @@ export default class RayVisitor implements Visitor {
     const height = this.imageData.height;
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
+        this.x = x;
+        this.y = y;
         this.transformations = [];
         this.inverseTransformations = [];
         this.objectIntersections = [];
@@ -111,7 +115,7 @@ export default class RayVisitor implements Visitor {
         const toWorld = this.transformations[this.transformations.length - 1];
 
         rootNode.accept(this);
-        this.ray = Ray.makeRay(x, y, this.camera);
+        // this.ray = Ray.makeRay(x, y, this.camera);
 
         if (this.intersection) {
           //If the ray intersects with more than one object, sort the intersections by t-value and select the closest one
@@ -201,6 +205,7 @@ export default class RayVisitor implements Visitor {
     node: SphereNode | PyramidNode | AABoxNode | CustomShapeNode,
     unitObject: any
   ) {
+    console.log(node);
     const toWorld = this.transformations[this.transformations.length - 1];
     const fromWorld =
       this.inverseTransformations[this.inverseTransformations.length - 1];
@@ -232,6 +237,7 @@ export default class RayVisitor implements Visitor {
     }
   }
   visitCameraNode(node: CameraNode, active: boolean) {
+    console.log(node + " camera");
     if (active) {
       let toWorld = this.transformations[this.transformations.length - 1];
 
@@ -243,6 +249,7 @@ export default class RayVisitor implements Visitor {
         toWorld: toWorld,
       };
       this.camera = cameraRaytracer;
+      this.ray = Ray.makeRay(this.x, this.y, this.camera);
       console.log(this.camera);
     }
   }

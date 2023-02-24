@@ -5,7 +5,8 @@ import {
   AABoxNode,
   CameraNode,
   CustomShapeNode,
-  GroupNode, LightNode,
+  GroupNode,
+  LightNode,
   PyramidNode,
   SphereNode,
   TextureBoxNode,
@@ -41,21 +42,21 @@ export default interface PhongValues {
 }
 
 export interface CameraRaytracer {
-  origin: Vector,
-  width: number,
-  height: number,
-  alpha: number,
-  toWorld: Matrix
+  origin: Vector;
+  width: number;
+  height: number;
+  alpha: number;
+  toWorld: Matrix;
 }
 
 export interface CameraRasteriser {
-  eye: Vector,
-  center: Vector,
-  up: Vector,
-  fovy: number,
-  aspect: number,
-  near: number,
-  far: number
+  eye: Vector;
+  center: Vector;
+  up: Vector;
+  fovy: number;
+  aspect: number;
+  near: number;
+  far: number;
 }
 
 window.addEventListener("load", () => {
@@ -125,7 +126,9 @@ window.addEventListener("load", () => {
   sg.add(cameraTranslation);
 
   const light1 = new LightNode();
-  const lightTranslation = new GroupNode(new Translation(new Vector(-1, -2, 9, 0)));
+  const lightTranslation = new GroupNode(
+    new Translation(new Vector(-1, -2, 9, 0))
+  );
   lightTranslation.add(light1);
   sg.add(lightTranslation);
 
@@ -394,12 +397,7 @@ window.addEventListener("load", () => {
 
   function animate(timestamp: number) {
     if (renderMode == "rasterization") {
-      rasterVisitor.renderWithPhong(
-        sg,
-        null,
-        null,
-        phongValues
-      );
+      rasterVisitor.renderWithPhong(sg, null, null, phongValues);
     } else if (renderMode == "raytracing") {
       rayVisitor.render(sg, null, null, phongValues);
     }

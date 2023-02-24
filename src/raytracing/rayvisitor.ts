@@ -16,10 +16,13 @@ import {
   TextureBoxNode,
   PyramidNode,
   CustomShapeNode,
-  CameraNode, LightNode,
+  CameraNode,
+  LightNode,
 } from "../nodes";
 import { ChildProcess } from "child_process";
-import PhongValues, {CameraRaytracer} from "../boilerplate/project-boilerplate";
+import PhongValues, {
+  CameraRaytracer,
+} from "../boilerplate/project-boilerplate";
 import CustomShape from "../objects/customShape";
 
 const UNIT_SPHERE = new Sphere(
@@ -97,7 +100,6 @@ export default class RayVisitor implements Visitor {
     const height = this.imageData.height;
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
-
         this.transformations = [];
         this.inverseTransformations = [];
         this.objectIntersections = [];
@@ -105,19 +107,11 @@ export default class RayVisitor implements Visitor {
         this.inverseTransformations.push(Matrix.identity());
         this.lightPositions = [];
         this.intersection = null;
-        let toWorld = this.transformations[this.transformations.length - 1];
 
-        let cameraRaytracer = {
-          origin: toWorld.mulVec(new Vector(0, 0, 0, 1)),
-          width: 100,
-          height: 100,
-          alpha: Math.PI / 3,
-          toWorld: toWorld
-        }
-        this.camera = cameraRaytracer;
-        this.ray = Ray.makeRay(x, y, this.camera);
+        const toWorld = this.transformations[this.transformations.length - 1];
 
         rootNode.accept(this);
+        this.ray = Ray.makeRay(x, y, this.camera);
 
         if (this.intersection) {
           //If the ray intersects with more than one object, sort the intersections by t-value and select the closest one
@@ -237,7 +231,21 @@ export default class RayVisitor implements Visitor {
       }
     }
   }
-  visitCameraNode(node: CameraNode) {}
+  visitCameraNode(node: CameraNode, active: boolean) {
+    if (active) {
+      let toWorld = this.transformations[this.transformations.length - 1];
+
+      let cameraRaytracer = {
+        origin: toWorld.mulVec(new Vector(0, 0, 0, 1)),
+        width: 100,
+        height: 100,
+        alpha: Math.PI / 3,
+        toWorld: toWorld,
+      };
+      this.camera = cameraRaytracer;
+      console.log(this.camera);
+    }
+  }
 
   visitLightNode(node: LightNode): void {
     let toWorld = this.transformations[this.transformations.length - 1];

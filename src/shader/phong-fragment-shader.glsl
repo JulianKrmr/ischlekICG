@@ -19,9 +19,6 @@ const vec4 cameraPos = vec4(0.0, 0.0, 0.0, 1.0);
 uniform vec3 LightPositions[8];
 uniform int numberOfLights;
 
-
-
-
 void main(void) {
 
 

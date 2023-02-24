@@ -197,9 +197,6 @@ export default class RasterBox {
       vertices.length
     );
 
-    console.log("lenght colors: " + colors.length)
-    console.log("amountOfVertices: " + vertices.length)
-
     this.elements = vertices.length / 3;
 
     const vertexBuffer = gl.createBuffer();

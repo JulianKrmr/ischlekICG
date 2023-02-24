@@ -195,12 +195,12 @@ window.addEventListener("load", () => {
 
   // texture only comes after first traversal; cube just stays black now
   const textureBoxScaling = new GroupNode(
-    new Scaling(new Vector(0.5, 0.5, 0.5, 0))
+    new Scaling(new Vector(2.0, 2.0, 2.0, 0))
   );
   const textureBoxTranslation = new GroupNode(
     new Translation(new Vector(1, -1, 1, 0))
   );
-  const textureBox = new TextureBoxNode("hci-logo.png", textureBoxScaling);
+  const textureBox = new TextureBoxNode("hci-logo.png", textureBoxScaling, "brickwall-normal.jpg");
 
   textureBoxScaling.add(textureBox);
   textureBoxTranslation.add(textureBoxScaling);

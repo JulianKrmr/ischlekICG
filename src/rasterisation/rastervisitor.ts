@@ -119,6 +119,12 @@ export class RasterVisitor implements Visitor {
     const L = shader.getUniformVec3Array("LightPositions");
     L.set(lightPositions);
     shader.getUniformInt("numberOfLights").set(lightPositions.length);
+
+    const textureShader = this.textureshader;
+    textureShader.use();
+    const LTexture = shader.getUniformVec3Array("LightPositions");
+    LTexture.set(lightPositions);
+    textureShader.getUniformInt("numberOfLights").set(lightPositions.length);
   }
 
   passPhongValues(phongValues: PhongValues) {
@@ -338,12 +344,25 @@ export class RasterVisitor implements Visitor {
   visitTextureBoxNode(node: TextureBoxNode) {
     this.textureshader.use();
     let shader = this.textureshader;
-
+    const fromWorld = this.transformations[this.transformations.length - 1];
     const toWorld = this.transformations[this.transformations.length - 1];
     shader.getUniformMatrix("M").set(toWorld);
     let P = shader.getUniformMatrix("P");
     if (P && this.perspective) {
       P.set(this.perspective);
+    }
+    let normal = fromWorld.transpose();
+    normal.setVal(0, 3, 0);
+    normal.setVal(1, 3, 0);
+    normal.setVal(2, 3, 0);
+    normal.setVal(3, 0, 0);
+    normal.setVal(3, 1, 0);
+    normal.setVal(3, 2, 0);
+    normal.setVal(3, 3, 1);
+
+    const N = shader.getUniformMatrix("N");
+    if (N) {
+      N.set(normal);
     }
     shader.getUniformMatrix("V").set(this.lookat);
 
@@ -459,7 +478,8 @@ export class RasterSetupVisitor {
         this.gl,
         new Vector(-0.5, -0.5, -0.5, 1),
         new Vector(0.5, 0.5, 0.5, 1),
-        node.texture
+        node.texture,
+        node.normal
       )
     );
   }

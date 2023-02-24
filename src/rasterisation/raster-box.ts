@@ -191,7 +191,11 @@ export default class RasterBox {
       0.0, 0.0, -1.0, 0.0,
     ];
 
-    const colors = this.createColors(color, color2, vertices.length);
+    const colors = this.createColors(
+      color,
+      color2,
+      vertices.length
+    );
 
     this.elements = vertices.length / 3;
 

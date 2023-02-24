@@ -177,11 +177,11 @@ export class RasterVisitor implements Visitor {
       let toWorld = this.transformations[this.transformations.length - 1];
 
       let cameraRasteriser = {
-        eye: toWorld.mulVec(new Vector(0, 0, 0, 1)), // origin
-        center: toWorld.mulVec(new Vector(0, 0, -1, 1)),
-        up: toWorld.mulVec(new Vector(0, 1, 0, 0)),
+        eye: new Vector(0, 0, 0, 1),
+        center: new Vector(0, 0, -1, 1),
+        up: new Vector(0, 1, 0, 0),
         fovy: 60,
-        aspect: 350 / 350,
+        aspect: 500 / 500,
         near: 0.1,
         far: 100
       };

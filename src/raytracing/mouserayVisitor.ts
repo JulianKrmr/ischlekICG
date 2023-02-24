@@ -16,10 +16,14 @@ import {
   TextureBoxNode,
   PyramidNode,
   CustomShapeNode,
-  CameraNode, LightNode,
+  CameraNode,
+  LightNode,
 } from "../nodes";
 import { ChildProcess } from "child_process";
-import PhongValues from "../boilerplate/project-boilerplate";
+import PhongValues, {
+  CameraRasteriser,
+  CameraRaytracer,
+} from "../boilerplate/project-boilerplate";
 import CustomShape from "../objects/customShape";
 
 const UNIT_SPHERE = new Sphere(
@@ -57,6 +61,7 @@ export default class MouserayVisitor implements Visitor {
   ray: Ray;
   objectIntersections: [Intersection, Ray, Node][];
   phongValues: PhongValues; //evtl raus? falls nicht wieder in constructor rein
+  camera: CameraRaytracer | CameraRasteriser;
   /**
    * Creates a new RayVisitor
    * @param context The 2D context to render to
@@ -81,15 +86,51 @@ export default class MouserayVisitor implements Visitor {
     y: number,
     renderingContext: any //bisher useless
   ) {
+    this.transformations = [];
+    this.inverseTransformations = [];
+    this.objectIntersections = [];
+    this.transformations.push(Matrix.identity());
+    this.inverseTransformations.push(Matrix.identity());
+    this.intersection = null;
+    let toWorld = this.transformations[this.transformations.length - 1];
+
+    if (renderingContext == WebGL2RenderingContext) {
+      //rasterizer
+      y = y / 2;
+      x = x / 2;
+      let cameraRasteriser = {
+        eye: new Vector(0, 0, 0, 1),
+        center: new Vector(0, 0, -1, 1),
+        up: new Vector(0, 1, 0, 0),
+        fovy: 60,
+        aspect: 500 / 500,
+        near: 0.1,
+        far: 100,
+      };
+      this.camera = cameraRasteriser;
+      this.ray = Ray.makeRay(x, y, { width: 500, height: 500, alpha: 60 });
+    } else {
+      //raytracer
+      y = y / 10;
+      x = x / 10;
+      let cameraRaytracer = {
+        origin: toWorld.mulVec(new Vector(0, 0, 0, 1)),
+        width: 100,
+        height: 100,
+        alpha: Math.PI / 3,
+        toWorld: toWorld,
+      };
+      this.camera = cameraRaytracer;
+      this.ray = Ray.makeRay(x, y, { width: 100, height: 100, alpha: 60 });
+    }
+
+    console.log(this.ray);
     //so far useless, may be used to scale to canvas size
     const width = renderingContext.canvas.width;
     const height = renderingContext.canvas.height;
 
     //To scale to canvas size, has to be changed if canvas size changes
-    y = y / 10;
-    x = x / 10;
 
-    this.ray = Ray.makeRay(x, y, camera);
     this.transformations = [Matrix.identity()];
     this.inverseTransformations = [Matrix.identity()];
     this.objectIntersections = [];
@@ -183,7 +224,6 @@ export default class MouserayVisitor implements Visitor {
     let intersection = unitObject.intersect(ray);
 
     if (intersection) {
-      // console.log(intersection);
       const intersectionPointWorld = toWorld.mulVec(intersection.point);
       const intersectionNormalWorld = toWorld
         .mulVec(intersection.normal)
@@ -193,7 +233,6 @@ export default class MouserayVisitor implements Visitor {
         intersectionPointWorld,
         intersectionNormalWorld
       );
-      //was macht das?
       if (
         this.intersection === null ||
         intersection.closerThan(this.intersection)

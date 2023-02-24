@@ -109,8 +109,8 @@ export default class RayVisitor implements Visitor {
 
         let cameraRaytracer = {
           origin: toWorld.mulVec(new Vector(0, 0, 0, 1)),
-          width: 200,
-          height: 200,
+          width: 100,
+          height: 100,
           alpha: Math.PI / 3,
           toWorld: toWorld
         }

@@ -106,11 +106,11 @@ export class RasterVisitor implements Visitor {
   private passCameraPosition(eye: Vector) {
     const shader = this.shader;
     shader.use();
-    shader.getUniformVec3("cameraPosition").set(eye);
+    shader.getUniformVec3("cameraPos").set(eye);
 
     const textureShader = this.textureshader;
     textureShader.use();
-    textureShader.getUniformVec3("cameraPosition").set(eye);
+    textureShader.getUniformVec3("cameraPos").set(eye);
   }
 
   passLightPositions(lightPositions: Array<Vector>) {
@@ -180,9 +180,9 @@ export class RasterVisitor implements Visitor {
       let toWorld = this.transformations[this.transformations.length - 1];
 
       let cameraRasteriser = {
-        eye: new Vector(0, 0, 0, 1),
-        center: new Vector(0, 0, -1, 1),
-        up: new Vector(0, 1, 0, 0),
+        eye: toWorld.mulVec(new Vector(0, 0, 0, 1)),
+        center: toWorld.mulVec(new Vector(0, 0, -1, 1)),
+        up: toWorld.mulVec(new Vector(0, 1, 0, 0)),
         fovy: 60,
         aspect: 500 / 500,
         near: 0.1,

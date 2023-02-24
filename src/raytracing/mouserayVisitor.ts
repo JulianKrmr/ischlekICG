@@ -151,19 +151,28 @@ export default class MouserayVisitor implements Visitor {
         this.objectIntersections[0][2] instanceof SphereNode ||
         this.objectIntersections[0][2] instanceof AABoxNode ||
         this.objectIntersections[0][2] instanceof PyramidNode ||
-        this.objectIntersections[0][2] instanceof CustomShapeNode
+        this.objectIntersections[0][2] instanceof CustomShapeNode ||
+        this.objectIntersections[0][2] instanceof TextureBoxNode
       ) {
+        if (
+          this.objectIntersections[0][2] instanceof SphereNode ||
+          this.objectIntersections[0][2] instanceof AABoxNode ||
+          this.objectIntersections[0][2] instanceof PyramidNode ||
+          this.objectIntersections[0][2] instanceof CustomShapeNode
+        ) {
+          this.objectIntersections[0][2].color = new Vector(
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            0
+          );
+        }
         //das gibt total schwachsinnige werte für t
         // console.log(this.objectIntersections[0][0].t);
         // console.log(this.objectIntersections[1][0].t);
 
         //Selects the node of the closest intersection
-        this.objectIntersections[0][2].color = new Vector(
-          Math.random(),
-          Math.random(),
-          Math.random(),
-          0
-        );
+
         return this.objectIntersections[0][2];
       }
     }
@@ -203,7 +212,9 @@ export default class MouserayVisitor implements Visitor {
   visitAABoxNode(node: AABoxNode): void {
     this.visitNode(node, UNIT_AABOX);
   }
-  visitTextureBoxNode(node: TextureBoxNode) {}
+  visitTextureBoxNode(node: TextureBoxNode) {
+    this.visitNode(node, UNIT_AABOX);
+  }
   visitCustomShapeNode(node: CustomShapeNode): void {
     this.visitNode(
       node,

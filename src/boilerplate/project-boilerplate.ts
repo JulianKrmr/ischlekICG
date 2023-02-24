@@ -63,8 +63,12 @@ window.addEventListener("load", () => {
     "mode--toggle"
   ) as HTMLFormElement;
 
-  let selectedNode: SphereNode | PyramidNode | AABoxNode | CustomShapeNode =
-    null;
+  let selectedNode:
+    | SphereNode
+    | PyramidNode
+    | AABoxNode
+    | CustomShapeNode
+    | TextureBoxNode = null;
   let selectedGroupNode: GroupNode = null;
 
   //scene graph
@@ -133,7 +137,7 @@ window.addEventListener("load", () => {
     const window = new AABoxNode(
       new Vector(0.7, 0.5, 0.0, 1),
       new Vector(0.7, 0.5, 0.0, 1),
-      windowScaling
+      windowTranslation
     );
     windowScaling.add(window);
     windowTranslation.add(windowScaling);
@@ -148,7 +152,7 @@ window.addEventListener("load", () => {
     const windowTopBar = new AABoxNode(
       new Vector(1.0, 0.1, 0, 1),
       new Vector(1.0, 0.1, 0, 1),
-      windowTopBarScaling
+      windowTranslation
     );
     windowTopBarScaling.add(windowTopBar);
     windowTopBarTranslation.add(windowTopBarScaling);
@@ -163,7 +167,7 @@ window.addEventListener("load", () => {
     const windowScene = new AABoxNode(
       new Vector(1, 1, 1, 1),
       new Vector(1, 1, 1, 1),
-      windowSceneScaling
+      windowTranslation
     );
     windowSceneScaling.add(windowScene);
     windowSceneTranslation.add(windowSceneScaling);

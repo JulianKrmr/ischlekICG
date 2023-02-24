@@ -117,11 +117,15 @@ export default class MouserayVisitor implements Visitor {
         origin: toWorld.mulVec(new Vector(0, 0, 0, 1)),
         width: 100,
         height: 100,
-        alpha: Math.PI / 3,
+        alpha: Math.PI / 4,
         toWorld: toWorld,
       };
       this.camera = cameraRaytracer;
-      this.ray = Ray.makeRay(x, y, { width: 100, height: 100, alpha: 60 });
+      this.ray = Ray.makeRay(x, y, {
+        width: 100,
+        height: 100,
+        alpha: Math.PI / 4,
+      });
     }
 
     console.log(this.ray);

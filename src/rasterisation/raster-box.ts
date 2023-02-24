@@ -257,14 +257,24 @@ export default class RasterBox {
     let colors = [];
     for (let i = 0; i < amountOfIndices; i = i + 18) {
       colors.push(
-        color1.r, color1.g, color1.b,
-        color1.r, color1.g, color1.b,
-        color1.r, color1.g, color1.b,
-        color2.r, color2.g, color2.b,
-        color2.r, color2.g, color2.b,
-        color2.r, color2.g, color2.b,
-
-
+        color1.r,
+        color1.g,
+        color1.b,
+        color1.r,
+        color1.g,
+        color1.b,
+        color1.r,
+        color1.g,
+        color1.b,
+        color2.r,
+        color2.g,
+        color2.b,
+        color2.r,
+        color2.g,
+        color2.b,
+        color2.r,
+        color2.g,
+        color2.b
       );
     }
     return colors;

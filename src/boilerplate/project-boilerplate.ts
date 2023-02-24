@@ -6,6 +6,7 @@ import {
   CameraNode,
   CustomShapeNode,
   GroupNode,
+  LightNode,
   PyramidNode,
   SphereNode,
   TextureBoxNode,
@@ -40,13 +41,35 @@ export default interface PhongValues {
   shininess: number;
 }
 
+export interface CameraRaytracer {
+  origin: Vector;
+  width: number;
+  height: number;
+  alpha: number;
+  toWorld: Matrix;
+}
+
+export interface CameraRasteriser {
+  eye: Vector;
+  center: Vector;
+  up: Vector;
+  fovy: number;
+  aspect: number;
+  near: number;
+  far: number;
+}
+
 window.addEventListener("load", () => {
   const modeToggleForm = document.getElementById(
     "mode--toggle"
   ) as HTMLFormElement;
 
-  let selectedNode: SphereNode | PyramidNode | AABoxNode | CustomShapeNode =
-    null;
+  let selectedNode:
+    | SphereNode
+    | PyramidNode
+    | AABoxNode
+    | CustomShapeNode
+    | TextureBoxNode = null;
   let selectedGroupNode: GroupNode = null;
 
   //scene graph
@@ -102,6 +125,13 @@ window.addEventListener("load", () => {
   cameraTranslation.add(camera1);
   sg.add(cameraTranslation);
 
+  const light1 = new LightNode();
+  const lightTranslation = new GroupNode(
+    new Translation(new Vector(-1, -2, 9, 0))
+  );
+  lightTranslation.add(light1);
+  sg.add(lightTranslation);
+
   const createWindow = (xTranslation: number) => {
     const windowScaling = new GroupNode(new Scaling(new Vector(4, 5, 1, 0)));
     const windowTranslation = new GroupNode(
@@ -110,7 +140,7 @@ window.addEventListener("load", () => {
     const window = new AABoxNode(
       new Vector(0.7, 0.5, 0.0, 1),
       new Vector(0.7, 0.5, 0.0, 1),
-      windowScaling
+      windowTranslation
     );
     windowScaling.add(window);
     windowTranslation.add(windowScaling);
@@ -125,7 +155,7 @@ window.addEventListener("load", () => {
     const windowTopBar = new AABoxNode(
       new Vector(1.0, 0.1, 0, 1),
       new Vector(1.0, 0.1, 0, 1),
-      windowTopBarScaling
+      windowTranslation
     );
     windowTopBarScaling.add(windowTopBar);
     windowTopBarTranslation.add(windowTopBarScaling);
@@ -140,7 +170,7 @@ window.addEventListener("load", () => {
     const windowScene = new AABoxNode(
       new Vector(1, 1, 1, 1),
       new Vector(1, 1, 1, 1),
-      windowSceneScaling
+      windowTranslation
     );
     windowSceneScaling.add(windowScene);
     windowSceneTranslation.add(windowSceneScaling);
@@ -343,23 +373,23 @@ window.addEventListener("load", () => {
     }
   });
 
-  const lightPositions = [new Vector(1, 1, -1, 1), new Vector(5, 10, -1, 5)];
-  const rayCamera = {
-    origin: new Vector(0, 0, -15, 1),
-    width: rayCanvas.width,
-    height: rayCanvas.height,
-    alpha: Math.PI / 3,
-  };
-
-  let rasterCamera = {
-    eye: new Vector(0, 0, 0, 1),
-    center: new Vector(0, 0, -1, 1),
-    up: new Vector(0, 1, 0, 0),
-    fovy: 60,
-    aspect: rasterCanvas.width / rasterCanvas.height,
-    near: 0.1,
-    far: 100,
-  };
+  // const lightPositions = [new Vector(1, 1, -1, 1), new Vector(5, 10, -1, 5)];
+  // const rayCamera = {
+  //   origin: new Vector(0, 0, -15, 1),
+  //   width: rayCanvas.width,
+  //   height: rayCanvas.height,
+  //   alpha: Math.PI / 3,
+  // };
+  //
+  // let rasterCamera = {
+  //   eye: new Vector(0, 0, 0, 1),
+  //   center: new Vector(0, 0, -1, 1),
+  //   up: new Vector(0, 1, 0, 0),
+  //   fovy: 60,
+  //   aspect: rasterCanvas.width / rasterCanvas.height,
+  //   near: 0.1,
+  //   far: 100,
+  // };
 
   let lastTimestamp = performance.now();
 
@@ -367,14 +397,9 @@ window.addEventListener("load", () => {
 
   function animate(timestamp: number) {
     if (renderMode == "rasterization") {
-      rasterVisitor.renderWithPhong(
-        sg,
-        rasterCamera,
-        lightPositions,
-        phongValues
-      );
+      rasterVisitor.renderWithPhong(sg, null, null, phongValues);
     } else if (renderMode == "raytracing") {
-      rayVisitor.render(sg, rayCamera, lightPositions, phongValues);
+      rayVisitor.render(sg, null, null, phongValues);
     }
     animation1.simulate(timestamp - lastTimestamp);
 
@@ -473,7 +498,8 @@ window.addEventListener("load", () => {
   rasterCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    selectedNode = mouseRayVisitor.click(sg, rayCamera, mx, my, rasterContext);
+    console.log(mx, my + " raster");
+    selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
     }
@@ -482,7 +508,9 @@ window.addEventListener("load", () => {
   rayCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    selectedNode = mouseRayVisitor.click(sg, rayCamera, mx, my, rayContext);
+    console.log(mx, my + " ray");
+
+    selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
     }

@@ -13,6 +13,7 @@ import {
   PyramidNode,
   CustomShapeNode,
   CameraNode,
+  LightNode,
 } from "../nodes";
 import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
@@ -43,6 +44,9 @@ interface Renderable {
 export class RasterVisitor implements Visitor {
   transformations: Matrix[];
   inverseTransformations: Matrix[];
+  eye: Vector;
+  lightPositions: Array<Vector>;
+  cameraToWorld: Matrix;
 
   /**
    * Creates a new RasterVisitor
@@ -70,10 +74,6 @@ export class RasterVisitor implements Visitor {
     // clear
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    if (camera) {
-      this.setupCamera(camera);
-    }
-
     // traverse and render
     rootNode.accept(this);
   }
@@ -86,15 +86,33 @@ export class RasterVisitor implements Visitor {
     // clear
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    if (camera) {
-      this.setupCamera(camera);
-    }
+    // if (camera) {
+    //   this.setupCamera(camera);
+    // }
+    this.transformations = [];
+    this.inverseTransformations = [];
+    this.transformations.push(Matrix.identity());
+    this.inverseTransformations.push(Matrix.identity());
+    this.lightPositions = [];
+    rootNode.accept(this);
+    this.passCameraPosition(this.eye);
+    this.passLightPositions(this.lightPositions);
     this.passPhongValues(phongValues);
-    this.passLightPositions(lightPositions);
 
     // traverse and render
     rootNode.accept(this);
   }
+
+  private passCameraPosition(eye: Vector) {
+    const shader = this.shader;
+    shader.use();
+    shader.getUniformVec3("cameraPosition").set(eye);
+
+    const textureShader = this.textureshader;
+    textureShader.use();
+    textureShader.getUniformVec3("cameraPosition").set(eye);
+  }
+
   passLightPositions(lightPositions: Array<Vector>) {
     const shader = this.shader;
     shader.use();
@@ -154,9 +172,26 @@ export class RasterVisitor implements Visitor {
       camera.near,
       camera.far
     );
+    this.eye = camera.eye;
   }
 
-  visitCameraNode(node: CameraNode) {}
+  visitCameraNode(node: CameraNode, active: boolean): void {
+    if (active) {
+      let toWorld = this.transformations[this.transformations.length - 1];
+
+      let cameraRasteriser = {
+        eye: new Vector(0, 0, 0, 1),
+        center: new Vector(0, 0, -1, 1),
+        up: new Vector(0, 1, 0, 0),
+        fovy: 60,
+        aspect: 500 / 500,
+        near: 0.1,
+        far: 100,
+      };
+      this.cameraToWorld = toWorld;
+      this.setupCamera(cameraRasteriser);
+    }
+  }
 
   /**
    * Visits a group node
@@ -335,6 +370,12 @@ export class RasterVisitor implements Visitor {
   }
 
   visitCustomShapeNode(node: CustomShapeNode) {}
+
+  visitLightNode(node: LightNode): void {
+    let toWorld = this.transformations[this.transformations.length - 1];
+
+    this.lightPositions.push(toWorld.mulVec(new Vector(0, 0, 0, 1)));
+  }
 }
 
 /**
@@ -445,4 +486,5 @@ export class RasterSetupVisitor {
   visitCustomShapeNode(node: CustomShapeNode) {}
 
   visitCameraNode(node: CameraNode) {}
+  visitLightNode(node: LightNode) {}
 }

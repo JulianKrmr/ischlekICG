@@ -17,9 +17,13 @@ import {
   PyramidNode,
   CustomShapeNode,
   CameraNode,
+  LightNode,
 } from "../nodes";
 import { ChildProcess } from "child_process";
-import PhongValues from "../boilerplate/project-boilerplate";
+import PhongValues, {
+  CameraRasteriser,
+  CameraRaytracer,
+} from "../boilerplate/project-boilerplate";
 import CustomShape from "../objects/customShape";
 
 const UNIT_SPHERE = new Sphere(
@@ -56,7 +60,8 @@ export default class MouserayVisitor implements Visitor {
   intersection: Intersection | null;
   ray: Ray;
   objectIntersections: [Intersection, Ray, Node][];
-  phongValues: PhongValues; //evtl raus? falls nicht wieder in constructor rein
+  phongValues: PhongValues;
+  camera: CameraRaytracer | CameraRasteriser;
   /**
    * Creates a new RayVisitor
    * @param context The 2D context to render to
@@ -73,23 +78,56 @@ export default class MouserayVisitor implements Visitor {
    * @param camera The camera used
    * @param lightPositions The light light positions
    */
-  //Is triggered by mouseclick, casts a ray (like in rayvisitor) and selects the closest object
+  //Is triggered by mouseclick, casts a ray (like in rayvisitor) and returns the closest objectNode
   click(
     rootNode: Node,
     camera: { origin: Vector; width: number; height: number; alpha: number },
     x: number,
     y: number,
-    renderingContext: any //bisher useless
+    renderingContext: any
   ) {
-    //so far useless, may be used to scale to canvas size
-    const width = renderingContext.canvas.width;
-    const height = renderingContext.canvas.height;
+    this.transformations = [];
+    this.inverseTransformations = [];
+    this.objectIntersections = [];
+    this.transformations.push(Matrix.identity());
+    this.inverseTransformations.push(Matrix.identity());
+    this.intersection = null;
+    let toWorld = this.transformations[this.transformations.length - 1];
 
-    //To scale to canvas size, has to be changed if canvas size changes
-    y = y / 10;
-    x = x / 10;
+    if (renderingContext == WebGL2RenderingContext) {
+      //rasterizer
+      y = y / 2;
+      x = x / 2;
+      let cameraRasteriser = {
+        eye: new Vector(0, 0, 0, 1),
+        center: new Vector(0, 0, -1, 1),
+        up: new Vector(0, 1, 0, 0),
+        fovy: 60,
+        aspect: 500 / 500,
+        near: 0.1,
+        far: 100,
+      };
+      this.camera = cameraRasteriser;
+      this.ray = Ray.makeRay(x, y, { width: 500, height: 500, alpha: 60 });
+    } else {
+      //raytracer
+      y = y / 10;
+      x = x / 10;
+      let cameraRaytracer = {
+        origin: toWorld.mulVec(new Vector(0, 0, 0, 1)),
+        width: 100,
+        height: 100,
+        alpha: Math.PI / 4,
+        toWorld: toWorld,
+      };
+      this.camera = cameraRaytracer;
+      this.ray = Ray.makeRay(x, y, {
+        width: 100,
+        height: 100,
+        alpha: Math.PI / 4,
+      });
+    }
 
-    this.ray = Ray.makeRay(x, y, camera);
     this.transformations = [Matrix.identity()];
     this.inverseTransformations = [Matrix.identity()];
     this.objectIntersections = [];
@@ -106,19 +144,28 @@ export default class MouserayVisitor implements Visitor {
         this.objectIntersections[0][2] instanceof SphereNode ||
         this.objectIntersections[0][2] instanceof AABoxNode ||
         this.objectIntersections[0][2] instanceof PyramidNode ||
-        this.objectIntersections[0][2] instanceof CustomShapeNode
+        this.objectIntersections[0][2] instanceof CustomShapeNode ||
+        this.objectIntersections[0][2] instanceof TextureBoxNode
       ) {
+        //if the node is not a texture node, change its  color
+        if (
+          this.objectIntersections[0][2] instanceof SphereNode ||
+          this.objectIntersections[0][2] instanceof AABoxNode ||
+          this.objectIntersections[0][2] instanceof PyramidNode ||
+          this.objectIntersections[0][2] instanceof CustomShapeNode
+        ) {
+          this.objectIntersections[0][2].color = new Vector(
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            0
+          );
+        }
         //das gibt total schwachsinnige werte für t
         // console.log(this.objectIntersections[0][0].t);
         // console.log(this.objectIntersections[1][0].t);
 
-        //Selects the node of the closest intersection
-        this.objectIntersections[0][2].color = new Vector(
-          Math.random(),
-          Math.random(),
-          Math.random(),
-          0
-        );
+        //Selects the node of the closest intersection and returns it
         return this.objectIntersections[0][2];
       }
     }
@@ -158,7 +205,9 @@ export default class MouserayVisitor implements Visitor {
   visitAABoxNode(node: AABoxNode): void {
     this.visitNode(node, UNIT_AABOX);
   }
-  visitTextureBoxNode(node: TextureBoxNode) {}
+  visitTextureBoxNode(node: TextureBoxNode) {
+    this.visitNode(node, UNIT_AABOX);
+  }
   visitCustomShapeNode(node: CustomShapeNode): void {
     this.visitNode(
       node,
@@ -167,7 +216,8 @@ export default class MouserayVisitor implements Visitor {
   }
   visitCameraNode(node: CameraNode) {}
 
-  //interface ray object statt any?
+  visitLightNode(node: LightNode) {}
+
   //visits a node and checks for intersection, pushes intersection and node to array
   visitNode(node: Node, unitObject: any) {
     const toWorld = this.transformations[this.transformations.length - 1];
@@ -181,7 +231,6 @@ export default class MouserayVisitor implements Visitor {
     let intersection = unitObject.intersect(ray);
 
     if (intersection) {
-      // console.log(intersection);
       const intersectionPointWorld = toWorld.mulVec(intersection.point);
       const intersectionNormalWorld = toWorld
         .mulVec(intersection.normal)
@@ -191,7 +240,6 @@ export default class MouserayVisitor implements Visitor {
         intersectionPointWorld,
         intersectionNormalWorld
       );
-      //was macht das?
       if (
         this.intersection === null ||
         intersection.closerThan(this.intersection)
@@ -202,113 +250,3 @@ export default class MouserayVisitor implements Visitor {
     }
   }
 }
-
-/**
- * Visits a sphere node
- * @param node - The node to visit
- */
-// visitSphereNode(node: SphereNode) {
-//   const toWorld = this.transformations[this.transformations.length - 1];
-//   const fromWorld =
-//     this.inverseTransformations[this.inverseTransformations.length - 1];
-
-//   const ray = new Ray(
-//     fromWorld.mulVec(this.ray.origin),
-//     fromWorld.mulVec(this.ray.direction).normalize()
-//   );
-//   let intersection = UNIT_SPHERE.intersect(ray);
-
-//   if (intersection) {
-//     const intersectionPointWorld = toWorld.mulVec(intersection.point);
-//     const intersectionNormalWorld = toWorld
-//       .mulVec(intersection.normal)
-//       .normalize();
-//     intersection = new Intersection(
-//       (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
-//       intersectionPointWorld,
-//       intersectionNormalWorld
-//     );
-//     if (
-//       this.intersection === null ||
-//       intersection.closerThan(this.intersection)
-//     ) {
-//       this.intersection = intersection;
-//     }
-//     this.objectIntersections.push([intersection, ray, node]);
-//   }
-// }
-
-// /**
-//  * Visits an axis aligned box node
-//  * @param node The node to visit
-//  */
-// visitAABoxNode(node: AABoxNode) {
-//   const toWorld = this.transformations[this.transformations.length - 1];
-//   const fromWorld =
-//     this.inverseTransformations[this.inverseTransformations.length - 1];
-
-//   const ray = new Ray(
-//     fromWorld.mulVec(this.ray.origin),
-//     fromWorld.mulVec(this.ray.direction).normalize()
-//   );
-//   let intersection = UNIT_AABOX.intersect(ray);
-
-//   if (intersection) {
-//     const intersectionPointWorld = toWorld.mulVec(intersection.point);
-//     const intersectionNormalWorld = toWorld
-//       .mulVec(intersection.normal)
-//       .normalize();
-//     intersection = new Intersection(
-//       (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
-//       intersectionPointWorld,
-//       intersectionNormalWorld
-//     );
-//     if (
-//       this.intersection === null ||
-//       intersection.closerThan(this.intersection)
-//     ) {
-//       this.intersection = intersection;
-//     }
-//     this.objectIntersections.push([intersection, ray, node]);
-//   }
-// }
-
-// /**
-//  * Visits an axis aligned box node
-//  * @param node The node to visit
-//  */
-// visitPyramidNode(node: PyramidNode) {
-//   const toWorld = this.transformations[this.transformations.length - 1];
-//   const fromWorld =
-//     this.inverseTransformations[this.inverseTransformations.length - 1];
-
-//   const ray = new Ray(
-//     fromWorld.mulVec(this.ray.origin),
-//     fromWorld.mulVec(this.ray.direction).normalize()
-//   );
-//   let intersection = UNIT_PYRAMID.intersect(ray);
-
-//   if (intersection) {
-//     const intersectionPointWorld = toWorld.mulVec(intersection.point);
-//     const intersectionNormalWorld = toWorld
-//       .mulVec(intersection.normal)
-//       .normalize();
-//     intersection = new Intersection(
-//       (intersectionPointWorld.x - ray.origin.x) / ray.direction.x,
-//       intersectionPointWorld,
-//       intersectionNormalWorld
-//     );
-//     if (
-//       this.intersection === null ||
-//       intersection.closerThan(this.intersection)
-//     ) {
-//       this.intersection = intersection;
-//     }
-//     this.objectIntersections.push([intersection, ray, node]);
-//   }
-// }
-
-/**
- * Visits a textured box node
- * @param node The node to visit
- */

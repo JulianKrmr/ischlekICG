@@ -231,7 +231,7 @@ window.addEventListener("load", () => {
   const textureBoxTranslation = new GroupNode(
     new Translation(new Vector(1, -1, 1, 0))
   );
-  const textureBox = new TextureVideoBoxNode("assitoni.mp4", textureBoxScaling, "normalneutral.jpg");
+  const textureBox = new TextureVideoBoxNode("assitoni.mp4", textureBoxScaling);
 
   textureBoxScaling.add(textureBox);
   textureBoxTranslation.add(textureBoxScaling);

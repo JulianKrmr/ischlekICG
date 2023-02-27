@@ -1,15 +1,5 @@
-Pyramide geht weder zu rotieren noch zu phongFragmentShader
+Scaling und Rotating im Raytracer
 
-Klickbarkeit ist nur so halb richtig
+Pyramid
 
-Rotierbarkeit im raytracing geht nicht
-
-raytracing zeigt objekte nicht
-
-parents für objectnodes einfügen
-
-animationNodes funktionieren lassen
-
-
-camera und light im scenegraph
-
+Z fighting

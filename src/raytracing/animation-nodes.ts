@@ -206,7 +206,7 @@ export class ScalerNode extends AnimationNode {
   }
 }
 
-export class MoverNode extends AnimationNode {
+export class DriverNode extends AnimationNode {
   distanceToGoal: number; //wie weit soll er springen
   speed: number; //wie schnell soll er springen?
   direction: Vector;
@@ -225,22 +225,14 @@ export class MoverNode extends AnimationNode {
   }
 
   simulate(deltaT: number) {
+    console.log(this.active);
     if (this.active) {
-      if (this.up) {
-        //wenn up true ist, wird die translate methode ausgeführt, aber für speed * deltaT
-        //und distanceCovered wird immer erhöht, um zu schauen wann man im Ziel ist
-        translate(this.direction.mul(this.speed * deltaT), this.groupNode);
-        this.distanceCovered += this.direction.mul(this.speed).length * deltaT;
-        if (this.distanceCovered >= this.distanceToGoal) {
-          this.up = false;
-        }
-      } else {
-        //wenn up false ist, wird die translate methode ausgeführt, aber für -1 * speed * deltaT, um rückwärts zu laufen
-        translate(this.direction.mul(-1 * this.speed * deltaT), this.groupNode);
-        this.distanceCovered -= this.direction.mul(this.speed).length * deltaT;
-        if (this.distanceCovered <= 0) {
-          this.up = true;
-        }
+      //wenn active true ist, wird die translate methode ausgeführt, aber für speed * deltaT
+      //und distanceCovered wird immer erhöht, um zu schauen wann man im Ziel ist
+      translate(this.direction.mul(this.speed * deltaT), this.groupNode);
+      this.distanceCovered += this.direction.mul(this.speed).length * deltaT;
+      if (this.distanceCovered >= this.distanceToGoal) {
+        this.active = false;
       }
     }
   }

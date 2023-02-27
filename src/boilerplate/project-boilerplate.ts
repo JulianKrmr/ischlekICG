@@ -29,6 +29,7 @@ import textureVertexShader from "../shader/texture-vertex-perspective-shader.gls
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 import RasterBox from "../rasterisation/raster-box";
 import {
+  DriverNode,
   JumperNode,
   RotationNode,
   ScalerNode,
@@ -238,7 +239,7 @@ window.addEventListener("load", () => {
     new Rotation(new Vector(0, 0, 1, 0), Math.PI)
   );
 
-  textureBoxRotation.add(textureBox)
+  textureBoxRotation.add(textureBox);
   textureBoxScaling.add(textureBoxRotation);
   textureBoxTranslation.add(textureBoxScaling);
   rightWindowSceneTranslation.add(textureBoxTranslation);
@@ -281,7 +282,7 @@ window.addEventListener("load", () => {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   const transformationNode = new GroupNode(
-    new Translation(new Vector(0, 5, -5, 0))
+    new Translation(new Vector(-4, 5, -5, 0))
   );
   transformationNode.add(
     new AABoxNode(
@@ -290,14 +291,14 @@ window.addEventListener("load", () => {
       transformationNode
     )
   );
-  const animation1 = new JumperNode(
+  const animation1 = new DriverNode(
     transformationNode,
-    new Vector(2, 1, 1, 0),
-    0.002
+    new Vector(5, 0, 0, 0),
+    0.0002
   );
-  // sg.add(transformationNode);
+  sg.add(transformationNode);
 
-  // animation1.toggleActive();
+  animation1.toggleActive();
 
   // const thirdTransformationNode = new GroupNode(
   //   new Translation(new Vector(0, 0.5, -7, 0))

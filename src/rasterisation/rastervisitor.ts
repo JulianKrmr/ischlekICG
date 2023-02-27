@@ -14,6 +14,7 @@ import {
   CustomShapeNode,
   CameraNode,
   LightNode,
+  TextureVideoBoxNode,
 } from "../nodes";
 import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
@@ -22,6 +23,7 @@ import Intersection from "../math/intersection";
 import PhongValues from "../boilerplate/project-boilerplate";
 import AABox from "../objects/aabox";
 import Sphere from "../objects/sphere";
+import RasterVideoTextureBox from "./raster-texture-box-video";
 
 interface Camera {
   eye: Vector;
@@ -369,6 +371,35 @@ export class RasterVisitor implements Visitor {
     this.renderables.get(node).render(shader);
   }
 
+  visitTextureVideoBoxNode(node: TextureVideoBoxNode){
+    this.textureshader.use();
+    let shader = this.textureshader;
+    const fromWorld = this.transformations[this.transformations.length - 1];
+    const toWorld = this.transformations[this.transformations.length - 1];
+    shader.getUniformMatrix("M").set(toWorld);
+    let P = shader.getUniformMatrix("P");
+    if (P && this.perspective) {
+      P.set(this.perspective);
+    }
+    let normal = fromWorld.transpose();
+    normal.setVal(0, 3, 0);
+    normal.setVal(1, 3, 0);
+    normal.setVal(2, 3, 0);
+    normal.setVal(3, 0, 0);
+    normal.setVal(3, 1, 0);
+    normal.setVal(3, 2, 0);
+    normal.setVal(3, 3, 1);
+
+    const N = shader.getUniformMatrix("N");
+    if (N) {
+      N.set(normal);
+    }
+    shader.getUniformMatrix("V").set(this.lookat);
+
+    this.renderables.get(node).render(shader);
+
+  }
+
   visitCustomShapeNode(node: CustomShapeNode) {}
 
   visitLightNode(node: LightNode): void {
@@ -480,6 +511,23 @@ export class RasterSetupVisitor {
         new Vector(0.5, 0.5, 0.5, 1),
         node.texture,
         node.normal
+      )
+    );
+  }
+
+  visitTextureVideoBoxNode(node: TextureVideoBoxNode) {
+    let normalMap = "normalneutral.png";
+    if (node.normal) {
+      normalMap = node.normal;
+    }
+    this.objects.set(
+      node,
+      new RasterVideoTextureBox(
+        this.gl,
+        new Vector(-0.5, -0.5, -0.5, 1),
+        new Vector(0.5, 0.5, 0.5, 1),
+        node.texture,
+        normalMap
       )
     );
   }

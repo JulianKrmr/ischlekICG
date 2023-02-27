@@ -18,6 +18,7 @@ import {
   CustomShapeNode,
   CameraNode,
   LightNode,
+  TextureVideoBoxNode,
 } from "../nodes";
 import { ChildProcess } from "child_process";
 import PhongValues, {
@@ -194,6 +195,7 @@ export default class RayVisitor implements Visitor {
     this.visitNode(node, UNIT_AABOX);
   }
   visitTextureBoxNode(node: TextureBoxNode) {} //TODO
+  visitTextureVideoBoxNode(node: TextureVideoBoxNode): void {} //TODO
   visitCustomShapeNode(node: CustomShapeNode) {
     this.visitNode(
       node,

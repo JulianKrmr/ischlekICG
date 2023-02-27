@@ -69,7 +69,6 @@ export class CameraNode extends Node {
 }
 
 export class LightNode extends Node {
-
   /**
    * Lichtquelle / Light
    */
@@ -87,8 +86,8 @@ export class LightNode extends Node {
 
   toJSON() {
     return {
-      "LightNode": {}
-    }
+      LightNode: {},
+    };
   }
 }
 
@@ -191,6 +190,18 @@ export class TextureBoxNode extends Node {
    */
   accept(visitor: Visitor) {
     visitor.visitTextureBoxNode(this);
+  }
+}
+export class TextureVideoBoxNode extends Node {
+  constructor(
+    public texture: string,
+    public parent?: GroupNode,
+    public normal?: string
+  ) {
+    super();
+  }
+  accept(visitor: Visitor) {
+    visitor.visitTextureVideoBoxNode(this);
   }
 }
 

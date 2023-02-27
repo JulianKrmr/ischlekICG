@@ -10,6 +10,7 @@ import {
   PyramidNode,
   SphereNode,
   TextureBoxNode,
+  TextureVideoBoxNode,
 } from "../nodes";
 import { Rotation, Scaling, Translation } from "../math/transformation";
 import RayVisitor from "../raytracing/rayvisitor";
@@ -230,11 +231,7 @@ window.addEventListener("load", () => {
   const textureBoxTranslation = new GroupNode(
     new Translation(new Vector(1, -1, 1, 0))
   );
-  const textureBox = new TextureBoxNode(
-    "hci-logo.png",
-    textureBoxScaling,
-    "brickwall-normal.jpg"
-  );
+  const textureBox = new TextureVideoBoxNode("assitoni.mp4", textureBoxScaling, "normalneutral.jpg");
 
   textureBoxScaling.add(textureBox);
   textureBoxTranslation.add(textureBoxScaling);

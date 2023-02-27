@@ -234,7 +234,12 @@ window.addEventListener("load", () => {
   );
   const textureBox = new TextureTextBoxNode("der assitoni", textureBoxScaling);
 
-  textureBoxScaling.add(textureBox);
+  const textureBoxRotation = new GroupNode(
+    new Rotation(new Vector(0, 0, 1, 0), Math.PI)
+  );
+
+  textureBoxRotation.add(textureBox)
+  textureBoxScaling.add(textureBoxRotation);
   textureBoxTranslation.add(textureBoxScaling);
   rightWindowSceneTranslation.add(textureBoxTranslation);
 

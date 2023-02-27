@@ -283,6 +283,10 @@ export default class RasterTextTextureBox {
     this.textCanvas = document.createElement("canvas");
     var ctx = this.textCanvas.getContext("2d");
 
+    ctx.translate(this.textCanvas.width, 0)
+    ctx.scale(-1, 1)
+    // ctx.rotate(90)
+
     ctx.fillStyle = "#0827d4"; // This determines the text colour, it can take a hex value or rgba value (e.g. rgba(255,0,0,0.5))
     ctx.textAlign = "center"; // This determines the alignment of text, e.g. left, center, right
     ctx.textBaseline = "middle"; // This determines the baseline of the text, e.g. top, middle, bottom

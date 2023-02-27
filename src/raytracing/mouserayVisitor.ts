@@ -147,7 +147,9 @@ export default class MouserayVisitor implements Visitor {
         this.objectIntersections[0][2] instanceof AABoxNode ||
         this.objectIntersections[0][2] instanceof PyramidNode ||
         this.objectIntersections[0][2] instanceof CustomShapeNode ||
-        this.objectIntersections[0][2] instanceof TextureBoxNode
+        this.objectIntersections[0][2] instanceof TextureBoxNode ||
+        this.objectIntersections[0][2] instanceof TextureVideoBoxNode ||
+        this.objectIntersections[0][2] instanceof TextureTextBoxNode
       ) {
         //if the node is not a texture node, change its  color
         if (
@@ -214,7 +216,7 @@ export default class MouserayVisitor implements Visitor {
     this.visitNode(node, UNIT_AABOX);
   }
   visitTextureTextBoxNode(node: TextureTextBoxNode): void {
-    this.visitNode(node, UNIT_AABOX)
+    this.visitNode(node, UNIT_AABOX);
   }
   visitCustomShapeNode(node: CustomShapeNode): void {
     this.visitNode(

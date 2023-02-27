@@ -72,6 +72,8 @@ window.addEventListener("load", () => {
     | PyramidNode
     | AABoxNode
     | CustomShapeNode
+    | TextureVideoBoxNode
+    | TextureTextBoxNode
     | TextureBoxNode = null;
   let selectedGroupNode: GroupNode = null;
 

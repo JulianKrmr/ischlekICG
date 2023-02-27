@@ -15,6 +15,7 @@ import {
   CameraNode,
   LightNode,
   TextureVideoBoxNode,
+  TextureTextBoxNode,
 } from "../nodes";
 import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
@@ -24,6 +25,7 @@ import PhongValues from "../boilerplate/project-boilerplate";
 import AABox from "../objects/aabox";
 import Sphere from "../objects/sphere";
 import RasterVideoTextureBox from "./raster-texture-box-video";
+import RasterTextTextureBox from "./raster-texture-box-text";
 
 interface Camera {
   eye: Vector;
@@ -371,7 +373,7 @@ export class RasterVisitor implements Visitor {
     this.renderables.get(node).render(shader);
   }
 
-  visitTextureVideoBoxNode(node: TextureVideoBoxNode){
+  visitTextureVideoBoxNode(node: TextureVideoBoxNode) {
     this.textureshader.use();
     let shader = this.textureshader;
     const fromWorld = this.transformations[this.transformations.length - 1];
@@ -397,7 +399,34 @@ export class RasterVisitor implements Visitor {
     shader.getUniformMatrix("V").set(this.lookat);
 
     this.renderables.get(node).render(shader);
+  }
 
+  visitTextureTextBoxNode(node: TextureTextBoxNode): void {
+    this.textureshader.use();
+    let shader = this.textureshader;
+    const fromWorld = this.transformations[this.transformations.length - 1];
+    const toWorld = this.transformations[this.transformations.length - 1];
+    shader.getUniformMatrix("M").set(toWorld);
+    let P = shader.getUniformMatrix("P");
+    if (P && this.perspective) {
+      P.set(this.perspective);
+    }
+    let normal = fromWorld.transpose();
+    normal.setVal(0, 3, 0);
+    normal.setVal(1, 3, 0);
+    normal.setVal(2, 3, 0);
+    normal.setVal(3, 0, 0);
+    normal.setVal(3, 1, 0);
+    normal.setVal(3, 2, 0);
+    normal.setVal(3, 3, 1);
+
+    const N = shader.getUniformMatrix("N");
+    if (N) {
+      N.set(normal);
+    }
+    shader.getUniformMatrix("V").set(this.lookat);
+
+    this.renderables.get(node).render(shader);
   }
 
   visitCustomShapeNode(node: CustomShapeNode) {}
@@ -531,6 +560,23 @@ export class RasterSetupVisitor {
       )
     );
   }
+  visitTextureTextBoxNode(node: TextureTextBoxNode) {
+    let normalMap = "normalneutral.png";
+    if (node.normal) {
+      normalMap = node.normal;
+    }
+    this.objects.set(
+      node,
+      new RasterTextTextureBox(
+        this.gl,
+        new Vector(-0.5, -0.5, -0.5, 1),
+        new Vector(0.5, 0.5, 0.5, 1),
+        node.texture,
+        normalMap
+      )
+    );
+  }
+
   visitCustomShapeNode(node: CustomShapeNode) {}
 
   visitCameraNode(node: CameraNode) {}

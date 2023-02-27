@@ -10,6 +10,7 @@ import {
   PyramidNode,
   SphereNode,
   TextureBoxNode,
+  TextureTextBoxNode,
   TextureVideoBoxNode,
 } from "../nodes";
 import { Rotation, Scaling, Translation } from "../math/transformation";
@@ -231,7 +232,7 @@ window.addEventListener("load", () => {
   const textureBoxTranslation = new GroupNode(
     new Translation(new Vector(1, -1, 1, 0))
   );
-  const textureBox = new TextureVideoBoxNode("assitoni.mp4", textureBoxScaling);
+  const textureBox = new TextureTextBoxNode("der assitoni", textureBoxScaling);
 
   textureBoxScaling.add(textureBox);
   textureBoxTranslation.add(textureBoxScaling);

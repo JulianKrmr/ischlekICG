@@ -205,6 +205,20 @@ export class TextureVideoBoxNode extends Node {
   }
 }
 
+export class TextureTextBoxNode extends Node {
+  constructor(
+    public texture: string,
+    public parent?: GroupNode,
+    public normal?: string
+  ){
+    super();
+  }
+  accept(visitor: Visitor): void {
+    visitor.visitTextureTextBoxNode(this)
+  }
+  
+}
+
 export class CustomShapeNode extends Node {
   constructor(
     public vertices: Vector[],

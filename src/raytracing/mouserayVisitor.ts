@@ -19,6 +19,7 @@ import {
   CameraNode,
   LightNode,
   TextureVideoBoxNode,
+  TextureTextBoxNode,
 } from "../nodes";
 import { ChildProcess } from "child_process";
 import PhongValues, {
@@ -211,6 +212,9 @@ export default class MouserayVisitor implements Visitor {
   }
   visitTextureVideoBoxNode(node: TextureVideoBoxNode): void {
     this.visitNode(node, UNIT_AABOX);
+  }
+  visitTextureTextBoxNode(node: TextureTextBoxNode): void {
+    this.visitNode(node, UNIT_AABOX)
   }
   visitCustomShapeNode(node: CustomShapeNode): void {
     this.visitNode(

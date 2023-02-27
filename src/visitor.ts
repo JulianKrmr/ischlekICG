@@ -8,6 +8,7 @@ import {
   CameraNode,
   LightNode,
   TextureVideoBoxNode,
+  TextureTextBoxNode,
 } from "./nodes";
 
 export default interface Visitor {
@@ -17,6 +18,7 @@ export default interface Visitor {
   visitPyramidNode(node: PyramidNode): void;
   visitTextureBoxNode(node: TextureBoxNode): void;
   visitTextureVideoBoxNode(node: TextureVideoBoxNode): void;
+  visitTextureTextBoxNode(node: TextureTextBoxNode): void;
   visitCameraNode(node: CameraNode, active: boolean): void;
   visitLightNode(node: LightNode): void;
   visitCustomShapeNode(node: CustomShapeNode): void;

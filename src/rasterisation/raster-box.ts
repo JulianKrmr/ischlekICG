@@ -253,9 +253,9 @@ export default class RasterBox {
     this.gl.disableVertexAttribArray(normalLocation);
   }
 
-  createColors(color1: Vector, color2: Vector, amountOfIndices: number) {
+  createColors(color1: Vector, color2: Vector, amountOfVertices: number) {
     let colors = [];
-    for (let i = 0; i < amountOfIndices; i = i + 18) {
+    for (let i = 0; i < amountOfVertices; i = i + 18) {
       colors.push(
         color1.r,
         color1.g,

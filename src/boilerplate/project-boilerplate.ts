@@ -284,12 +284,13 @@ window.addEventListener("load", () => {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   const transformationNode = new GroupNode(
-    new Translation(new Vector(-4, 5, -5, 0))
+    new Translation(new Vector(-4, 5, -2, 0))
   );
   transformationNode.add(
-    new AABoxNode(
+    new PyramidNode(
       new Vector(0, 0, 1, 0),
       new Vector(0, 0, 1, 0),
+      new Vector(0, 1, 0, 0),
       transformationNode
     )
   );
@@ -300,7 +301,7 @@ window.addEventListener("load", () => {
   );
   sg.add(transformationNode);
 
-  animation1.toggleActive();
+  // animation1.toggleActive();
 
   // const thirdTransformationNode = new GroupNode(
   //   new Translation(new Vector(0, 0.5, -7, 0))

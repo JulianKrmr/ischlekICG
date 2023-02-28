@@ -149,7 +149,7 @@ export class PyramidNode extends Node {
    */
   constructor(
     public area: Vector,
-    public color?: Vector,
+    public color: Vector,
     public color2?: Vector,
     public parent?: GroupNode
   ) {
@@ -210,13 +210,12 @@ export class TextureTextBoxNode extends Node {
     public texture: string,
     public parent?: GroupNode,
     public normal?: string
-  ){
+  ) {
     super();
   }
   accept(visitor: Visitor): void {
-    visitor.visitTextureTextBoxNode(this)
+    visitor.visitTextureTextBoxNode(this);
   }
-  
 }
 
 export class CustomShapeNode extends Node {

@@ -21,6 +21,8 @@ export default class RasterBox {
    */
   elements: number;
   vertices: Array<number>;
+  indices: Array<number>;
+  normals: Array<number>;
 
   /**
    * Creates all WebGL buffers for the box
@@ -40,13 +42,14 @@ export default class RasterBox {
     private gl: WebGL2RenderingContext,
     minPoint: Vector,
     maxPoint: Vector,
-    color?: Vector,
+    color: Vector,
     color2?: Vector
   ) {
     this.gl = gl;
     const mi = minPoint;
     const ma = maxPoint;
-    let vertices = [
+
+    this.vertices = [
       // front
       mi.x,
       mi.y,
@@ -163,7 +166,39 @@ export default class RasterBox {
       mi.z,
     ];
 
-    this.vertices = vertices;
+    this.indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; //?
+
+    // this.normals = [];
+    // //for each indice, take the 3 vertices, calulate 2 vectors from them (that span a plane),
+    // //cross product them, normalize the vector and push it to the normals array, resulting in the normal vector for each triangle
+    // for (let i = 0; i < this.indices.length; i += 3) {
+    //   let p1 = new Vector(
+    //     this.vertices[this.indices[i] * 3],
+    //     this.vertices[this.indices[i] * 3 + 1],
+    //     this.vertices[this.indices[i] * 3 + 2],
+    //     1
+    //   );
+    //   let p2 = new Vector(
+    //     this.vertices[this.indices[i + 1] * 3],
+    //     this.vertices[this.indices[i + 1] * 3 + 1],
+    //     this.vertices[this.indices[i + 1] * 3 + 2],
+    //     1
+    //   );
+    //   let p3 = new Vector(
+    //     this.vertices[this.indices[i + 2] * 3],
+    //     this.vertices[this.indices[i + 2] * 3 + 1],
+    //     this.vertices[this.indices[i + 2] * 3 + 2],
+    //     1
+    //   );
+
+    //   let vec1 = p2.sub(p1); //Vector von p1 nach p2
+    //   let vec2 = p3.sub(p1); //Vector von p1 nach p3
+    //   let normalVector = vec1.cross(vec2).normalize(); //Normalenvektor
+
+    //   this.normals.push(normalVector.x);
+    //   this.normals.push(normalVector.y);
+    //   this.normals.push(normalVector.z);
+    // }
 
     let normals = [
       // Front
@@ -191,17 +226,17 @@ export default class RasterBox {
       0.0, 0.0, -1.0, 0.0,
     ];
 
-    const colors = this.createColors(
-      color,
-      color2,
-      vertices.length
-    );
+    const colors = this.createColors(color, color2, this.vertices.length);
 
-    this.elements = vertices.length / 3;
+    this.elements = this.vertices.length / 3;
 
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array(this.vertices),
+      gl.STATIC_DRAW
+    );
     this.vertexBuffer = vertexBuffer;
 
     const normalBuffer = this.gl.createBuffer();
@@ -257,24 +292,79 @@ export default class RasterBox {
     let colors = [];
     for (let i = 0; i < amountOfIndices; i = i + 18) {
       colors.push(
-        color1.r,
-        color1.g,
-        color1.b,
-        color1.r,
-        color1.g,
-        color1.b,
-        color1.r,
-        color1.g,
-        color1.b,
-        color2.r,
-        color2.g,
-        color2.b,
-        color2.r,
-        color2.g,
-        color2.b,
-        color2.r,
-        color2.g,
-        color2.b
+        100,
+        100,
+        100,
+        1
+        // 100,
+        // 100,
+        // 100,
+        // 1,
+        // 100,
+        // 100,
+        // 100,
+        // 1,
+        // 100,
+        // 100,
+        // 100,
+        // 1,
+        // 100,
+        // 100,
+        // 100,
+        // 1,
+        // 100,
+        // 100,
+        // 100,
+        // 1,
+        // 100,
+        // 100,
+        // 100,
+        // 1,
+        // 100,
+        // 100,
+        // 100,
+        // 1
+        // 155,
+        // 155,
+        // 155
+
+        // color1.r,
+        // color1.r,
+        // color1.r,
+
+        // color1.r,
+        // color1.r,
+        // color1.r,
+
+        // color1.r,
+        // color1.r,
+        // color1.r,
+
+        // color1.r,
+        // color1.r,
+        // color1.r,
+
+        // color1.r,
+        // color1.r,
+        // color1.r
+        // color1.r,
+        // color1.g,
+        // color1.b,
+        // color1.r,
+        // color1.g,
+        // color1.b,
+        // color1.r,
+        // color1.g,
+        // color1.b,
+        // color2.r,
+        // color2.g,
+        // color2.b,
+        // color2.r,
+        // color2.g,
+        // color2.b,
+        // color2.r,
+        // color2.g,
+        // color2.b
       );
     }
     return colors;

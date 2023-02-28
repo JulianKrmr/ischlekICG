@@ -72,6 +72,8 @@ export default class RasterPyramid {
     //Für jedes indice einen vector
     this.normals = [];
 
+    //for each indice, take the 3 vertices, calulate 2 vectors from them (that span a plane),
+    //cross product them, normalize the vector and push it to the normals array, resulting in the normal vector for each triangle
     for (let i = 0; i < this.indices.length; i += 3) {
       let p1 = new Vector(
         this.vertices[this.indices[i] * 3],
@@ -102,15 +104,9 @@ export default class RasterPyramid {
     }
 
     let colors = [
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color2.r,
-      color2.g,
-      color2.b,
+      // 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+      // 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+      // 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
 
       color1.r,
       color1.g,
@@ -148,6 +144,10 @@ export default class RasterPyramid {
       color1.r,
       color1.g,
       color1.b,
+      color2.r,
+      color2.g,
+      color2.b,
+
       color1.r,
       color1.g,
       color1.b,
@@ -157,96 +157,17 @@ export default class RasterPyramid {
       color1.r,
       color1.g,
       color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
+
+      // color1.r,
+      // color1.g,
+      // color1.b,
+      // color1.r,
+      // color1.g,
+      // color1.b,
+      // color1.r,
+      // color1.g,
+      // color1.b,
     ];
-
-    // let point0 = new Vector(mi.x, mi.y, ma.z, 1);
-    // let point1 = new Vector(ma.x, mi.y, ma.z, 1);
-    // let point2 = new Vector(ma.x, mi.y, mi.z, 1);
-    // let point3 = new Vector(mi.x, mi.y, mi.z, 1);
-    // let point4 = new Vector((mi.x + ma.x) / 2, ma.y, (mi.z + ma.z) / 2, 1);
-
-    // let vec_0_1 = point1.sub(point0);
-    // let vec_0_4 = point4.sub(point0);
-    // let frontUp = vec_0_1.cross(vec_0_4).normalize();
-
-    // let vec_3_0 = point0.sub(point3);
-    // let vec_3_4 = point4.sub(point3);
-    // let leftUp = vec_3_0.cross(vec_3_4).normalize();
-
-    // let vec_2_3 = point3.sub(point2);
-    // let vec_2_4 = point4.sub(point2);
-    // let backUp = vec_2_3.cross(vec_2_4).normalize();
-
-    // let vec_1_2 = point2.sub(point1);
-    // let vec_1_4 = point4.sub(point1);
-    // let rightUp = vec_1_2.cross(vec_1_4).normalize();
-
-    // let normals = [
-    //   // facing front and up
-    //   frontUp.x,
-    //   frontUp.y,
-    //   frontUp.z,
-    //   frontUp.x,
-    //   frontUp.y,
-    //   frontUp.z,
-    //   frontUp.x,
-    //   frontUp.y,
-    //   frontUp.z,
-
-    //   // facing back and up
-    //   backUp.x,
-    //   backUp.y,
-    //   backUp.z,
-    //   backUp.x,
-    //   backUp.y,
-    //   backUp.z,
-    //   backUp.x,
-    //   backUp.y,
-    //   backUp.z,
-
-    //   rightUp.x,
-    //   rightUp.y,
-    //   rightUp.z, // right up
-    //   rightUp.x,
-    //   rightUp.y,
-    //   rightUp.z, // right up
-    //   rightUp.x,
-    //   rightUp.y,
-    //   rightUp.z, // right up
-
-    //   leftUp.x,
-    //   leftUp.y,
-    //   leftUp.z,
-    //   leftUp.x,
-    //   leftUp.y,
-    //   leftUp.z,
-    //   leftUp.x,
-    //   leftUp.y,
-    //   leftUp.z,
-
-    //   0,
-    //   -1,
-    //   0,
-    //   0,
-    //   -1,
-    //   0,
-    //   0,
-    //   -1,
-    //   0,
-    //   0,
-    //   -1,
-    //   0,
-    //   0,
-    //   -1,
-    //   0,
-    //   0,
-    //   -1,
-    //   0,
-    // ];
-
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(

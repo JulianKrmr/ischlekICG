@@ -496,7 +496,18 @@ window.addEventListener("load", () => {
     selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
+
+      //makes the selected object jump once
+      animation1 = new JumperNode(
+        selectedGroupNode,
+        new Vector(0, 0.5, 0, 0),
+        0.005,
+        true
+      );
+      animation1.toggleActive();
+
       //left window minimizer group node hat id 1 bekommen
+      //if minimizer is selected, animate the minimization
       if (selectedGroupNode.id == 1) {
         animation1 = new DriverNode(
           leftWindowSceneTranslation,
@@ -504,6 +515,7 @@ window.addEventListener("load", () => {
           0.002
         );
         animation1.toggleActive();
+
         //right window minimizer group node hat id 2 bekommen
       } else if (selectedGroupNode.id == 2) {
         animation1 = new DriverNode(
@@ -522,6 +534,17 @@ window.addEventListener("load", () => {
     selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
+
+      //jumps once
+      animation1 = new JumperNode(
+        selectedGroupNode,
+        new Vector(0, 0.5, 0, 0),
+        0.005,
+        true
+      );
+      animation1.toggleActive();
+
+      //if left minimize btn is selected, animate the minimization
       if (selectedGroupNode.id == 1) {
         animation1 = new DriverNode(
           leftWindowSceneTranslation,
@@ -529,6 +552,8 @@ window.addEventListener("load", () => {
           0.002
         );
         animation1.toggleActive();
+
+        //if right minimize btn is selected, animate the minimization
       } else if (selectedGroupNode.id == 2) {
         animation1 = new DriverNode(
           rightWindowSceneTranslation,

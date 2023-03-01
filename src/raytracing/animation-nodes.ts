@@ -126,8 +126,14 @@ export class JumperNode extends AnimationNode {
   direction: Vector;
   up: boolean = true;
   distanceCovered: number = 0;
+  single: boolean = false;
 
-  constructor(groupNode: GroupNode, direction: Vector, speed?: number) {
+  constructor(
+    groupNode: GroupNode,
+    direction: Vector,
+    speed?: number,
+    single?: boolean
+  ) {
     super(groupNode);
     this.distanceToGoal = direction.length;
     this.direction = direction;
@@ -135,6 +141,11 @@ export class JumperNode extends AnimationNode {
       this.speed = speed;
     } else {
       this.speed = 0.001;
+    }
+    if (single) {
+      this.single = single;
+    } else {
+      this.single = false;
     }
   }
 
@@ -153,6 +164,9 @@ export class JumperNode extends AnimationNode {
         translate(this.direction.mul(-1 * this.speed * deltaT), this.groupNode);
         this.distanceCovered -= this.direction.mul(this.speed).length * deltaT;
         if (this.distanceCovered <= 0) {
+          if (this.single) {
+            this.active = false;
+          }
           this.up = true;
         }
       }

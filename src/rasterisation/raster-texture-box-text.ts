@@ -60,6 +60,13 @@ export default class RasterTextTextureBox {
   ) {
     const mi = minPoint;
     const ma = maxPoint;
+    /*
+    In the case of a cube, all of its vertices are unique, 
+    and each vertex is used exactly once by two or three faces. 
+    This means that we can define the cube's six faces as two triangles each, with no shared vertices, using a total of 36 vertices
+    (6 faces * 2 triangles per face * 3 vertices per triangle). 
+    In this case, we don't need to use indices to refer to shared vertices, since there are no shared vertices to begin with.
+    */
     let vertices = [
       // front
       mi.x,
@@ -258,6 +265,13 @@ export default class RasterTextTextureBox {
     this.texCoords = uvBuffer;
 
     // https://learnopengl.com/Advanced-Lighting/Normal-Mapping
+    /* In summary, normal mapping is a technique used in computer graphics to simulate complex details and textures on a surface. 
+       The technique requires knowledge of the tangent and bitangent vectors at each point on the surface, 
+       which together form the tangent space. 
+       The tangent and bitangent vectors are calculated using the normal vector and the position of the vertices. 
+       The normal map is then transformed from the tangent space of the map to the tangent space of the surface
+        using a transformation matrix, and the resulting normal vector is used to modify the surface normal of the vertex.
+    */
     this.tangents = [];
     this.bitangents = [];
     this.calculateTangentsAndBitangents(vertices, uv);
@@ -283,8 +297,8 @@ export default class RasterTextTextureBox {
     this.textCanvas = document.createElement("canvas");
     var ctx = this.textCanvas.getContext("2d");
 
-    ctx.translate(this.textCanvas.width, 0)
-    ctx.scale(-1, 1)
+    ctx.translate(this.textCanvas.width, 0);
+    ctx.scale(-1, 1);
     // ctx.rotate(90)
 
     ctx.fillStyle = "#0827d4"; // This determines the text colour, it can take a hex value or rgba value (e.g. rgba(255,0,0,0.5))
@@ -404,27 +418,45 @@ export default class RasterTextTextureBox {
     this.gl.disableVertexAttribArray(bitangentLocation);
   }
   // https://learnopengl.com/Advanced-Lighting/Normal-Mapping
+  /*
+  To apply a normal map to a surface, we need to transform the normals stored in the normal map
+  from their original coordinate system to the coordinate system of the surface. 
+  This requires knowledge of the tangent and bitangent vectors at each point on the surface.
+  */
+  /*
+  Each vertex has 3 components for position (x, y, z) and 2 components for UV coordinates (u, v), 
+  hence a total of 5 values per vertex. 
+  Since the loop is iterating over 6 faces and calculating tangents and bitangents for each of the three vertices,
+  we have a total of 6 * 3 * 5 = 90 values that need to be calculated and stored in the tangent and bitangent arrays.
+
+  Therefore, the size of the arrays that are used to store the tangents and bitangents should be 18 times the number of vertices
+   in the mesh (since each vertex has 5 values, and 18 = 6 * 3).
+  */
   calculateTangentsAndBitangents(vertices: Array<number>, uv: Array<number>) {
+    /*
+    the loop is iterating over 6 faces of a mesh (assuming the mesh is a cube or a similar object), and for each face, 
+    it calculates tangents and bitangents for each of the three vertices.
+    */
     for (let i = 0; i < 6; i++) {
-      let pos1 = new Vector(
+      let firstPosition = new Vector(
         vertices[0 + i * 18],
         vertices[1 + i * 18],
         vertices[2 + i * 18],
         1
       );
-      let pos2 = new Vector(
+      let secondPosition = new Vector(
         vertices[3 + i * 18],
         vertices[4 + i * 18],
         vertices[5 + i * 18],
         1
       );
-      let pos3 = new Vector(
+      let thirdPosition = new Vector(
         vertices[6 + i * 18],
         vertices[7 + i * 18],
         vertices[8 + i * 18],
         1
       );
-      let pos4 = new Vector(
+      let fourthPositon = new Vector(
         vertices[12 + i * 18],
         vertices[13 + i * 18],
         vertices[14 + i * 18],
@@ -436,10 +468,10 @@ export default class RasterTextTextureBox {
       let uv3 = new Vector(uv[4 + i * 12], uv[5 + i * 12], 0, 1);
       let uv4 = new Vector(uv[8 + i * 12], uv[9 + i * 12], 0, 1);
 
-      let edge1 = pos2.sub(pos1);
-      let edge2 = pos3.sub(pos1);
-      let edge3 = pos3.sub(pos1);
-      let edge4 = pos4.sub(pos3);
+      let edge1 = secondPosition.sub(firstPosition);
+      let edge2 = thirdPosition.sub(firstPosition);
+      let edge3 = thirdPosition.sub(firstPosition);
+      let edge4 = fourthPositon.sub(thirdPosition);
       let deltaUV1 = uv2.sub(uv1);
       let deltaUV2 = uv3.sub(uv1);
       let deltaUV3 = uv3.sub(uv1);
@@ -463,6 +495,7 @@ export default class RasterTextTextureBox {
       let bitangent2y = f * (-deltaUV4.x * edge3.y + deltaUV3.x * edge4.y);
       let bitangent2z = f * (-deltaUV4.x * edge3.z + deltaUV3.x * edge4.z);
 
+      // calculate for each of the 3 vertices
       for (let j = 0; j < 3; j++) {
         this.tangents[0 + i * 18 + j * 3] = tangent1x;
         this.tangents[1 + i * 18 + j * 3] = tangent1y;

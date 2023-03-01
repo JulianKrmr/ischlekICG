@@ -86,10 +86,6 @@ window.addEventListener("load", () => {
     | TextureBoxNode = null;
   let selectedGroupNode: GroupNode = null;
 
-  //to make it public
-  const minimizerScaling = new GroupNode(
-    new Scaling(new Vector(0.5, 0.3, 0.1, 0))
-  );
   //scene graph
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -152,7 +148,7 @@ window.addEventListener("load", () => {
   lightTranslation.add(light1);
   sg.add(lightTranslation);
 
-  const createWindow = (xTranslation: number) => {
+  const createWindow = (xTranslation: number, id: number) => {
     const windowScaling = new GroupNode(new Scaling(new Vector(4, 5, 1, 0)));
     const windowTranslation = new GroupNode(
       new Translation(new Vector(xTranslation, 0.5, 0, 0))
@@ -180,11 +176,12 @@ window.addEventListener("load", () => {
     windowTranslation.add(windowTopBarTranslation);
 
     //minimierungsschaltfläche
-    // const minimizerScaling = new GroupNode(
-    //   new Scaling(new Vector(0.5, 0.3, 0.1, 0))
-    // );
     const minimizerTranslation = new GroupNode(
       new Translation(new Vector(1.5, 2.6, 0.5, 0))
+    );
+    const minimizerScaling = new GroupNode(
+      new Scaling(new Vector(0.5, 0.3, 0.5, 0)),
+      id
     );
     const minimizer = new AABoxNode(
       new Vector(0.3, 0.1, 1, 1),
@@ -212,8 +209,8 @@ window.addEventListener("load", () => {
     return windowSceneTranslation;
   };
 
-  const leftWindowSceneTranslation = createWindow(-2.2);
-  const rightWindowSceneTranslation = createWindow(2.2);
+  const leftWindowSceneTranslation = createWindow(-2.2, 1);
+  const rightWindowSceneTranslation = createWindow(2.2, 2);
 
   const pyramidScaling = new GroupNode(
     new Scaling(new Vector(0.5, 0.5, 0.5, 0))
@@ -298,8 +295,8 @@ window.addEventListener("load", () => {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  const animation1 = new DriverNode(
-    minimizerScaling,
+  let animation1 = new DriverNode(
+    selectedGroupNode,
     new Vector(0, -5, -30, 0),
     0.0002
   );
@@ -537,13 +534,39 @@ window.addEventListener("load", () => {
     selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
+      console.log(selectedGroupNode);
+      if (selectedGroupNode.id == 1) {
+        animation1 = new DriverNode(
+          leftWindowSceneTranslation,
+          new Vector(0, -5, -30, 0),
+          0.0002
+        );
+        animation1.toggleActive();
+
+        animation1 = new DriverNode(
+          selectedGroupNode,
+          new Vector(0, -5, -30, 0),
+          0.0002
+        );
+        animation1.toggleActive();
+      } else if (selectedGroupNode.id == 2) {
+        animation1 = new DriverNode(
+          rightWindowSceneTranslation,
+          new Vector(0, -5, -30, 0),
+          0.0002
+        );
+        animation1.toggleActive();
+
+        animation1 = new DriverNode(
+          selectedGroupNode,
+          new Vector(0, -5, -30, 0),
+          0.0002
+        );
+        animation1.toggleActive();
+      }
     }
 
-    //wenn die minimierungs schaltfläche gedrückt wird, muss
-    if (selectedGroupNode === minimizerScaling) {
-      //toggle den animation node in eine richtung
-      animation1.toggleActive();
-    }
+    //check ob die minimierungs schaltfläche gedrückt wurde
   });
 
   rayCanvas.addEventListener("mousedown", (event) => {
@@ -552,6 +575,16 @@ window.addEventListener("load", () => {
     selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
+      console.log(selectedGroupNode.id);
+      if (selectedGroupNode.id != null) {
+        animation1 = new DriverNode(
+          selectedGroupNode,
+          new Vector(0, -5, -30, 0),
+          0.0002
+        );
+        console.log(animation1);
+        animation1.toggleActive();
+      }
     }
   });
 

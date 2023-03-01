@@ -24,7 +24,7 @@ export default class Ray {
   static makeRay(
     x: number,
     y: number,
-    camera: { width: number; height: number; alpha: number }
+    camera: { width: number; height: number; alpha: number, origin: Vector}
   ): Ray {
     const direction = new Vector(
       x - (camera.width - 1) / 2,
@@ -33,6 +33,6 @@ export default class Ray {
       0
     );
     // direction calculation follows the formula from the lecture slides (Ray Tracing Algorithm: Page 16)
-    return new Ray(new Vector(0, 0, 0, 1), direction.normalize());
+    return new Ray(camera.origin, direction.normalize());
   }
 }

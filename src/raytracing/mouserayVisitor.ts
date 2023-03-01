@@ -7,25 +7,20 @@ import Pyramid from "../objects/pyramid";
 import Intersection from "../math/intersection";
 import Ray from "../math/ray";
 import Visitor from "../visitor";
-import phong from "../phong";
 import {
-  Node,
-  GroupNode,
-  SphereNode,
   AABoxNode,
-  TextureBoxNode,
-  PyramidNode,
-  CustomShapeNode,
   CameraNode,
+  CustomShapeNode,
+  GroupNode,
   LightNode,
-  TextureVideoBoxNode,
+  Node,
+  PyramidNode,
+  SphereNode,
+  TextureBoxNode,
   TextureTextBoxNode,
+  TextureVideoBoxNode,
 } from "../nodes";
-import { ChildProcess } from "child_process";
-import PhongValues, {
-  CameraRasteriser,
-  CameraRaytracer,
-} from "../boilerplate/project-boilerplate";
+import PhongValues, {CameraRasteriser, CameraRaytracer,} from "../boilerplate/project-boilerplate";
 import CustomShape from "../objects/customShape";
 
 const UNIT_SPHERE = new Sphere(
@@ -100,7 +95,7 @@ export default class MouserayVisitor implements Visitor {
       //rasterizer
       y = y / 2;
       x = x / 2;
-      let cameraRasteriser = {
+      this.camera = {
         eye: new Vector(0, 0, 0, 1),
         center: new Vector(0, 0, -1, 1),
         up: new Vector(0, 1, 0, 0),
@@ -109,24 +104,23 @@ export default class MouserayVisitor implements Visitor {
         near: 0.1,
         far: 100,
       };
-      this.camera = cameraRasteriser;
-      this.ray = Ray.makeRay(x, y, { width: 500, height: 500, alpha: 60 });
+      this.ray = Ray.makeRay(x, y, { width: 500, height: 500, alpha: 60, origin: new Vector(0,0,-3,1)});
     } else {
       //raytracer
       y = y / 10;
       x = x / 10;
-      let cameraRaytracer = {
+      this.camera = {
         origin: toWorld.mulVec(new Vector(0, 0, 0, 1)),
         width: 100,
         height: 100,
-        alpha: Math.PI / 4,
+        alpha: Math.PI / 3,
         toWorld: toWorld,
       };
-      this.camera = cameraRaytracer;
       this.ray = Ray.makeRay(x, y, {
         width: 100,
         height: 100,
-        alpha: Math.PI / 4,
+        alpha: Math.PI / 3,
+        origin: new Vector(0,0,-3,1),
       });
     }
 

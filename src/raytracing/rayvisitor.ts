@@ -9,22 +9,19 @@ import Ray from "../math/ray";
 import Visitor from "../visitor";
 import phong from "../phong";
 import {
-  Node,
-  GroupNode,
-  SphereNode,
   AABoxNode,
-  TextureBoxNode,
-  PyramidNode,
-  CustomShapeNode,
   CameraNode,
+  CustomShapeNode,
+  GroupNode,
   LightNode,
-  TextureVideoBoxNode,
+  Node,
+  PyramidNode,
+  SphereNode,
+  TextureBoxNode,
   TextureTextBoxNode,
+  TextureVideoBoxNode,
 } from "../nodes";
-import { ChildProcess } from "child_process";
-import PhongValues, {
-  CameraRaytracer,
-} from "../boilerplate/project-boilerplate";
+import PhongValues, {CameraRaytracer,} from "../boilerplate/project-boilerplate";
 import CustomShape from "../objects/customShape";
 
 const UNIT_SPHERE = new Sphere(
@@ -117,38 +114,33 @@ export default class RayVisitor implements Visitor {
         const toWorld = this.transformations[this.transformations.length - 1];
 
         rootNode.accept(this);
-        // this.ray = Ray.makeRay(x, y, this.camera);
+
+        // if (this.intersection) {
+        //   //If the ray intersects with more than one object, sort the intersections by t-value and select the closest one
+        //   if (this.objectIntersections.length > 1) {
+        //     this.objectIntersections = this.objectIntersections.sort(
+        //       (a, b) => a[0].t - b[0].t
+        //     );
+        //     if (
+        //       this.objectIntersections[0][2] instanceof SphereNode ||
+        //       this.objectIntersections[0][2] instanceof AABoxNode ||
+        //       this.objectIntersections[0][2] instanceof PyramidNode ||
+        //       this.objectIntersections[0][2] instanceof CustomShapeNode
+        //     ) {
+        //       this.intersectionColor = this.objectIntersections[0][2].color;
+        //       this.intersection = this.objectIntersections[0][0];
+        //     }
+        //   }
+        // }
 
         if (this.intersection) {
-          //If the ray intersects with more than one object, sort the intersections by t-value and select the closest one
-          if (this.objectIntersections.length > 1) {
-            this.objectIntersections = this.objectIntersections.sort(
-              (a, b) => a[0].t - b[0].t
-            );
-            if (
-              this.objectIntersections[0][2] instanceof SphereNode ||
-              this.objectIntersections[0][2] instanceof AABoxNode ||
-              this.objectIntersections[0][2] instanceof PyramidNode ||
-              this.objectIntersections[0][2] instanceof CustomShapeNode
-            ) {
-              this.intersectionColor = this.objectIntersections[0][2].color;
-              this.intersection = this.objectIntersections[0][0];
-            }
-          }
-          //Sets the color of the pixel
           if (!this.intersectionColor) {
             data[4 * (width * y + x) + 0] = 0;
             data[4 * (width * y + x) + 1] = 0;
             data[4 * (width * y + x) + 2] = 0;
             data[4 * (width * y + x) + 3] = 255;
           } else {
-            let color = phong(
-              this.intersectionColor,
-              this.intersection,
-              this.lightPositions,
-              phongValues,
-              this.camera.origin
-            );
+            let color = phong(this.intersectionColor, this.intersection, this.lightPositions, phongValues, this.camera.origin);
             data[4 * (width * y + x) + 0] = color.r * 255;
             data[4 * (width * y + x) + 1] = color.g * 255;
             data[4 * (width * y + x) + 2] = color.b * 255;
@@ -243,14 +235,13 @@ export default class RayVisitor implements Visitor {
     if (active) {
       let toWorld = this.transformations[this.transformations.length - 1];
 
-      let cameraRaytracer = {
+      this.camera = {
         origin: toWorld.mulVec(new Vector(0, 0, 0, 1)),
         width: 100,
         height: 100,
         alpha: Math.PI / 3,
         toWorld: toWorld,
       };
-      this.camera = cameraRaytracer;
       this.ray = Ray.makeRay(this.x, this.y, this.camera);
     }
   }

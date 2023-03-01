@@ -19,6 +19,7 @@ window.addEventListener("load", (evt) => {
     width: canvas.width,
     height: canvas.height,
     alpha: (Math.PI * 2) / 3,
+    origin: new Vector(0,0,0,1),
   };
   for (let x = 0; x < canvas.width; x++) {
     for (let y = 0; y < canvas.height; y++) {

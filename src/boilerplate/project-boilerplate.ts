@@ -88,48 +88,6 @@ window.addEventListener("load", () => {
 
   //scene graph
   ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  // const sg = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
-
-  // sg.add(transformationNode);
-  // transformationNode.add(
-  //   new AABoxNode(new Vector(1.0, 0, 0, 0), transformationNode)
-  // );
-
-  // const secondTransformationNode = new GroupNode(
-  //   new Translation(new Vector(2, 0, -4, 0))
-  // );
-  // sg.add(secondTransformationNode);
-
-  // let vertices = [
-  //   new Vector(-0.5, -0.5, -0.5, 1),
-  //   new Vector(0.5, -0.5, -0.5, 1),
-  //   new Vector(0.5, 0.5, -0.5, 1),
-  //   new Vector(-0.5, 0.5, -0.5, 1),
-  //   new Vector(-0.5, -0.5, 0.5, 1),
-  //   new Vector(0.5, -0.5, 0.5, 1),
-  //   new Vector(0.5, 0.5, 0.5, 1),
-  //   new Vector(-0.5, 0.5, 0.5, 1),
-  // ];
-  // let indices = [
-  //   0, 1, 2, 0, 2, 3, 1, 5, 6, 1, 6, 2, 5, 4, 6, 4, 7, 6, 0, 3, 7, 0, 7, 4, 3,
-  //   2, 6, 3, 6, 7, 5, 4, 0, 5, 0, 1,
-  // ];
-  // secondTransformationNode.add(
-  //   new CustomShapeNode(
-  //     vertices,
-  //     indices,
-  //     new Vector(0.5, 1, 0, 0),
-  //     secondTransformationNode
-  //   )
-  // );
-
-  // create a rotation node
-  // const animation1 = new ScalerNode(
-  //   transformationNode,
-  //   new Vector(1, 2, 1, 0),
-  //   0.001
-  // );
   let nodes: any[] = [];
 
   let sg = new GroupNode(new Translation(new Vector(0, 0, -15, 0)));
@@ -206,7 +164,7 @@ window.addEventListener("load", () => {
     windowSceneTranslation.add(windowSceneScaling);
     windowTranslation.add(windowSceneTranslation);
 
-    return windowSceneTranslation;
+    return windowTranslation;
   };
 
   const leftWindowSceneTranslation = createWindow(-2.2, 1);
@@ -300,8 +258,11 @@ window.addEventListener("load", () => {
     new Vector(0, -5, -30, 0),
     0.0002
   );
-
-  // animation1.toggleActive();
+  let animation2 = new DriverNode(
+    selectedGroupNode,
+    new Vector(0, -5, -30, 0),
+    0.0002
+  );
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -435,6 +396,7 @@ window.addEventListener("load", () => {
       rayVisitor.render(sg, null, null, phongValues);
     }
     animation1.simulate(timestamp - lastTimestamp);
+    animation2.simulate(timestamp - lastTimestamp);
 
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
@@ -534,39 +496,24 @@ window.addEventListener("load", () => {
     selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
-      console.log(selectedGroupNode);
+      //left window minimizer group node hat id 1 bekommen
       if (selectedGroupNode.id == 1) {
         animation1 = new DriverNode(
           leftWindowSceneTranslation,
           new Vector(0, -5, -30, 0),
-          0.0002
+          0.002
         );
         animation1.toggleActive();
-
-        animation1 = new DriverNode(
-          selectedGroupNode,
-          new Vector(0, -5, -30, 0),
-          0.0002
-        );
-        animation1.toggleActive();
+        //right window minimizer group node hat id 2 bekommen
       } else if (selectedGroupNode.id == 2) {
         animation1 = new DriverNode(
           rightWindowSceneTranslation,
           new Vector(0, -5, -30, 0),
-          0.0002
-        );
-        animation1.toggleActive();
-
-        animation1 = new DriverNode(
-          selectedGroupNode,
-          new Vector(0, -5, -30, 0),
-          0.0002
+          0.002
         );
         animation1.toggleActive();
       }
     }
-
-    //check ob die minimierungs schaltfläche gedrückt wurde
   });
 
   rayCanvas.addEventListener("mousedown", (event) => {
@@ -575,14 +522,19 @@ window.addEventListener("load", () => {
     selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
-      console.log(selectedGroupNode.id);
-      if (selectedGroupNode.id != null) {
+      if (selectedGroupNode.id == 1) {
         animation1 = new DriverNode(
-          selectedGroupNode,
+          leftWindowSceneTranslation,
           new Vector(0, -5, -30, 0),
-          0.0002
+          0.002
         );
-        console.log(animation1);
+        animation1.toggleActive();
+      } else if (selectedGroupNode.id == 2) {
+        animation1 = new DriverNode(
+          rightWindowSceneTranslation,
+          new Vector(0, -5, -30, 0),
+          0.002
+        );
         animation1.toggleActive();
       }
     }

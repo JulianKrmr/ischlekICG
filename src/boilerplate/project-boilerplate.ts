@@ -86,6 +86,10 @@ window.addEventListener("load", () => {
     | TextureBoxNode = null;
   let selectedGroupNode: GroupNode = null;
 
+  //to make it public
+  const minimizerScaling = new GroupNode(
+    new Scaling(new Vector(0.5, 0.3, 0.1, 0))
+  );
   //scene graph
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -174,6 +178,22 @@ window.addEventListener("load", () => {
     windowTopBarScaling.add(windowTopBar);
     windowTopBarTranslation.add(windowTopBarScaling);
     windowTranslation.add(windowTopBarTranslation);
+
+    //minimierungsschaltfläche
+    // const minimizerScaling = new GroupNode(
+    //   new Scaling(new Vector(0.5, 0.3, 0.1, 0))
+    // );
+    const minimizerTranslation = new GroupNode(
+      new Translation(new Vector(1.5, 2.6, 0.5, 0))
+    );
+    const minimizer = new AABoxNode(
+      new Vector(0.3, 0.1, 1, 1),
+      minimizerScaling
+    );
+
+    minimizerScaling.add(minimizer);
+    minimizerTranslation.add(minimizerScaling);
+    windowTranslation.add(minimizerTranslation);
 
     const windowSceneScaling = new GroupNode(
       new Scaling(new Vector(3.7, 4.2, 1.1, 0))
@@ -277,18 +297,12 @@ window.addEventListener("load", () => {
   taskbarTranslation.add(rightTaskbarIcon);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
-  const transformationNode = new GroupNode(
-    new Translation(new Vector(-4, 5, -2, 0))
-  );
-  transformationNode.add(
-    new PyramidNode(new Vector(0, 1, 0, 0), transformationNode)
-  );
+
   const animation1 = new DriverNode(
-    transformationNode,
-    new Vector(5, 0, 0, 0),
+    minimizerScaling,
+    new Vector(0, -5, -30, 0),
     0.0002
   );
-  sg.add(transformationNode);
 
   // animation1.toggleActive();
 
@@ -434,7 +448,7 @@ window.addEventListener("load", () => {
 
   let translationSize = 0.2;
   let scaleSize = 0.1;
-  let rotationAmount = 20;
+  let rotationAmount = 0.3;
 
   window.addEventListener("keydown", function (event) {
     switch (event.key) {
@@ -520,18 +534,21 @@ window.addEventListener("load", () => {
   rasterCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    console.log(mx, my + " raster");
     selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
+    }
+
+    //wenn die minimierungs schaltfläche gedrückt wird, muss
+    if (selectedGroupNode === minimizerScaling) {
+      //toggle den animation node in eine richtung
+      animation1.toggleActive();
     }
   });
 
   rayCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
-    console.log(mx, my + " ray");
-
     selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
@@ -539,7 +556,6 @@ window.addEventListener("load", () => {
   });
 
   // download and import scene as JSON
-
   //download
   let downloadButton = document.getElementById("downloadButton");
   downloadButton.onclick = () => {

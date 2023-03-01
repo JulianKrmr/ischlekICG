@@ -529,9 +529,9 @@ export function rotate(axis: Vector, angle: number, node: GroupNode) {
   let oldMatrixInverse = node.transform.getInverseMatrix();
   let newTransformation = new Rotation(axis, angle);
   newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-  newTransformation.inverse = oldMatrixInverse.mul(
-    oldMatrixInverse.mul(newTransformation.getInverseMatrix())
-  );
+  newTransformation.inverse = newTransformation
+    .getInverseMatrix()
+    .mul(oldMatrixInverse);
   node.transform = newTransformation;
 }
 
@@ -540,9 +540,9 @@ export function translate(translation: Vector, node: GroupNode) {
   let oldMatrixInverse = node.transform.getInverseMatrix();
   let newTransformation = new Translation(translation);
   newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-  newTransformation.inverse = oldMatrixInverse.mul(
-    newTransformation.getInverseMatrix()
-  );
+  newTransformation.inverse = newTransformation
+    .getInverseMatrix()
+    .mul(oldMatrixInverse);
   node.transform = newTransformation;
 }
 
@@ -551,10 +551,9 @@ export function scale(scale: Vector, node: GroupNode) {
   let oldMatrixInverse = node.transform.getInverseMatrix();
   let newTransformation = new Scaling(scale);
   newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-  newTransformation.inverse = oldMatrixInverse.mul(
-    oldMatrixInverse.mul(newTransformation.getInverseMatrix())
-  );
+  newTransformation.inverse = newTransformation
+    .getInverseMatrix()
+    .mul(oldMatrixInverse);
+
   node.transform = newTransformation;
 }
-//TODO
-//rotation fixen bei pyramid

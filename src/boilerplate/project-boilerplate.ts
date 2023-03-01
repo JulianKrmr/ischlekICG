@@ -315,7 +315,6 @@ window.addEventListener("load", () => {
 
   const rasterContext: WebGL2RenderingContext =
     rasterCanvas.getContext("webgl2");
-  // console.log(rasterContext); //ist 1000?!?!?!?! nicht 800
   const setupVisitor = new RasterSetupVisitor(rasterContext);
   setupVisitor.setup(sg);
 

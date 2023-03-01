@@ -220,16 +220,17 @@ window.addEventListener("load", () => {
   textureBoxTranslation.add(textureBoxScaling);
   rightWindowSceneTranslation.add(textureBoxTranslation);
 
-  const taskbarIconScaling = new GroupNode(
-    new Scaling(new Vector(1, 1, 1.1, 0))
-  );
-  const createTaskbarIcon = (xPos: number) => {
+  const createTaskbarIcon = (xPos: number, id: number) => {
+    const taskbarIconTranslation = new GroupNode(
+      new Translation(new Vector(xPos, 0, 0, 0)),
+      id
+    );
+    const taskbarIconScaling = new GroupNode(
+      new Scaling(new Vector(1, 1, 1.1, 0))
+    );
     const taskbarIcon = new AABoxNode(
       new Vector(2, 0.1, 0, 1),
-      taskbarIconScaling
-    );
-    const taskbarIconTranslation = new GroupNode(
-      new Translation(new Vector(xPos, 0, 0, 0))
+      taskbarIconTranslation
     );
     taskbarIconScaling.add(taskbarIcon);
     taskbarIconTranslation.add(taskbarIconScaling);
@@ -245,10 +246,10 @@ window.addEventListener("load", () => {
   taskbarTranslation.add(taskbarScaling);
   sg.add(taskbarTranslation);
 
-  const leftTaskbarIcon = createTaskbarIcon(-3.5);
+  const leftTaskbarIcon = createTaskbarIcon(-3.5, 10);
   taskbarTranslation.add(leftTaskbarIcon);
 
-  const rightTaskbarIcon = createTaskbarIcon(-2.2);
+  const rightTaskbarIcon = createTaskbarIcon(-2.2, 11);
   taskbarTranslation.add(rightTaskbarIcon);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -367,23 +368,6 @@ window.addEventListener("load", () => {
         break;
     }
   });
-  // const lightPositions = [new Vector(1, 1, -1, 1), new Vector(5, 10, -1, 5)];
-  // const rayCamera = {
-  //   origin: new Vector(0, 0, -15, 1),
-  //   width: rayCanvas.width,
-  //   height: rayCanvas.height,
-  //   alpha: Math.PI / 3,
-  // };
-  //
-  // let rasterCamera = {
-  //   eye: new Vector(0, 0, 0, 1),
-  //   center: new Vector(0, 0, -1, 1),
-  //   up: new Vector(0, 1, 0, 0),
-  //   fovy: 60,
-  //   aspect: rasterCanvas.width / rasterCanvas.height,
-  //   near: 0.1,
-  //   far: 100,
-  // };
 
   let lastTimestamp = performance.now();
 
@@ -496,35 +480,7 @@ window.addEventListener("load", () => {
     selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
-
-      //makes the selected object jump once
-      animation1 = new JumperNode(
-        selectedGroupNode,
-        new Vector(0, 0.5, 0, 0),
-        0.005,
-        true
-      );
-      animation1.toggleActive();
-
-      //left window minimizer group node hat id 1 bekommen
-      //if minimizer is selected, animate the minimization
-      if (selectedGroupNode.id == 1) {
-        animation1 = new DriverNode(
-          leftWindowSceneTranslation,
-          new Vector(0, -5, -30, 0),
-          0.002
-        );
-        animation1.toggleActive();
-
-        //right window minimizer group node hat id 2 bekommen
-      } else if (selectedGroupNode.id == 2) {
-        animation1 = new DriverNode(
-          rightWindowSceneTranslation,
-          new Vector(0, -5, -30, 0),
-          0.002
-        );
-        animation1.toggleActive();
-      }
+      checkactions();
     }
   });
 
@@ -534,7 +490,15 @@ window.addEventListener("load", () => {
     selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
     if (selectedNode != null) {
       selectedGroupNode = selectedNode.parent;
+      checkactions();
+    }
+  });
 
+  let maximisedLeft = true;
+  let maximisedRight = true;
+
+  function checkactions() {
+    if (selectedGroupNode.id == null) {
       //jumps once
       animation1 = new JumperNode(
         selectedGroupNode,
@@ -545,25 +509,47 @@ window.addEventListener("load", () => {
       animation1.toggleActive();
 
       //if left minimize btn is selected, animate the minimization
-      if (selectedGroupNode.id == 1) {
-        animation1 = new DriverNode(
-          leftWindowSceneTranslation,
-          new Vector(0, -5, -30, 0),
-          0.002
-        );
-        animation1.toggleActive();
-
-        //if right minimize btn is selected, animate the minimization
-      } else if (selectedGroupNode.id == 2) {
-        animation1 = new DriverNode(
-          rightWindowSceneTranslation,
-          new Vector(0, -5, -30, 0),
-          0.002
-        );
-        animation1.toggleActive();
-      }
+    } else if (selectedGroupNode.id == 1 && maximisedLeft) {
+      animation1 = new DriverNode(
+        leftWindowSceneTranslation,
+        new Vector(0, -5, -30, 0),
+        0.002
+      );
+      maximisedLeft = false;
+      animation1.toggleActive();
     }
-  });
+    //if right minimize btn is selected, animate the minimization
+    else if (selectedGroupNode.id == 2 && maximisedRight) {
+      animation1 = new DriverNode(
+        rightWindowSceneTranslation,
+        new Vector(0, -5, -30, 0),
+        0.002
+      );
+      maximisedRight = false;
+      animation1.toggleActive();
+    }
+    //if left maximize btn is selected, animate the maximization
+    else if (selectedGroupNode.id == 10 && !maximisedLeft) {
+      console.log("left");
+      animation1 = new DriverNode(
+        leftWindowSceneTranslation,
+        new Vector(0, 5, 30, 0),
+        0.002
+      );
+      maximisedLeft = true;
+      animation1.toggleActive();
+      //if right maximize btn is selected, animate the maximization
+    } else if (selectedGroupNode.id == 11 && !maximisedRight) {
+      console.log("right");
+      animation1 = new DriverNode(
+        rightWindowSceneTranslation,
+        new Vector(0, 5, 30, 0),
+        0.002
+      );
+      maximisedRight = true;
+      animation1.toggleActive();
+    }
+  }
 
   // download and import scene as JSON
   //download

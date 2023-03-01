@@ -154,8 +154,7 @@ window.addEventListener("load", () => {
       new Translation(new Vector(xTranslation, 0.5, 0, 0))
     );
     const window = new AABoxNode(
-      new Vector(0.7, 0.5, 0.0, 1),
-      new Vector(0.7, 0.5, 0.0, 1),
+      new Vector(0.4, 0.3, 0.0, 1),
       windowTranslation
     );
     windowScaling.add(window);
@@ -169,8 +168,7 @@ window.addEventListener("load", () => {
       new Translation(new Vector(0, 2.6, 0, 0))
     );
     const windowTopBar = new AABoxNode(
-      new Vector(1.0, 0.1, 0, 1),
-      new Vector(1.0, 0.1, 0, 1),
+      new Vector(0.3, 0.1, 0, 1),
       windowTranslation
     );
     windowTopBarScaling.add(windowTopBar);
@@ -184,8 +182,7 @@ window.addEventListener("load", () => {
       new Translation(new Vector(0, -0.2, 0, 0))
     );
     const windowScene = new AABoxNode(
-      new Vector(1, 1, 1, 1),
-      new Vector(1, 1, 1, 1),
+      new Vector(0.9, 0.9, 0.9, 1),
       windowTranslation
     );
     windowSceneScaling.add(windowScene);
@@ -204,11 +201,7 @@ window.addEventListener("load", () => {
   const pyramidTranslation = new GroupNode(
     new Translation(new Vector(-1, 1, 1, 0))
   );
-  const pyramid = new PyramidNode(
-    new Vector(1.0, 1.0, 1.0, 1),
-    new Vector(0.5, 0.1, 0.3, 1),
-    pyramidScaling
-  );
+  const pyramid = new PyramidNode(new Vector(0.5, 0.1, 0.3, 1), pyramidScaling);
   pyramidScaling.add(pyramid);
   pyramidTranslation.add(pyramidScaling);
   leftWindowSceneTranslation.add(pyramidTranslation);
@@ -229,11 +222,7 @@ window.addEventListener("load", () => {
   const aaboxTranslation = new GroupNode(
     new Translation(new Vector(1, -1, 1, 0))
   );
-  const aabox = new AABoxNode(
-    new Vector(0.5, 0.1, 0.3, 1),
-    new Vector(0.5, 0.1, 0.3, 1),
-    aaboxScaling
-  );
+  const aabox = new AABoxNode(new Vector(0.5, 0.1, 0.3, 1), aaboxScaling);
   aaboxScaling.add(aabox);
   aaboxTranslation.add(aaboxScaling);
   leftWindowSceneTranslation.add(aaboxTranslation);
@@ -262,7 +251,6 @@ window.addEventListener("load", () => {
   const createTaskbarIcon = (xPos: number) => {
     const taskbarIcon = new AABoxNode(
       new Vector(2, 0.1, 0, 1),
-      new Vector(2, 0.1, 0, 1),
       taskbarIconScaling
     );
     const taskbarIconTranslation = new GroupNode(
@@ -277,11 +265,7 @@ window.addEventListener("load", () => {
   const taskbarTranslation = new GroupNode(
     new Translation(new Vector(0, -3, 0, 0))
   );
-  const taskbar = new AABoxNode(
-    new Vector(0.5, 0.5, 0.5, 1),
-    new Vector(0.5, 0.5, 0.5, 1),
-    taskbarScaling
-  );
+  const taskbar = new AABoxNode(new Vector(0.5, 0.5, 0.5, 1), taskbarScaling);
   taskbarScaling.add(taskbar);
   taskbarTranslation.add(taskbarScaling);
   sg.add(taskbarTranslation);
@@ -297,11 +281,7 @@ window.addEventListener("load", () => {
     new Translation(new Vector(-4, 5, -2, 0))
   );
   transformationNode.add(
-    new PyramidNode(
-      new Vector(0, 0, 1, 0),
-      new Vector(0, 1, 0, 0),
-      transformationNode
-    )
+    new PyramidNode(new Vector(0, 1, 0, 0), transformationNode)
   );
   const animation1 = new DriverNode(
     transformationNode,
@@ -570,8 +550,8 @@ window.addEventListener("load", () => {
     };
     var anchor = document.createElement("a");
     var file = new Blob([JSON.stringify(scene)], { type: "text/plain" });
-    anchor.href = URL.createObjectURL(file)
-    anchor.download = 'scene'
+    anchor.href = URL.createObjectURL(file);
+    anchor.download = "scene";
     anchor.click();
   };
 });

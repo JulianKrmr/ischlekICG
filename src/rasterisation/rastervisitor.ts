@@ -507,8 +507,7 @@ export class RasterSetupVisitor {
         this.gl,
         new Vector(-0.5, -0.5, -0.5, 1),
         new Vector(0.5, 0.5, 0.5, 1),
-        node.color,
-        node.color2
+        node.color
       )
     );
   }
@@ -516,12 +515,7 @@ export class RasterSetupVisitor {
   visitPyramidNode(node: PyramidNode) {
     this.objects.set(
       node,
-      new RasterPyramid(
-        this.gl,
-        new Vector(0, 0, 0, 1),
-        node.color,
-        node.color2
-      )
+      new RasterPyramid(this.gl, new Vector(0, 0, 0, 1), node.color)
     );
   }
 

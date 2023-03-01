@@ -44,8 +44,7 @@ export default class RasterPyramid {
     private gl: WebGL2RenderingContext,
     minPoint: Vector,
     maxPoint: Vector,
-    color1: Vector,
-    color2?: Vector
+    color: Vector
   ) {
     this.gl = gl;
     const mi = minPoint; //0
@@ -140,57 +139,12 @@ export default class RasterPyramid {
       this.normals.push(normalVector.z);
     }
 
-    let colors = [
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color2.r,
-      color2.g,
-      color2.b,
-
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color2.r,
-      color2.g,
-      color2.b,
-
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color2.r,
-      color2.g,
-      color2.b,
-
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color2.r,
-      color2.g,
-      color2.b,
-
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-    ];
+    let colors = [];
+    for (let i = 0; i < this.vertices.length / 3; i++) {
+      colors.push(color.x);
+      colors.push(color.y);
+      colors.push(color.z);
+    }
 
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);

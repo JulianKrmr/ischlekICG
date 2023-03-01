@@ -120,35 +120,19 @@ export default class MouserayVisitor implements Visitor {
       this.objectIntersections = this.objectIntersections.sort(
         (a, b) => a[0].t - b[0].t
       );
+      let intersectedNode = this.objectIntersections[0][2];
       if (
-        this.objectIntersections[0][2] instanceof SphereNode ||
-        this.objectIntersections[0][2] instanceof AABoxNode ||
-        this.objectIntersections[0][2] instanceof PyramidNode ||
-        this.objectIntersections[0][2] instanceof CustomShapeNode ||
-        this.objectIntersections[0][2] instanceof TextureBoxNode ||
-        this.objectIntersections[0][2] instanceof TextureVideoBoxNode ||
-        this.objectIntersections[0][2] instanceof TextureTextBoxNode
+        intersectedNode instanceof SphereNode ||
+        intersectedNode instanceof AABoxNode ||
+        intersectedNode instanceof PyramidNode ||
+        intersectedNode instanceof CustomShapeNode ||
+        intersectedNode instanceof TextureBoxNode ||
+        intersectedNode instanceof TextureVideoBoxNode ||
+        intersectedNode instanceof TextureTextBoxNode
       ) {
-        //if the node is not a texture node, change its  color
-        if (
-          this.objectIntersections[0][2] instanceof SphereNode ||
-          this.objectIntersections[0][2] instanceof AABoxNode ||
-          this.objectIntersections[0][2] instanceof PyramidNode ||
-          this.objectIntersections[0][2] instanceof CustomShapeNode
-        ) {
-          this.objectIntersections[0][2].color = new Vector(
-            Math.random(),
-            Math.random(),
-            Math.random(),
-            0
-          );
-        }
-        //das gibt total schwachsinnige werte für t
-        // console.log(this.objectIntersections[0][0].t);
-        // console.log(this.objectIntersections[1][0].t);
 
         //Selects the node of the closest intersection and returns it
-        return this.objectIntersections[0][2];
+        return intersectedNode;
       }
     }
   }

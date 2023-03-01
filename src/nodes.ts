@@ -21,14 +21,16 @@ export class Node {
  */
 export class GroupNode extends Node {
   children: Node[];
+  id: number;
 
   /**
    * Constructor
    * @param transform The node's transformation
    */
-  constructor(public transform: Transformation) {
+  constructor(public transform: Transformation, id?: number) {
     super();
     this.children = new Array() as Array<Node>;
+    this.id = id;
   }
 
   /**

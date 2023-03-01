@@ -23,8 +23,6 @@ export default class RasterPyramid {
   /**
    * The amount of indices
    */
-  elements: number;
-
   vertices: Array<number>;
   indices: Array<number>;
   normals: Array<number>;
@@ -157,16 +155,6 @@ export default class RasterPyramid {
       color1.r,
       color1.g,
       color1.b,
-
-      // color1.r,
-      // color1.g,
-      // color1.b,
-      // color1.r,
-      // color1.g,
-      // color1.b,
-      // color1.r,
-      // color1.g,
-      // color1.b,
     ];
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -185,7 +173,6 @@ export default class RasterPyramid {
       gl.STATIC_DRAW
     );
     this.indexBuffer = indexBuffer;
-    this.elements = this.indices.length;
 
     const normalBuffer = this.gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
@@ -232,7 +219,7 @@ export default class RasterPyramid {
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     this.gl.drawElements(
       this.gl.TRIANGLES,
-      this.elements,
+      this.indices.length,
       this.gl.UNSIGNED_SHORT,
       0
     );

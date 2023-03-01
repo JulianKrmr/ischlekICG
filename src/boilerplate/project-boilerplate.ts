@@ -258,11 +258,6 @@ window.addEventListener("load", () => {
     new Vector(0, -5, -30, 0),
     0.0002
   );
-  let animation2 = new DriverNode(
-    selectedGroupNode,
-    new Vector(0, -5, -30, 0),
-    0.0002
-  );
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
@@ -396,7 +391,6 @@ window.addEventListener("load", () => {
       rayVisitor.render(sg, null, null, phongValues);
     }
     animation1.simulate(timestamp - lastTimestamp);
-    animation2.simulate(timestamp - lastTimestamp);
 
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);

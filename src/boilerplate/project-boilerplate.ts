@@ -37,6 +37,12 @@ import {
 import MouserayVisitor from "../raytracing/mouserayVisitor";
 import AABox from "../objects/aabox";
 
+interface SceneObj {
+  rootNode: GroupNode;
+  nodes: any[];
+  phongValues: PhongValues;
+}
+
 export default interface PhongValues {
   ambient: number;
   diffuse: number;
@@ -61,6 +67,8 @@ export interface CameraRasteriser {
   near: number;
   far: number;
 }
+
+let scene: SceneObj;
 
 window.addEventListener("load", () => {
   const modeToggleForm = document.getElementById(
@@ -121,6 +129,8 @@ window.addEventListener("load", () => {
   //   new Vector(1, 2, 1, 0),
   //   0.001
   // );
+  let nodes: any[] = [];
+
   let sg = new GroupNode(new Translation(new Vector(0, 0, -15, 0)));
 
   const camera1 = new CameraNode(true);
@@ -523,6 +533,23 @@ window.addEventListener("load", () => {
       selectedGroupNode = selectedNode.parent;
     }
   });
+
+  // download and import scene as JSON
+
+  //download
+  let downloadButton = document.getElementById("downloadButton");
+  downloadButton.onclick = () => {
+    scene = {
+      rootNode: sg,
+      nodes: nodes,
+      phongValues: phongValues,
+    };
+    var anchor = document.createElement("a");
+    var file = new Blob([JSON.stringify(scene)], { type: "text/plain" });
+    anchor.href = URL.createObjectURL(file)
+    anchor.download = 'scene'
+    anchor.click();
+  };
 });
 export function rotate(axis: Vector, angle: number, node: GroupNode) {
   let oldMatrix = node.transform.getMatrix();

@@ -56,6 +56,13 @@ export default class RasterTextureBox {
   ) {
     const mi = minPoint;
     const ma = maxPoint;
+    /*
+    In the case of a cube, all of its vertices are unique, 
+    and each vertex is used exactly once by two or three faces. 
+    This means that we can define the cube's six faces as two triangles each, with no shared vertices, using a total of 36 vertices
+    (6 faces * 2 triangles per face * 3 vertices per triangle). 
+    In this case, we don't need to use indices to refer to shared vertices, since there are no shared vertices to begin with.
+    */
     let vertices = [
       // front
       mi.x,
@@ -364,7 +371,25 @@ export default class RasterTextureBox {
     this.gl.disableVertexAttribArray(bitangentLocation);
   }
   // https://learnopengl.com/Advanced-Lighting/Normal-Mapping
+  /*
+  To apply a normal map to a surface, we need to transform the normals stored in the normal map
+  from their original coordinate system to the coordinate system of the surface. 
+  This requires knowledge of the tangent and bitangent vectors at each point on the surface.
+  */
+  /*
+  Each vertex has 3 components for position (x, y, z) and 2 components for UV coordinates (u, v), 
+  hence a total of 5 values per vertex. 
+  Since the loop is iterating over 6 faces and calculating tangents and bitangents for each of the three vertices,
+  we have a total of 6 * 3 * 5 = 90 values that need to be calculated and stored in the tangent and bitangent arrays.
+
+  Therefore, the size of the arrays that are used to store the tangents and bitangents should be 18 times the number of vertices
+   in the mesh (since each vertex has 5 values, and 18 = 6 * 3).
+  */
   calculateTangentsAndBitangents(vertices: Array<number>, uv: Array<number>) {
+    /*
+    the loop is iterating over 6 faces of a mesh (assuming the mesh is a cube or a similar object), and for each face, 
+    it calculates tangents and bitangents for each of the three vertices.
+    */
     for (let i = 0; i < 6; i++) {
       let pos1 = new Vector(
         vertices[0 + i * 18],
@@ -423,6 +448,7 @@ export default class RasterTextureBox {
       let bitangent2y = f * (-deltaUV4.x * edge3.y + deltaUV3.x * edge4.y);
       let bitangent2z = f * (-deltaUV4.x * edge3.z + deltaUV3.x * edge4.z);
 
+      // calculate for each of the 3 vertices
       for (let j = 0; j < 3; j++) {
         this.tangents[0 + i * 18 + j * 3] = tangent1x;
         this.tangents[1 + i * 18 + j * 3] = tangent1y;

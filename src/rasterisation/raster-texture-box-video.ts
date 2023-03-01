@@ -4,7 +4,9 @@ import Shader from "../shader/shader";
 /**
  * A class creating buffers for a textured box to render it with WebGL
  * Source:
- * https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Animating_textures_in_WebGL?retiredLocale=de
+ * https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Creating_3D_objects_using_WebGL (for the Cube)
+ * &
+ * https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Animating_textures_in_WebGL?retiredLocale=de (for the Texture)
  */
 export default class RasterVideoTextureBox {
   private video: HTMLVideoElement;
@@ -60,6 +62,13 @@ export default class RasterVideoTextureBox {
   ) {
     const mi = minPoint;
     const ma = maxPoint;
+    /*
+    In the case of a cube, all of its vertices are unique, 
+    and each vertex is used exactly once by two or three faces. 
+    This means that we can define the cube's six faces as two triangles each, with no shared vertices, using a total of 36 vertices
+    (6 faces * 2 triangles per face * 3 vertices per triangle). 
+    In this case, we don't need to use indices to refer to shared vertices, since there are no shared vertices to begin with.
+    */
     let vertices = [
       // front
       mi.x,

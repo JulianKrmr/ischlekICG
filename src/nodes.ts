@@ -46,6 +46,15 @@ export class GroupNode extends Node {
   add(childNode: Node) {
     this.children.push(childNode);
   }
+
+  toJSON() {
+    return {
+      GroupNode: {
+        transform: this.transform.toJSON(),
+        children: this.children,
+      },
+    };
+  }
 }
 export class CameraNode extends Node {
   /**
@@ -65,6 +74,14 @@ export class CameraNode extends Node {
 
   setActiveStatus(val: boolean) {
     this.active = val;
+  }
+
+  toJSON() {
+    return {
+      CameraNode: {
+        active: this.active,
+      },
+    };
   }
 }
 
@@ -113,6 +130,14 @@ export class SphereNode extends Node {
   accept(visitor: Visitor) {
     visitor.visitSphereNode(this);
   }
+
+  toJSON() {
+    return {
+      SphereNode: {
+        color: this.color,
+      },
+    };
+  }
 }
 
 /**
@@ -141,6 +166,14 @@ export class AABoxNode extends Node {
   accept(visitor: Visitor) {
     visitor.visitAABoxNode(this);
   }
+  toJSON() {
+    return {
+      AABoxNode: {
+        color: this.color,
+        color2: this.color2,
+      },
+    };
+  }
 }
 
 export class PyramidNode extends Node {
@@ -161,6 +194,14 @@ export class PyramidNode extends Node {
    */
   accept(visitor: Visitor) {
     visitor.visitPyramidNode(this);
+  }
+  toJSON() {
+    return {
+      PyramidNode: {
+        color: this.color,
+        color2: this.color2,
+      },
+    };
   }
 }
 
@@ -190,6 +231,15 @@ export class TextureBoxNode extends Node {
   accept(visitor: Visitor) {
     visitor.visitTextureBoxNode(this);
   }
+
+  toJSON() {
+    return {
+      TextureBoxNode: {
+        texture: this.texture,
+        normal: this.normal,
+      },
+    };
+  }
 }
 export class TextureVideoBoxNode extends Node {
   constructor(
@@ -201,6 +251,14 @@ export class TextureVideoBoxNode extends Node {
   }
   accept(visitor: Visitor) {
     visitor.visitTextureVideoBoxNode(this);
+  }
+  toJSON() {
+    return {
+      TextureVideoBoxNode: {
+        texture: this.texture,
+        normal: this.normal,
+      },
+    };
   }
 }
 
@@ -215,6 +273,14 @@ export class TextureTextBoxNode extends Node {
   accept(visitor: Visitor): void {
     visitor.visitTextureTextBoxNode(this);
   }
+  toJSON() {
+    return {
+      TextureTextBoxNode: {
+        texture: this.texture,
+        normal: this.normal,
+      },
+    };
+  }
 }
 
 export class CustomShapeNode extends Node {
@@ -228,5 +294,14 @@ export class CustomShapeNode extends Node {
   }
   accept(visitor: Visitor): void {
     visitor.visitCustomShapeNode(this);
+  }
+  toJson() {
+    return {
+      CustomShapeNode: {
+        vertices: this.vertices,
+        indices: this.indices,
+        color: this.color,
+      },
+    };
   }
 }

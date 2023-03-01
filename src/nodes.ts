@@ -71,7 +71,7 @@ export class CameraNode extends Node {
    * @param visitor The visitor
    */
   accept(visitor: Visitor) {
-    visitor.visitCameraNode(this, this.active);
+    visitor.visitCameraNode(this);
   }
 
   setActiveStatus(val: boolean) {

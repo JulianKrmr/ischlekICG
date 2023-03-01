@@ -231,8 +231,7 @@ export default class RayVisitor implements Visitor {
       }
     }
   }
-  visitCameraNode(node: CameraNode, active: boolean) {
-    if (active) {
+  visitCameraNode(node: CameraNode) {
       let toWorld = this.transformations[this.transformations.length - 1];
 
       this.camera = {
@@ -243,7 +242,6 @@ export default class RayVisitor implements Visitor {
         toWorld: toWorld,
       };
       this.ray = Ray.makeRay(this.x, this.y, this.camera);
-    }
   }
 
   visitLightNode(node: LightNode): void {

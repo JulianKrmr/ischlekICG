@@ -179,8 +179,7 @@ export class RasterVisitor implements Visitor {
     this.eye = camera.eye;
   }
 
-  visitCameraNode(node: CameraNode, active: boolean): void {
-    if (active) {
+  visitCameraNode(node: CameraNode): void {
       let toWorld = this.transformations[this.transformations.length - 1];
 
       let cameraRasteriser = {
@@ -194,7 +193,6 @@ export class RasterVisitor implements Visitor {
       };
       this.cameraToWorld = toWorld;
       this.setupCamera(cameraRasteriser);
-    }
   }
 
   /**

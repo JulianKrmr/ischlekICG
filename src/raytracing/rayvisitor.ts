@@ -209,7 +209,6 @@ export default class RayVisitor implements Visitor {
     node: SphereNode | PyramidNode | AABoxNode | CustomShapeNode,
     unitObject: any
   ) {
-    console.log(node);
     const toWorld = this.transformations[this.transformations.length - 1];
     const fromWorld =
       this.inverseTransformations[this.inverseTransformations.length - 1];
@@ -241,7 +240,6 @@ export default class RayVisitor implements Visitor {
     }
   }
   visitCameraNode(node: CameraNode, active: boolean) {
-    console.log(node + " camera");
     if (active) {
       let toWorld = this.transformations[this.transformations.length - 1];
 
@@ -254,7 +252,6 @@ export default class RayVisitor implements Visitor {
       };
       this.camera = cameraRaytracer;
       this.ray = Ray.makeRay(this.x, this.y, this.camera);
-      console.log(this.camera);
     }
   }
 

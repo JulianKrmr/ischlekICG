@@ -206,7 +206,6 @@ window.addEventListener("load", () => {
   const pyramid = new PyramidNode(
     new Vector(1.0, 1.0, 1.0, 1),
     new Vector(0.5, 0.1, 0.3, 1),
-    new Vector(0.5, 0.1, 0.3, 1),
     pyramidScaling
   );
   pyramidScaling.add(pyramid);
@@ -294,12 +293,12 @@ window.addEventListener("load", () => {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   const transformationNode = new GroupNode(
-    new Translation(new Vector(-4, 5, -5, 0))
+    new Translation(new Vector(-4, 5, -2, 0))
   );
   transformationNode.add(
-    new AABoxNode(
+    new PyramidNode(
       new Vector(0, 0, 1, 0),
-      new Vector(0, 0, 1, 0),
+      new Vector(0, 1, 0, 0),
       transformationNode
     )
   );
@@ -310,7 +309,7 @@ window.addEventListener("load", () => {
   );
   sg.add(transformationNode);
 
-  animation1.toggleActive();
+  // animation1.toggleActive();
 
   // const thirdTransformationNode = new GroupNode(
   //   new Translation(new Vector(0, 0.5, -7, 0))
@@ -326,7 +325,6 @@ window.addEventListener("load", () => {
 
   const rasterContext: WebGL2RenderingContext =
     rasterCanvas.getContext("webgl2");
-  // console.log(rasterContext); //ist 1000?!?!?!?! nicht 800
   const setupVisitor = new RasterSetupVisitor(rasterContext);
   setupVisitor.setup(sg);
 
@@ -558,9 +556,9 @@ export function rotate(axis: Vector, angle: number, node: GroupNode) {
   let oldMatrixInverse = node.transform.getInverseMatrix();
   let newTransformation = new Rotation(axis, angle);
   newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-  newTransformation.inverse = oldMatrixInverse.mul(
-    oldMatrixInverse.mul(newTransformation.getInverseMatrix())
-  );
+  newTransformation.inverse = newTransformation
+    .getInverseMatrix()
+    .mul(oldMatrixInverse);
   node.transform = newTransformation;
 }
 
@@ -569,9 +567,9 @@ export function translate(translation: Vector, node: GroupNode) {
   let oldMatrixInverse = node.transform.getInverseMatrix();
   let newTransformation = new Translation(translation);
   newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-  newTransformation.inverse = oldMatrixInverse.mul(
-    newTransformation.getInverseMatrix()
-  );
+  newTransformation.inverse = newTransformation
+    .getInverseMatrix()
+    .mul(oldMatrixInverse);
   node.transform = newTransformation;
 }
 
@@ -580,10 +578,9 @@ export function scale(scale: Vector, node: GroupNode) {
   let oldMatrixInverse = node.transform.getInverseMatrix();
   let newTransformation = new Scaling(scale);
   newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-  newTransformation.inverse = oldMatrixInverse.mul(
-    oldMatrixInverse.mul(newTransformation.getInverseMatrix())
-  );
+  newTransformation.inverse = newTransformation
+    .getInverseMatrix()
+    .mul(oldMatrixInverse);
+
   node.transform = newTransformation;
 }
-//TODO
-//rotation fixen bei pyramid

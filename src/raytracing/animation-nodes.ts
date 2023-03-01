@@ -225,7 +225,6 @@ export class DriverNode extends AnimationNode {
   }
 
   simulate(deltaT: number) {
-    console.log(this.active);
     if (this.active) {
       //wenn active true ist, wird die translate methode ausgeführt, aber für speed * deltaT
       //und distanceCovered wird immer erhöht, um zu schauen wann man im Ziel ist

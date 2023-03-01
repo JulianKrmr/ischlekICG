@@ -519,7 +519,6 @@ export class RasterSetupVisitor {
       new RasterPyramid(
         this.gl,
         new Vector(0, 0, 0, 1),
-        node.area,
         node.color,
         node.color2
       )

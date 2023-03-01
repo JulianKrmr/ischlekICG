@@ -198,7 +198,6 @@ export class PyramidNode extends Node {
   toJSON() {
     return {
       PyramidNode: {
-        area: this.area,
         color: this.color,
         color2: this.color2,
       },

@@ -72,16 +72,11 @@
           id="rasterization"
           name="mode"
           value="rasterization"
+          checked
         />
         <br />
         <label for="raytracing">Ray Tracing</label>
-        <input
-          type="radio"
-          id="raytracing"
-          name="mode"
-          value="raytracing"
-          checked
-        />
+        <input type="radio" id="raytracing" name="mode" value="raytracing" />
       </form>
       <label for="kAmbient">kAmbient</label>
       <input
@@ -123,14 +118,6 @@
         id="shininess"
       />
       <br />
-      <label for="rotation">Rotation</label>
-      <input type="range" min="0" max="6.28318" step="0.01" id="rotation" />
-      <br />
-      <label for="translation">Translation</label>
-      <input type="range" min="-1" max="1" step="0.02" id="translation" />
-      <br />
-      <label for="scale">Scale</label>
-      <input type="range" min="1" max="2" step="0.01" id="scale" />
     </div>
   </body>
 </html>

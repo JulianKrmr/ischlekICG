@@ -59,6 +59,10 @@ export default class MouserayVisitor implements Visitor {
   objectIntersections: [Intersection, Ray, Node][];
   phongValues: PhongValues;
   camera: CameraRaytracer | CameraRasteriser;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
   /**
    * Creates a new RayVisitor
    * @param context The 2D context to render to
@@ -89,39 +93,19 @@ export default class MouserayVisitor implements Visitor {
     this.transformations.push(Matrix.identity());
     this.inverseTransformations.push(Matrix.identity());
     this.intersection = null;
-    let toWorld = this.transformations[this.transformations.length - 1];
 
     if (renderingContext == WebGL2RenderingContext) {
       //rasterizer
-      y = y / 2;
-      x = x / 2;
-      this.camera = {
-        eye: new Vector(0, 0, 0, 1),
-        center: new Vector(0, 0, -1, 1),
-        up: new Vector(0, 1, 0, 0),
-        fovy: 60,
-        aspect: 500 / 500,
-        near: 0.1,
-        far: 100,
-      };
-      this.ray = Ray.makeRay(x, y, { width: 500, height: 500, alpha: 60, origin: new Vector(0,0,-3,1)});
+      this.y = y / 2;
+      this.x = x / 2;
+      this.width = 500;
+      this.height = 500;
     } else {
       //raytracer
-      y = y / 10;
-      x = x / 10;
-      this.camera = {
-        origin: toWorld.mulVec(new Vector(0, 0, 0, 1)),
-        width: 100,
-        height: 100,
-        alpha: Math.PI / 3,
-        toWorld: toWorld,
-      };
-      this.ray = Ray.makeRay(x, y, {
-        width: 100,
-        height: 100,
-        alpha: Math.PI / 3,
-        origin: new Vector(0,0,-3,1),
-      });
+      this.y = y / 10;
+      this.x = x / 10;
+      this.width = 100;
+      this.height = 100;
     }
 
     this.transformations = [Matrix.identity()];
@@ -218,7 +202,11 @@ export default class MouserayVisitor implements Visitor {
       new CustomShape(node.vertices, node.indices, new Vector(0, 0, 0, 1))
     );
   }
-  visitCameraNode(node: CameraNode) {}
+  visitCameraNode(node: CameraNode) {
+    let toWorld = this.transformations[this.transformations.length - 1];
+    const origin = toWorld.mulVec(new Vector(0, 0, 0, 1));
+    this.ray = Ray.makeRay(this.x, this.y, {width: this.width, height: this.height, alpha: Math.PI/3, origin: origin});
+  }
 
   visitLightNode(node: LightNode) {}
 

@@ -151,11 +151,7 @@ export class AABoxNode extends Node {
    * with all edges of length 1
    * @param color The colour of the cube
    */
-  constructor(
-    public color: Vector,
-    public color2: Vector,
-    public parent?: GroupNode
-  ) {
+  constructor(public color: Vector, public parent?: GroupNode) {
     super();
   }
 
@@ -170,7 +166,6 @@ export class AABoxNode extends Node {
     return {
       AABoxNode: {
         color: this.color,
-        color2: this.color2,
       },
     };
   }
@@ -180,11 +175,7 @@ export class PyramidNode extends Node {
   /**
    * @param color The colour of the pyramid
    */
-  constructor(
-    public color: Vector,
-    public color2?: Vector,
-    public parent?: GroupNode
-  ) {
+  constructor(public color: Vector, public parent?: GroupNode) {
     super();
   }
 
@@ -199,7 +190,6 @@ export class PyramidNode extends Node {
     return {
       PyramidNode: {
         color: this.color,
-        color2: this.color2,
       },
     };
   }

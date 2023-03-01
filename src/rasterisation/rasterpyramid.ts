@@ -30,8 +30,7 @@ export default class RasterPyramid {
   constructor(
     private gl: WebGL2RenderingContext,
     centerPoint: Vector,
-    color1: Vector,
-    color2?: Vector
+    color: Vector
   ) {
     let height = 1;
     let width = 0.5;
@@ -101,61 +100,13 @@ export default class RasterPyramid {
       this.normals.push(normalVector.z);
     }
 
-    let colors = [
-      // 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-      // 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-      // 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+    let colors = [];
+    for (let i = 0; i < this.vertices.length / 3; i++) {
+      colors.push(color.x);
+      colors.push(color.y);
+      colors.push(color.z);
+    }
 
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color2.r,
-      color2.g,
-      color2.b,
-
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color2.r,
-      color2.g,
-      color2.b,
-
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color2.r,
-      color2.g,
-      color2.b,
-
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color2.r,
-      color2.g,
-      color2.b,
-
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-      color1.r,
-      color1.g,
-      color1.b,
-    ];
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(

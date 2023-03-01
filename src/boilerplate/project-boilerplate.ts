@@ -75,6 +75,7 @@ window.addEventListener("load", () => {
     "mode--toggle"
   ) as HTMLFormElement;
 
+  //null in the beginning, changes on cklick
   let selectedNode:
     | SphereNode
     | PyramidNode
@@ -311,12 +312,6 @@ window.addEventListener("load", () => {
 
   // animation1.toggleActive();
 
-  // const thirdTransformationNode = new GroupNode(
-  //   new Translation(new Vector(0, 0.5, -7, 0))
-  // );
-  // sg.add(thirdTransformationNode);
-  // thirdTransformationNode.add(new AABoxNode(new Vector(0, 0, 1, 0)));
-
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
   const rasterCanvas = document.getElementById(
@@ -373,15 +368,16 @@ window.addEventListener("load", () => {
     rayCanvas.height
   );
 
-  // default render method
-  let renderMode = "raytracing";
+  //default is rasterization
+  let renderMode = "rasterization";
+  rayCanvas.style.display = "none";
+  rasterCanvas.style.display = "block";
 
+  //if button is clicked, the renderer Changes
   modeToggleForm.addEventListener("change", (event: Event) => {
     const input = event.target as HTMLInputElement;
     renderMode = input.value;
-
     console.log("Mode toggled: " + renderMode);
-
     if (renderMode === "rasterization") {
       rayCanvas.style.display = "none";
       rasterCanvas.style.display = "block";
@@ -391,6 +387,34 @@ window.addEventListener("load", () => {
     }
   });
 
+  //buttons o and p change the renderer
+  window.addEventListener("keydown", function (event) {
+    switch (event.key) {
+      case "o": //rasterization mode
+        renderMode = "rasterization";
+        console.log("Mode toggled: " + renderMode);
+        rayCanvas.style.display = "none";
+        rasterCanvas.style.display = "block";
+        //set the radioButton to checked
+        let rasterizationButton = document.getElementById(
+          "rasterization"
+        ) as HTMLInputElement;
+        rasterizationButton.checked = true;
+        break;
+
+      case "p": //raytracing mode
+        renderMode = "raytracing";
+        console.log("Mode toggled: " + renderMode);
+        rasterCanvas.style.display = "none";
+        rayCanvas.style.display = "block";
+        //set the radioButton to checked
+        let raytracingButton = document.getElementById(
+          "raytracing"
+        ) as HTMLInputElement;
+        raytracingButton.checked = true;
+        break;
+    }
+  });
   // const lightPositions = [new Vector(1, 1, -1, 1), new Vector(5, 10, -1, 5)];
   // const rayCamera = {
   //   origin: new Vector(0, 0, -15, 1),

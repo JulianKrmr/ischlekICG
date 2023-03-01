@@ -551,10 +551,9 @@ export function scale(scale: Vector, node: GroupNode) {
   let oldMatrixInverse = node.transform.getInverseMatrix();
   let newTransformation = new Scaling(scale);
   newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-  newTransformation.inverse = oldMatrixInverse.mul(
-    oldMatrixInverse.mul(newTransformation.getInverseMatrix())
-  );
+  newTransformation.inverse = newTransformation
+    .getInverseMatrix()
+    .mul(oldMatrixInverse);
+
   node.transform = newTransformation;
 }
-//TODO
-//rotation fixen bei pyramid

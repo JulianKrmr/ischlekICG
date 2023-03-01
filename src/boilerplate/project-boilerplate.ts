@@ -244,7 +244,7 @@ window.addEventListener("load", () => {
   const textureBoxTranslation = new GroupNode(
     new Translation(new Vector(1, -1, 1, 0))
   );
-  const textureBox = new TextureTextBoxNode("der assitoni", textureBoxScaling);
+  const textureBox = new TextureTextBoxNode("text texture", textureBoxScaling);
 
   const textureBoxRotation = new GroupNode(
     new Rotation(new Vector(0, 0, 1, 0), Math.PI)

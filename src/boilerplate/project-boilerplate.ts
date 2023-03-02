@@ -81,9 +81,18 @@ window.addEventListener("load", () => {
   sg.add(cameraTranslation);
 
   const light1 = new LightNode();
-  const lightTranslation = new GroupNode(new Translation(new Vector(-1, -2, 9, 0)));
+  const lightBulb = new SphereNode(new Vector(1,1,0,1))
+  const lightTranslation = new GroupNode(new Translation(new Vector(-2, -2, 4, 0)));
   lightTranslation.add(light1);
+  lightTranslation.add(lightBulb);
   sg.add(lightTranslation);
+
+  const light2 = new LightNode();
+  const light2Bulb = new SphereNode(new Vector(1,1,0,1))
+  const light2Translation = new GroupNode(new Translation(new Vector(2, 4, 4, 0)));
+  light2Translation.add(light2);
+  light2Translation.add(light2Bulb)
+  sg.add(light2Translation);
 
   const createWindow = (xTranslation: number, id: number, windowNaming: string) => {
     const windowScaling = new GroupNode(new Scaling(new Vector(5, 6, 1, 0)));

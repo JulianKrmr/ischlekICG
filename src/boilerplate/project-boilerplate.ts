@@ -76,23 +76,52 @@ window.addEventListener("load", () => {
   let sg = new GroupNode(new Translation(new Vector(0, 0, -15, 0)));
 
   const camera1 = new CameraNode();
-  const cameraTranslation = new GroupNode(new Translation(new Vector(0, 0, 12, 0)));
+  const cameraTranslation = new GroupNode(new Translation(new Vector(0, -1, 12, 0)));
   cameraTranslation.add(camera1);
   sg.add(cameraTranslation);
 
   const light1 = new LightNode();
   const lightBulb = new SphereNode(new Vector(1,1,0,1))
-  const lightTranslation = new GroupNode(new Translation(new Vector(-2, -2, 4, 0)));
+  const lightTranslation = new GroupNode(new Translation(new Vector(-3, -2, 4, 0)));
+  const lightBulbScaling = new GroupNode(new Scaling(new Vector(0.5,0.5,0.5,1)));
+  const lightJump = new JumperNode(lightTranslation, new Vector(0, 5, 0, 0), 0.001, false);
+  lightBulbScaling.add(lightBulb);
   lightTranslation.add(light1);
-  lightTranslation.add(lightBulb);
+  lightTranslation.add(lightBulbScaling);
   sg.add(lightTranslation);
+  lightJump.toggleActive();
 
   const light2 = new LightNode();
   const light2Bulb = new SphereNode(new Vector(1,1,0,1))
-  const light2Translation = new GroupNode(new Translation(new Vector(2, 4, 4, 0)));
+  const light2Translation = new GroupNode(new Translation(new Vector(-3, 3, 4, 0)));
+  const light2BulbScaling = new GroupNode(new Scaling(new Vector(0.5,0.5,0.5,1)));
+  const light2Jump = new JumperNode(light2Translation, new Vector(7, 0, 0, 0), 0.001, false);
+  light2BulbScaling.add(light2Bulb);
   light2Translation.add(light2);
-  light2Translation.add(light2Bulb)
+  light2Translation.add(light2BulbScaling)
   sg.add(light2Translation);
+  light2Jump.toggleActive();
+
+  const light3 = new LightNode();
+  const light3Bulb = new SphereNode(new Vector(1,1,0,1))
+  const light3Translation = new GroupNode(new Translation(new Vector(5, -3, -3, 0)));
+  const light3BulbScaling = new GroupNode(new Scaling(new Vector(0.5,0.5,0.5,1)));
+  const light3Jump = new JumperNode(light3Translation, new Vector(0, 0, 7, 0), 0.001, false);
+  light3BulbScaling.add(light3Bulb);
+  light3Translation.add(light3);
+  light3Translation.add(light3BulbScaling)
+  sg.add(light3Translation);
+  light3Jump.toggleActive();
+
+  const light4 = new LightNode();
+  const light4Bulb = new SphereNode(new Vector(1,1,0,1))
+  const light4Translation = new GroupNode(new Translation(new Vector(5, 0, 20, 0)));
+  const light4Jump = new JumperNode(light4Translation, new Vector(-10, 0, 0, 0), 0.001, false);
+  light4Translation.add(light4);
+  light4Translation.add(light4Bulb)
+  sg.add(light4Translation);
+  light4Jump.toggleActive();
+
 
   const createWindow = (xTranslation: number, id: number, windowNaming: string) => {
     const windowScaling = new GroupNode(new Scaling(new Vector(5, 6, 1, 0)));
@@ -191,7 +220,7 @@ window.addEventListener("load", () => {
   };
 
   const taskbarScaling = new GroupNode(new Scaling(new Vector(15, 1, 1, 0)));
-  const taskbarTranslation = new GroupNode(new Translation(new Vector(0, -6.2, 0, 0)));
+  const taskbarTranslation = new GroupNode(new Translation(new Vector(0, -4, 0, 0)));
   const taskbar = new AABoxNode(new Vector(0.5, 0.5, 0.5, 1), taskbarScaling);
   taskbarScaling.add(taskbar);
   taskbarTranslation.add(taskbarScaling);
@@ -329,6 +358,10 @@ window.addEventListener("load", () => {
     rotationSphere.simulate(timestamp - lastTimestamp);
     rotationPyramid.simulate(timestamp - lastTimestamp);
     minimizeScaling.simulate(timestamp - lastTimestamp);
+    lightJump.simulate(timestamp - lastTimestamp);
+    light2Jump.simulate(timestamp - lastTimestamp);
+    light3Jump.simulate(timestamp - lastTimestamp);
+    light4Jump.simulate(timestamp - lastTimestamp);
 
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);

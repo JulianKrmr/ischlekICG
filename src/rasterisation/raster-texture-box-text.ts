@@ -304,7 +304,7 @@ export default class RasterTextTextureBox {
     ctx.fillStyle = "#0827d4"; // This determines the text colour, it can take a hex value or rgba value (e.g. rgba(255,0,0,0.5))
     ctx.textAlign = "center"; // This determines the alignment of text, e.g. left, center, right
     ctx.textBaseline = "middle"; // This determines the baseline of the text, e.g. top, middle, bottom
-    ctx.font = "35px monospace"; // This determines the size of the text and the font family used
+    ctx.font = "80px monospace"; // This determines the size of the text and the font family used
     ctx.fillText(
       texture,
       this.textCanvas.width / 2,

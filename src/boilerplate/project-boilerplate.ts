@@ -85,23 +85,39 @@ window.addEventListener("load", () => {
   lightTranslation.add(light1);
   sg.add(lightTranslation);
 
-  const createWindow = (xTranslation: number, id: number) => {
-    const windowScaling = new GroupNode(new Scaling(new Vector(4, 5, 1, 0)));
+  const createWindow = (xTranslation: number, id: number, windowNaming: string) => {
+    const windowScaling = new GroupNode(new Scaling(new Vector(5, 6, 1, 0)));
     const windowTranslation = new GroupNode(new Translation(new Vector(xTranslation, 0.5, 0, 0)));
     const window = new AABoxNode(new Vector(0.4, 0.3, 0.0, 1), windowTranslation);
     windowScaling.add(window);
     windowTranslation.add(windowScaling);
     sg.add(windowTranslation);
 
-    const windowTopBarScaling = new GroupNode(new Scaling(new Vector(4, 0.3, 1.1, 0)));
-    const windowTopBarTranslation = new GroupNode(new Translation(new Vector(0, 2.6, 0, 0)));
-    const windowTopBar = new AABoxNode(new Vector(0.3, 0.1, 0, 1), windowTranslation);
+    const windowTopBarScaling = new GroupNode(new Scaling(new Vector(5, 0.3, 1.1, 0)));
+    const windowTopBarTranslation = new GroupNode(new Translation(new Vector(0, 2.8, 0, 0)));
+    const windowTopBar = new AABoxNode(new Vector(0.7, 0.1, 0, 1), windowTranslation);
+    const windowNameScaling = new GroupNode(new Scaling(new Vector(1, 1, 1, 0)));
+    const windowNameTranslation = new GroupNode(new Translation(new Vector(-2, 2.5, 0.1, 0)));
+    const windowNameRotation = new GroupNode(new Rotation(new Vector(0, 0, 1, 0), Math.PI));
+
+    // textureBoxRotation.add(textureBox);
+    // textureBoxScaling.add(textureBoxRotation);
+    // textureBoxTranslation.add(textureBoxScaling);
+    // rightWindowSceneTranslation.add(textureBoxTranslation);
+
+    const windowName = new TextureTextBoxNode(windowNaming, windowTranslation);
+
+    windowNameRotation.add(windowName);
+    windowNameScaling.add(windowNameRotation);
+    windowNameTranslation.add(windowNameScaling);
+    windowTranslation.add(windowNameTranslation);
+
     windowTopBarScaling.add(windowTopBar);
     windowTopBarTranslation.add(windowTopBarScaling);
     windowTranslation.add(windowTopBarTranslation);
 
     //minimierungsschaltfläche
-    const minimizerTranslation = new GroupNode(new Translation(new Vector(1.5, 2.6, 0.5, 0)));
+    const minimizerTranslation = new GroupNode(new Translation(new Vector(2.2, 2.8, 0.5, 0)));
     const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.5, 0)), id);
     const minimizer = new AABoxNode(new Vector(0.3, 0.1, 1, 1), minimizerScaling);
 
@@ -109,7 +125,7 @@ window.addEventListener("load", () => {
     minimizerTranslation.add(minimizerScaling);
     windowTranslation.add(minimizerTranslation);
 
-    const windowSceneScaling = new GroupNode(new Scaling(new Vector(3.7, 4.2, 1.1, 0)));
+    const windowSceneScaling = new GroupNode(new Scaling(new Vector(4.5, 5.0, 1.1, 0)));
     const windowSceneTranslation = new GroupNode(new Translation(new Vector(0, -0.2, 0, 0)));
     const windowScene = new AABoxNode(new Vector(0.9, 0.9, 0.9, 1), windowTranslation);
     windowSceneScaling.add(windowScene);
@@ -119,8 +135,8 @@ window.addEventListener("load", () => {
     return windowTranslation;
   };
 
-  const leftWindowSceneTranslation = createWindow(-2.2, 1);
-  const rightWindowSceneTranslation = createWindow(2.2, 2);
+  const leftWindowSceneTranslation = createWindow(-2.8, 1, "Left");
+  const rightWindowSceneTranslation = createWindow(2.8, 2, "Right");
 
   const pyramidScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 0)));
   const pyramidTranslation = new GroupNode(new Translation(new Vector(-1, 1, 1, 0)));
@@ -147,7 +163,7 @@ window.addEventListener("load", () => {
   // texture only comes after first traversal; cube just stays black now
   const textureBoxScaling = new GroupNode(new Scaling(new Vector(2.0, 2.0, 2.0, 0)));
   const textureBoxTranslation = new GroupNode(new Translation(new Vector(1, -1, 1, 0)));
-  const textureBox = new TextureTextBoxNode("text texture", textureBoxScaling);
+  const textureBox = new TextureVideoBoxNode("assitoni.mp4", textureBoxScaling);
 
   const textureBoxRotation = new GroupNode(new Rotation(new Vector(0, 0, 1, 0), Math.PI));
 
@@ -165,8 +181,8 @@ window.addEventListener("load", () => {
     return taskbarIconTranslation;
   };
 
-  const taskbarScaling = new GroupNode(new Scaling(new Vector(15, 1, 1, 0)));
-  const taskbarTranslation = new GroupNode(new Translation(new Vector(0, -6.3, 0, 0)));
+  const taskbarScaling = new GroupNode(new Scaling(new Vector(10.5, 1, 1, 0)));
+  const taskbarTranslation = new GroupNode(new Translation(new Vector(0, -3.5, 0, 0)));
   const taskbar = new AABoxNode(new Vector(0.5, 0.5, 0.5, 1), taskbarScaling);
   taskbarScaling.add(taskbar);
   taskbarTranslation.add(taskbarScaling);

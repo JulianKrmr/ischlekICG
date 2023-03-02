@@ -208,11 +208,7 @@ export class TextureBoxNode extends Node {
    * with all edges of length 1
    * @param texture The image filename for the texture
    */
-  constructor(
-    public texture: string,
-    public parent?: GroupNode,
-    public normal?: string
-  ) {
+  constructor(public texture: string, public parent?: GroupNode, public normal?: string) {
     super();
   }
 
@@ -234,11 +230,7 @@ export class TextureBoxNode extends Node {
   }
 }
 export class TextureVideoBoxNode extends Node {
-  constructor(
-    public texture: string,
-    public parent?: GroupNode,
-    public normal?: string
-  ) {
+  constructor(public texture: string, public parent?: GroupNode, public normal?: string) {
     super();
   }
   accept(visitor: Visitor) {
@@ -255,11 +247,7 @@ export class TextureVideoBoxNode extends Node {
 }
 
 export class TextureTextBoxNode extends Node {
-  constructor(
-    public texture: string,
-    public parent?: GroupNode,
-    public normal?: string
-  ) {
+  constructor(public texture: string, public parent?: GroupNode, public id?: number, public normal?: string) {
     super();
   }
   accept(visitor: Visitor): void {
@@ -276,12 +264,7 @@ export class TextureTextBoxNode extends Node {
 }
 
 export class CustomShapeNode extends Node {
-  constructor(
-    public vertices: Vector[],
-    public indices: number[],
-    public color: Vector,
-    public parent?: GroupNode
-  ) {
+  constructor(public vertices: Vector[], public indices: number[], public color: Vector, public parent?: GroupNode) {
     super();
   }
   accept(visitor: Visitor): void {

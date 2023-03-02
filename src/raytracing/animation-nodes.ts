@@ -7,7 +7,7 @@ import { scale, translate } from "../boilerplate/project-boilerplate";
 /**
  * Class representing an Animation
  */
-class AnimationNode {
+export class AnimationNode {
   /**
    * Describes if the animation is running
    */

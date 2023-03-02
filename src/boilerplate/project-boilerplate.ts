@@ -25,7 +25,7 @@ import phongFragmentShader from "../shader/phong-fragment-shader.glsl";
 import textureVertexShader from "../shader/texture-vertex-perspective-shader.glsl";
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 import RasterBox from "../rasterisation/raster-box";
-import { DriverNode, JumperNode, RotationNode, ScalerNode } from "../raytracing/animation-nodes";
+import { DriverNode, JumperNode, RotationNode, ScalerNode, AnimationNode } from "../raytracing/animation-nodes";
 import MouserayVisitor from "../raytracing/mouserayVisitor";
 import AABox from "../objects/aabox";
 
@@ -84,6 +84,11 @@ window.addEventListener("load", () => {
   const lightTranslation = new GroupNode(new Translation(new Vector(-1, -2, 9, 0)));
   lightTranslation.add(light1);
   sg.add(lightTranslation);
+
+  const testTranslation = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
+  const testTexture = new TextureTextBoxNode("B", testTranslation, 1);
+  testTranslation.add(testTexture);
+  sg.add(testTranslation);
 
   const createWindow = (xTranslation: number, id: number, windowNaming: string) => {
     const windowScaling = new GroupNode(new Scaling(new Vector(5, 6, 1, 0)));
@@ -194,8 +199,27 @@ window.addEventListener("load", () => {
   const rightTaskbarIcon = createTaskbarIcon(-2.2, 11, new Vector(0.1, 0.5, 0.3, 1));
   taskbarTranslation.add(rightTaskbarIcon);
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //TicTacToe
+  const ticTacToeRoot = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
+  const ticTacToeScaling = new GroupNode(new Scaling(new Vector(0.8, 0.8, 0.8, 0))); //scales the size of the cubes
+  ticTacToeRoot.add(ticTacToeScaling);
+  //creates 9 cubes with 9 different ids
+  //attaches the cubes to the scale node, who is attached to the root node
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      let cubetranslation = new GroupNode(new Translation(new Vector(i * 1.3 - 1, j * 1.3 - 0.5, 0.3, 0)), i + j * 3 + 20); //ids go from 20 to 28
+      let cube = new TextureTextBoxNode("X", cubetranslation);
+      cubetranslation.add(cube);
+      ticTacToeScaling.add(cubetranslation);
+    }
+  }
+
+  rightWindowSceneTranslation.add(ticTacToeRoot);
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //Animation Nodes
+  //an array of all the animation nodes
+
   let animation1 = new DriverNode(selectedGroupNode, new Vector(0, -5, -30, 0), 0.0002);
   let minimizeScaling = new ScalerNode(selectedGroupNode, new Vector(0.1, 0.1, 0.1, 0), true, 0.0002);
 
@@ -292,6 +316,7 @@ window.addEventListener("load", () => {
     } else if (renderMode == "raytracing") {
       rayVisitor.render(sg, null, null, phongValues);
     }
+
     animation1.simulate(timestamp - lastTimestamp);
     rotationSphere.simulate(timestamp - lastTimestamp);
     rotationPyramid.simulate(timestamp - lastTimestamp);
@@ -437,6 +462,27 @@ window.addEventListener("load", () => {
       animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(6, 14, 0, 0), 0.001);
       maximisedRight = true;
       animation1.toggleActive();
+    } else if (selectedGroupNode.id >= 20 && selectedGroupNode.id <= 28) {
+      //covers all tictactoe cubes
+      console.log(selectedNode);
+      toggleSymbol();
+      console.log(selectedNode);
+      //little click animation
+      animation1 = new JumperNode(selectedGroupNode, new Vector(0, 0, 0.3, 0), 0.005, true);
+      animation1.toggleActive();
+    }
+  }
+
+  function toggleSymbol() {
+    //switch between 3 otpions X, O, empty
+    if (selectedNode instanceof TextureTextBoxNode) {
+      if (selectedNode.texture == "X") {
+        selectedNode.texture = "O";
+      } else if (selectedNode.texture == "O") {
+        selectedNode.texture = "";
+      } else {
+        selectedNode.texture = "X";
+      }
     }
   }
 

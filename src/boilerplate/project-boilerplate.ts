@@ -409,23 +409,27 @@ window.addEventListener("load", () => {
     window.requestAnimationFrame(animate);
   };
 
-  rasterCanvas.addEventListener("mousedown", (event) => {
-    let mx = event.offsetX;
-    let my = event.offsetY;
-    selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
-    if (selectedNode != null) {
-      selectedGroupNode = selectedNode.parent;
-      checkactions();
+  rasterCanvas.addEventListener("click", (event) => {
+    if (canClick) {
+      let mx = event.offsetX;
+      let my = event.offsetY;
+      selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
+      if (selectedNode != null) {
+        selectedGroupNode = selectedNode.parent;
+        checkactions();
+      }
     }
   });
 
-  rayCanvas.addEventListener("mousedown", (event) => {
-    let mx = event.offsetX;
-    let my = event.offsetY;
-    selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
-    if (selectedNode != null) {
-      selectedGroupNode = selectedNode.parent;
-      checkactions();
+  rayCanvas.addEventListener("click", (event) => {
+    if (canClick) {
+      let mx = event.offsetX;
+      let my = event.offsetY;
+      selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
+      if (selectedNode != null) {
+        selectedGroupNode = selectedNode.parent;
+        checkactions();
+      }
     }
   });
 
@@ -433,40 +437,42 @@ window.addEventListener("load", () => {
   let maximisedRight = true;
 
   function checkactions() {
-    if (selectedGroupNode.id == null) {
-      //jumps once
-      animation1 = new JumperNode(selectedGroupNode, new Vector(0, 0.5, 0, 0), 0.005, true);
-      animation1.toggleActive();
-      //if left minimize btn is selected, animate the minimization
-    } else if (selectedGroupNode.id == 1 && maximisedLeft) {
-      animation1 = new DriverNode(leftWindowSceneTranslation, new Vector(-2, -14, 0, 0), 0.001);
-      maximisedLeft = false;
-      animation1.toggleActive();
-    }
-    //if right minimize btn is selected, animate the minimization
-    else if (selectedGroupNode.id == 2 && maximisedRight) {
-      animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(-6, -14, 0, 0), 0.001);
-      maximisedRight = false;
-      animation1.toggleActive();
-    }
-    //if left maximize btn is selected, animate the maximization
-    else if (selectedGroupNode.id == 10 && !maximisedLeft) {
-      animation1 = new DriverNode(leftWindowSceneTranslation, new Vector(2, 14, 0, 0), 0.001);
-      maximisedLeft = true;
-      animation1.toggleActive();
+    if (!ctrlDown) {
+      if (selectedGroupNode.id == null) {
+        //jumps once
+        animation1 = new JumperNode(selectedGroupNode, new Vector(0, 0.5, 0, 0), 0.005, true);
+        animation1.toggleActive();
+        //if left minimize btn is selected, animate the minimization
+      } else if (selectedGroupNode.id == 1 && maximisedLeft) {
+        animation1 = new DriverNode(leftWindowSceneTranslation, new Vector(-2, -14, 0, 0), 0.001);
+        maximisedLeft = false;
+        animation1.toggleActive();
+      }
+      //if right minimize btn is selected, animate the minimization
+      else if (selectedGroupNode.id == 2 && maximisedRight) {
+        animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(-6, -14, 0, 0), 0.001);
+        maximisedRight = false;
+        animation1.toggleActive();
+      }
+      //if left maximize btn is selected, animate the maximization
+      else if (selectedGroupNode.id == 10 && !maximisedLeft) {
+        animation1 = new DriverNode(leftWindowSceneTranslation, new Vector(2, 14, 0, 0), 0.001);
+        maximisedLeft = true;
+        animation1.toggleActive();
 
-      // scale(new Vector(10, 10, 10, 0), leftWindowSceneTranslation);
-      //if right maximize btn is selected, animate the maximization
-    } else if (selectedGroupNode.id == 11 && !maximisedRight) {
-      animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(6, 14, 0, 0), 0.001);
-      maximisedRight = true;
-      animation1.toggleActive();
-    } else if (selectedGroupNode.id >= 20 && selectedGroupNode.id <= 28) {
-      //covers all tictactoe cubes
-      toggleSymbol();
-      //little click animation
-      animation1 = new JumperNode(selectedGroupNode, new Vector(0, 0, 0.3, 0), 0.005, true);
-      animation1.toggleActive();
+        // scale(new Vector(10, 10, 10, 0), leftWindowSceneTranslation);
+        //if right maximize btn is selected, animate the maximization
+      } else if (selectedGroupNode.id == 11 && !maximisedRight) {
+        animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(6, 14, 0, 0), 0.001);
+        maximisedRight = true;
+        animation1.toggleActive();
+      } else if (selectedGroupNode.id >= 20 && selectedGroupNode.id <= 28) {
+        //covers all tictactoe cubes
+        toggleSymbol();
+        //little click animation
+        animation1 = new JumperNode(selectedGroupNode, new Vector(0, 0, 0.3, 0), 0.005, true);
+        animation1.toggleActive();
+      }
     }
   }
 
@@ -492,19 +498,50 @@ window.addEventListener("load", () => {
   let zoomedIn = false;
   let zoomVector = new Vector(0, 0, 0, 0);
 
-  rasterCanvas.addEventListener("mousedown", (event) => {
-    let mx = event.offsetX;
-    let my = event.offsetY;
+  var ctrlDown = false;
 
-    let ray = mouseRayVisitor.CameraDrive(sg, null, mx, my, rasterContext);
-    zoomVector = ray.direction.mul(5);
-    if (zoomedIn) {
-      animation1 = new DriverNode(cameraTranslation, zoomVector.mul(-1), 0.002);
-    } else {
-      animation1 = new DriverNode(cameraTranslation, zoomVector, 0.002);
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Control") {
+      ctrlDown = true;
     }
-    animation1.toggleActive();
-    zoomedIn = !zoomedIn;
+  });
+
+  document.addEventListener("keyup", function (event) {
+    if (event.key === "Control") {
+      ctrlDown = false;
+    }
+  });
+
+  document.addEventListener("click", function (event) {
+    if (canClick) {
+      if (ctrlDown) {
+        let mx = event.offsetX;
+        let my = event.offsetY;
+
+        let ray = mouseRayVisitor.CameraDrive(sg, null, mx, my, rasterContext);
+        zoomVector = ray.direction.mul(5);
+        if (zoomedIn) {
+          animation1 = new DriverNode(cameraTranslation, zoomVector.mul(-1), 0.002);
+        } else {
+          animation1 = new DriverNode(cameraTranslation, zoomVector, 0.002);
+        }
+        animation1.toggleActive();
+        zoomedIn = !zoomedIn;
+      }
+    }
+  });
+
+  var canClick = true;
+
+  document.addEventListener("click", function (event) {
+    if (canClick) {
+      // Only executes when canClick is true
+      // Set canClick to false and start the timeout
+      canClick = false;
+      setTimeout(function () {
+        canClick = true;
+      }, 400); // Set the timeout to 400ms
+    }
   });
 
   // download and import scene as JSON

@@ -62,7 +62,7 @@ export class CameraNode extends Node {
   /**
    * Camera
    */
-  constructor(public active: boolean) {
+  constructor() {
     super();
   }
 
@@ -74,14 +74,14 @@ export class CameraNode extends Node {
     visitor.visitCameraNode(this);
   }
 
-  setActiveStatus(val: boolean) {
-    this.active = val;
-  }
+  // setActiveStatus(val: boolean) {
+  //   this.active = val;
+  // }
 
   toJSON() {
     return {
       CameraNode: {
-        active: this.active,
+        // active: this.active,
       },
     };
   }

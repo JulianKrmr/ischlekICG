@@ -119,6 +119,38 @@ export default class MouserayVisitor implements Visitor {
     }
   }
 
+  CameraDrive(rootNode: Node, camera: { origin: Vector; width: number; height: number; alpha: number }, x: number, y: number, renderingContext: any) {
+    this.transformations = [];
+    this.inverseTransformations = [];
+    this.objectIntersections = [];
+    this.transformations.push(Matrix.identity());
+    this.inverseTransformations.push(Matrix.identity());
+    this.intersection = null;
+
+    if (renderingContext == WebGL2RenderingContext) {
+      //rasterizer
+      this.width = 500;
+      this.height = 500;
+    } else {
+      //raytracer
+      this.y = y / 10;
+      this.x = x / 10;
+      this.width = 100;
+      this.height = 100;
+    }
+
+    this.transformations = [Matrix.identity()];
+    this.inverseTransformations = [Matrix.identity()];
+    this.objectIntersections = [];
+
+    this.intersection = null;
+    rootNode.accept(this);
+
+    if (this.intersection) {
+      return this.ray;
+    }
+  }
+
   /**
    * Visits a group node
    * @param node The node to visit
@@ -159,6 +191,7 @@ export default class MouserayVisitor implements Visitor {
     let toWorld = this.transformations[this.transformations.length - 1];
     const origin = toWorld.mulVec(new Vector(0, 0, 0, 1));
     this.ray = Ray.makeRay(this.x, this.y, { width: this.width, height: this.height, alpha: Math.PI / 3, origin: origin });
+    console.log(this.ray);
   }
 
   visitLightNode(node: LightNode) {}

@@ -75,7 +75,7 @@ window.addEventListener("load", () => {
 
   let sg = new GroupNode(new Translation(new Vector(0, 0, -15, 0)));
 
-  const camera1 = new CameraNode(true);
+  const camera1 = new CameraNode();
   const cameraTranslation = new GroupNode(new Translation(new Vector(0, 0, 12, 0)));
   cameraTranslation.add(camera1);
   sg.add(cameraTranslation);
@@ -84,11 +84,6 @@ window.addEventListener("load", () => {
   const lightTranslation = new GroupNode(new Translation(new Vector(-1, -2, 9, 0)));
   lightTranslation.add(light1);
   sg.add(lightTranslation);
-
-  const testTranslation = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
-  const testTexture = new TextureTextBoxNode("B", testTranslation, 1);
-  testTranslation.add(testTexture);
-  sg.add(testTranslation);
 
   const createWindow = (xTranslation: number, id: number, windowNaming: string) => {
     const windowScaling = new GroupNode(new Scaling(new Vector(5, 6, 1, 0)));
@@ -101,8 +96,8 @@ window.addEventListener("load", () => {
     const windowTopBarScaling = new GroupNode(new Scaling(new Vector(5, 0.3, 1.1, 0)));
     const windowTopBarTranslation = new GroupNode(new Translation(new Vector(0, 2.8, 0, 0)));
     const windowTopBar = new AABoxNode(new Vector(0.7, 0.1, 0, 1), windowTranslation);
-    const windowNameScaling = new GroupNode(new Scaling(new Vector(1, 1, 1, 0)));
-    const windowNameTranslation = new GroupNode(new Translation(new Vector(-2, 2.5, 0.1, 0)));
+    const windowNameScaling = new GroupNode(new Scaling(new Vector(2, 0.5, 1, 0)));
+    const windowNameTranslation = new GroupNode(new Translation(new Vector(-1.49, 2.7, 0.1, 0)));
     const windowNameRotation = new GroupNode(new Rotation(new Vector(0, 0, 1, 0), Math.PI));
 
     // textureBoxRotation.add(textureBox);
@@ -166,8 +161,8 @@ window.addEventListener("load", () => {
   leftWindowSceneTranslation.add(aaboxTranslation);
 
   // texture only comes after first traversal; cube just stays black now
-  const textureBoxScaling = new GroupNode(new Scaling(new Vector(2.0, 2.0, 2.0, 0)));
-  const textureBoxTranslation = new GroupNode(new Translation(new Vector(1, -1, 1, 0)));
+  const textureBoxScaling = new GroupNode(new Scaling(new Vector(4.0, 2.0, 0.1, 0)));
+  const textureBoxTranslation = new GroupNode(new Translation(new Vector(0.1, 1, 0.51, 0)));
   const textureBox = new TextureVideoBoxNode("assitoni.mp4", textureBoxScaling);
 
   const textureBoxRotation = new GroupNode(new Rotation(new Vector(0, 0, 1, 0), Math.PI));
@@ -175,7 +170,7 @@ window.addEventListener("load", () => {
   textureBoxRotation.add(textureBox);
   textureBoxScaling.add(textureBoxRotation);
   textureBoxTranslation.add(textureBoxScaling);
-  rightWindowSceneTranslation.add(textureBoxTranslation);
+  leftWindowSceneTranslation.add(textureBoxTranslation);
 
   const createTaskbarIcon = (xPos: number, id: number, color: Vector) => {
     const taskbarIconTranslation = new GroupNode(new Translation(new Vector(xPos, 0.01, 0, 0)), id);
@@ -202,17 +197,21 @@ window.addEventListener("load", () => {
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //TicTacToe
   const ticTacToeRoot = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
-  const ticTacToeScaling = new GroupNode(new Scaling(new Vector(0.8, 0.8, 0.8, 0))); //scales the size of the cubes
-  ticTacToeRoot.add(ticTacToeScaling);
-  //creates 9 cubes with 9 different ids
-  //attaches the cubes to the scale node, who is attached to the root node
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 3; j++) {
-      let cubetranslation = new GroupNode(new Translation(new Vector(i * 1.3 - 1, j * 1.3 - 0.5, 0.3, 0)), i + j * 3 + 20); //ids go from 20 to 28
-      let cube = new TextureTextBoxNode("X", cubetranslation);
-      cubetranslation.add(cube);
-      ticTacToeScaling.add(cubetranslation);
+  ticTacToeRoot.add(createTicTacToe());
+
+  function createTicTacToe() {
+    const ticTacToeScaling = new GroupNode(new Scaling(new Vector(0.8, 0.8, 0.8, 0))); //scales the size of the cubes
+    //creates 9 cubes with 9 different ids
+    //attaches the cubes to the scale node, who is attached to the root node
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        let cubetranslation = new GroupNode(new Translation(new Vector(i * 1.3 - 1, j * 1.3 - 0.5, 0.3, 0)), i + j * 3 + 20); //ids go from 20 to 28
+        let cube = new TextureTextBoxNode("X", cubetranslation);
+        cubetranslation.add(cube);
+        ticTacToeScaling.add(cubetranslation);
+      }
     }
+    return ticTacToeScaling;
   }
 
   rightWindowSceneTranslation.add(ticTacToeRoot);
@@ -464,9 +463,7 @@ window.addEventListener("load", () => {
       animation1.toggleActive();
     } else if (selectedGroupNode.id >= 20 && selectedGroupNode.id <= 28) {
       //covers all tictactoe cubes
-      console.log(selectedNode);
       toggleSymbol();
-      console.log(selectedNode);
       //little click animation
       animation1 = new JumperNode(selectedGroupNode, new Vector(0, 0, 0.3, 0), 0.005, true);
       animation1.toggleActive();
@@ -485,6 +482,30 @@ window.addEventListener("load", () => {
       }
     }
   }
+
+  let resetButton = document.getElementById("resetTicTacToe");
+  resetButton.onclick = () => {
+    ticTacToeRoot.children = [];
+    ticTacToeRoot.add(createTicTacToe());
+  };
+
+  let zoomedIn = false;
+  let zoomVector = new Vector(0, 0, 0, 0);
+
+  rasterCanvas.addEventListener("mousedown", (event) => {
+    let mx = event.offsetX;
+    let my = event.offsetY;
+
+    let ray = mouseRayVisitor.CameraDrive(sg, null, mx, my, rasterContext);
+    zoomVector = ray.direction.mul(5);
+    if (zoomedIn) {
+      animation1 = new DriverNode(cameraTranslation, zoomVector.mul(-1), 0.002);
+    } else {
+      animation1 = new DriverNode(cameraTranslation, zoomVector, 0.002);
+    }
+    animation1.toggleActive();
+    zoomedIn = !zoomedIn;
+  });
 
   // download and import scene as JSON
   //download

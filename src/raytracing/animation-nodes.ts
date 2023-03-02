@@ -42,18 +42,23 @@ export class RotationNode extends AnimationNode {
    * The vector to rotate around
    */
   axis: Vector;
+  speed: number;
 
   /**
    * Creates a new RotationNode
    * @param groupNode The group node to attach to
    * @param axis The axis to rotate around
    */
-  constructor(groupNode: GroupNode, axis: Vector) {
+  constructor(groupNode: GroupNode, axis: Vector, speed?: number) {
     super(groupNode);
     this.angle = 0;
     this.axis = axis;
+    if (speed) {
+      this.speed = speed;
+    } else {
+      this.speed = 0.0001;
+    }
   }
-
   /**
    * Advances the animation by deltaT
    * @param deltaT The time difference, the animation is advanced by
@@ -63,7 +68,7 @@ export class RotationNode extends AnimationNode {
       this.angle = Math.PI * 4;
       const matrix = this.groupNode.transform.getMatrix();
       const inverse = this.groupNode.transform.getInverseMatrix();
-      let rotation = new Rotation(this.axis, 0.0001 * this.angle * deltaT);
+      let rotation = new Rotation(this.axis, this.speed * this.angle * deltaT);
       rotation.matrix = matrix.mul(rotation.getMatrix());
       rotation.inverse = rotation.getInverseMatrix().mul(inverse);
       this.groupNode.transform = rotation;
@@ -91,11 +96,7 @@ export class SlerpNode extends AnimationNode {
    * @param groupNode The group node to attach to
    * @param axis The axis to rotate around
    */
-  constructor(
-    groupNode: GroupNode,
-    rotation1: Quaternion,
-    rotation2: Quaternion
-  ) {
+  constructor(groupNode: GroupNode, rotation1: Quaternion, rotation2: Quaternion) {
     super(groupNode);
     this.rotations = [rotation1, rotation2];
     this.t = 0;
@@ -108,10 +109,7 @@ export class SlerpNode extends AnimationNode {
   simulate(deltaT: number) {
     if (this.active) {
       this.t += 0.001 * deltaT;
-      const rot = this.rotations[0].slerp(
-        this.rotations[1],
-        (Math.sin(this.t) + 1) / 2
-      );
+      const rot = this.rotations[0].slerp(this.rotations[1], (Math.sin(this.t) + 1) / 2);
       (this.groupNode.transform as SQT).rotation = rot;
     }
   }
@@ -128,12 +126,7 @@ export class JumperNode extends AnimationNode {
   distanceCovered: number = 0;
   single: boolean = false;
 
-  constructor(
-    groupNode: GroupNode,
-    direction: Vector,
-    speed?: number,
-    single?: boolean
-  ) {
+  constructor(groupNode: GroupNode, direction: Vector, speed?: number, single?: boolean) {
     super(groupNode);
     this.distanceToGoal = direction.length;
     this.direction = direction;
@@ -164,6 +157,7 @@ export class JumperNode extends AnimationNode {
         translate(this.direction.mul(-1 * this.speed * deltaT), this.groupNode);
         this.distanceCovered -= this.direction.mul(this.speed).length * deltaT;
         if (this.distanceCovered <= 0) {
+          //not needed?
           if (this.single) {
             this.active = false;
           }
@@ -180,8 +174,9 @@ export class ScalerNode extends AnimationNode {
   firstHalf: boolean = true; //aktiv in welche richtung es geht
   distanceCovered: number = 0; //wie viel von der Skalierung hat er schon geschaff
   speed: number; //wie schnell skalieren
+  single: boolean = false;
 
-  constructor(groupNode: GroupNode, scaling: Vector, speed?: number) {
+  constructor(groupNode: GroupNode, scaling: Vector, single?: boolean, speed?: number) {
     super(groupNode);
     this.scaling = scaling.sub(new Vector(1, 1, 1, 0));
     this.distanceToGoal = this.scaling.length;
@@ -190,6 +185,11 @@ export class ScalerNode extends AnimationNode {
     } else {
       this.speed = 0.001;
     }
+    if (single) {
+      this.single = single;
+    } else {
+      this.single = false;
+    }
   }
 
   simulate(deltaT: number) {
@@ -197,20 +197,18 @@ export class ScalerNode extends AnimationNode {
       if (this.firstHalf) {
         //   wenn firsthalf true ist, wird die scale methode ausgeführt, aber für speed * deltaT
         //   und distanceCovered wird immer erhöht, um zu schauen wann man im Ziel ist
-        scale(
-          new Vector(1, 1, 1, 0).add(this.scaling.mul(this.speed).mul(deltaT)),
-          this.groupNode
-        );
+        scale(new Vector(1, 1, 1, 0).add(this.scaling.mul(this.speed).mul(deltaT)), this.groupNode);
         this.distanceCovered += this.scaling.length * deltaT * this.speed;
         if (this.distanceCovered >= this.distanceToGoal) {
+          //not needed?
+          if (this.single) {
+            this.active = false;
+          }
           this.firstHalf = false;
         }
       } else {
         //wenn fistHalf false ist, wird die scale methode ausgeführt, aber für -1 * speed * deltaT, um rückwärts zu laufen
-        scale(
-          new Vector(1, 1, 1, 0).sub(this.scaling.mul(this.speed).mul(deltaT)),
-          this.groupNode
-        );
+        scale(new Vector(1, 1, 1, 0).sub(this.scaling.mul(this.speed).mul(deltaT)), this.groupNode);
         this.distanceCovered -= this.scaling.length * deltaT * this.speed;
         if (this.distanceCovered <= 0) {
           this.firstHalf = true;

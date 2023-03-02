@@ -15,10 +15,7 @@ import {
 } from "../nodes";
 import { Rotation, Scaling, Translation } from "../math/transformation";
 import RayVisitor from "../raytracing/rayvisitor";
-import {
-  RasterSetupVisitor,
-  RasterVisitor,
-} from "../rasterisation/rastervisitor";
+import { RasterSetupVisitor, RasterVisitor } from "../rasterisation/rastervisitor";
 import Shader from "../shader/shader";
 import Matrix from "../math/matrix";
 
@@ -28,12 +25,7 @@ import phongFragmentShader from "../shader/phong-fragment-shader.glsl";
 import textureVertexShader from "../shader/texture-vertex-perspective-shader.glsl";
 import textureFragmentShader from "../shader/texture-fragment-shader.glsl";
 import RasterBox from "../rasterisation/raster-box";
-import {
-  DriverNode,
-  JumperNode,
-  RotationNode,
-  ScalerNode,
-} from "../raytracing/animation-nodes";
+import { DriverNode, JumperNode, RotationNode, ScalerNode } from "../raytracing/animation-nodes";
 import MouserayVisitor from "../raytracing/mouserayVisitor";
 import AABox from "../objects/aabox";
 
@@ -71,19 +63,10 @@ export interface CameraRasteriser {
 let scene: SceneObj;
 
 window.addEventListener("load", () => {
-  const modeToggleForm = document.getElementById(
-    "mode--toggle"
-  ) as HTMLFormElement;
+  const modeToggleForm = document.getElementById("mode--toggle") as HTMLFormElement;
 
   //null in the beginning, changes on cklick
-  let selectedNode:
-    | SphereNode
-    | PyramidNode
-    | AABoxNode
-    | CustomShapeNode
-    | TextureVideoBoxNode
-    | TextureTextBoxNode
-    | TextureBoxNode = null;
+  let selectedNode: SphereNode | PyramidNode | AABoxNode | CustomShapeNode | TextureVideoBoxNode | TextureTextBoxNode | TextureBoxNode = null;
   let selectedGroupNode: GroupNode = null;
 
   //scene graph
@@ -93,73 +76,42 @@ window.addEventListener("load", () => {
   let sg = new GroupNode(new Translation(new Vector(0, 0, -15, 0)));
 
   const camera1 = new CameraNode(true);
-  const cameraTranslation = new GroupNode(
-    new Translation(new Vector(0, 0, 12, 0))
-  );
+  const cameraTranslation = new GroupNode(new Translation(new Vector(0, 0, 12, 0)));
   cameraTranslation.add(camera1);
   sg.add(cameraTranslation);
 
   const light1 = new LightNode();
-  const lightTranslation = new GroupNode(
-    new Translation(new Vector(-1, -2, 9, 0))
-  );
+  const lightTranslation = new GroupNode(new Translation(new Vector(-1, -2, 9, 0)));
   lightTranslation.add(light1);
   sg.add(lightTranslation);
 
   const createWindow = (xTranslation: number, id: number) => {
     const windowScaling = new GroupNode(new Scaling(new Vector(4, 5, 1, 0)));
-    const windowTranslation = new GroupNode(
-      new Translation(new Vector(xTranslation, 0.5, 0, 0))
-    );
-    const window = new AABoxNode(
-      new Vector(0.4, 0.3, 0.0, 1),
-      windowTranslation
-    );
+    const windowTranslation = new GroupNode(new Translation(new Vector(xTranslation, 0.5, 0, 0)));
+    const window = new AABoxNode(new Vector(0.4, 0.3, 0.0, 1), windowTranslation);
     windowScaling.add(window);
     windowTranslation.add(windowScaling);
     sg.add(windowTranslation);
 
-    const windowTopBarScaling = new GroupNode(
-      new Scaling(new Vector(4, 0.3, 1.1, 0))
-    );
-    const windowTopBarTranslation = new GroupNode(
-      new Translation(new Vector(0, 2.6, 0, 0))
-    );
-    const windowTopBar = new AABoxNode(
-      new Vector(0.3, 0.1, 0, 1),
-      windowTranslation
-    );
+    const windowTopBarScaling = new GroupNode(new Scaling(new Vector(4, 0.3, 1.1, 0)));
+    const windowTopBarTranslation = new GroupNode(new Translation(new Vector(0, 2.6, 0, 0)));
+    const windowTopBar = new AABoxNode(new Vector(0.3, 0.1, 0, 1), windowTranslation);
     windowTopBarScaling.add(windowTopBar);
     windowTopBarTranslation.add(windowTopBarScaling);
     windowTranslation.add(windowTopBarTranslation);
 
     //minimierungsschaltfläche
-    const minimizerTranslation = new GroupNode(
-      new Translation(new Vector(1.5, 2.6, 0.5, 0))
-    );
-    const minimizerScaling = new GroupNode(
-      new Scaling(new Vector(0.5, 0.3, 0.5, 0)),
-      id
-    );
-    const minimizer = new AABoxNode(
-      new Vector(0.3, 0.1, 1, 1),
-      minimizerScaling
-    );
+    const minimizerTranslation = new GroupNode(new Translation(new Vector(1.5, 2.6, 0.5, 0)));
+    const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.5, 0)), id);
+    const minimizer = new AABoxNode(new Vector(0.3, 0.1, 1, 1), minimizerScaling);
 
     minimizerScaling.add(minimizer);
     minimizerTranslation.add(minimizerScaling);
     windowTranslation.add(minimizerTranslation);
 
-    const windowSceneScaling = new GroupNode(
-      new Scaling(new Vector(3.7, 4.2, 1.1, 0))
-    );
-    const windowSceneTranslation = new GroupNode(
-      new Translation(new Vector(0, -0.2, 0, 0))
-    );
-    const windowScene = new AABoxNode(
-      new Vector(0.9, 0.9, 0.9, 1),
-      windowTranslation
-    );
+    const windowSceneScaling = new GroupNode(new Scaling(new Vector(3.7, 4.2, 1.1, 0)));
+    const windowSceneTranslation = new GroupNode(new Translation(new Vector(0, -0.2, 0, 0)));
+    const windowScene = new AABoxNode(new Vector(0.9, 0.9, 0.9, 1), windowTranslation);
     windowSceneScaling.add(windowScene);
     windowSceneTranslation.add(windowSceneScaling);
     windowTranslation.add(windowSceneTranslation);
@@ -170,23 +122,15 @@ window.addEventListener("load", () => {
   const leftWindowSceneTranslation = createWindow(-2.2, 1);
   const rightWindowSceneTranslation = createWindow(2.2, 2);
 
-  const pyramidScaling = new GroupNode(
-    new Scaling(new Vector(0.5, 0.5, 0.5, 0))
-  );
-  const pyramidTranslation = new GroupNode(
-    new Translation(new Vector(-1, 1, 1, 0))
-  );
+  const pyramidScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 0)));
+  const pyramidTranslation = new GroupNode(new Translation(new Vector(-1, 1, 1, 0)));
   const pyramid = new PyramidNode(new Vector(0.5, 0.1, 0.3, 1), pyramidScaling);
   pyramidScaling.add(pyramid);
   pyramidTranslation.add(pyramidScaling);
   leftWindowSceneTranslation.add(pyramidTranslation);
 
-  const sphereScaling = new GroupNode(
-    new Scaling(new Vector(0.5, 0.5, 0.5, 0))
-  );
-  const sphereTranslation = new GroupNode(
-    new Translation(new Vector(0, 0, 1, 0))
-  );
+  const sphereScaling = new GroupNode(new Scaling(new Vector(0.3, 0.3, 0.3, 0)));
+  const sphereTranslation = new GroupNode(new Translation(new Vector(0, 0, 1, 0)));
   const sphere = new SphereNode(new Vector(0.5, 0.1, 0.3, 1), sphereScaling);
 
   sphereScaling.add(sphere);
@@ -194,101 +138,70 @@ window.addEventListener("load", () => {
   leftWindowSceneTranslation.add(sphereTranslation);
 
   const aaboxScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 0)));
-  const aaboxTranslation = new GroupNode(
-    new Translation(new Vector(1, -1, 1, 0))
-  );
+  const aaboxTranslation = new GroupNode(new Translation(new Vector(1, -1, 1, 0)));
   const aabox = new AABoxNode(new Vector(0.5, 0.1, 0.3, 1), aaboxScaling);
   aaboxScaling.add(aabox);
   aaboxTranslation.add(aaboxScaling);
   leftWindowSceneTranslation.add(aaboxTranslation);
 
   // texture only comes after first traversal; cube just stays black now
-  const textureBoxScaling = new GroupNode(
-    new Scaling(new Vector(2.0, 2.0, 2.0, 0))
-  );
-  const textureBoxTranslation = new GroupNode(
-    new Translation(new Vector(1, -1, 1, 0))
-  );
+  const textureBoxScaling = new GroupNode(new Scaling(new Vector(2.0, 2.0, 2.0, 0)));
+  const textureBoxTranslation = new GroupNode(new Translation(new Vector(1, -1, 1, 0)));
   const textureBox = new TextureTextBoxNode("text texture", textureBoxScaling);
 
-  const textureBoxRotation = new GroupNode(
-    new Rotation(new Vector(0, 0, 1, 0), Math.PI)
-  );
+  const textureBoxRotation = new GroupNode(new Rotation(new Vector(0, 0, 1, 0), Math.PI));
 
   textureBoxRotation.add(textureBox);
   textureBoxScaling.add(textureBoxRotation);
   textureBoxTranslation.add(textureBoxScaling);
   rightWindowSceneTranslation.add(textureBoxTranslation);
 
-  const createTaskbarIcon = (xPos: number, id: number) => {
-    const taskbarIconTranslation = new GroupNode(
-      new Translation(new Vector(xPos, 0, 0, 0)),
-      id
-    );
-    const taskbarIconScaling = new GroupNode(
-      new Scaling(new Vector(1, 1, 1.1, 0))
-    );
-    const taskbarIcon = new AABoxNode(
-      new Vector(2, 0.1, 0, 1),
-      taskbarIconTranslation
-    );
+  const createTaskbarIcon = (xPos: number, id: number, color: Vector) => {
+    const taskbarIconTranslation = new GroupNode(new Translation(new Vector(xPos, 0.01, 0, 0)), id);
+    const taskbarIconScaling = new GroupNode(new Scaling(new Vector(1, 1, 1.1, 0)));
+    const taskbarIcon = new AABoxNode(color, taskbarIconTranslation);
     taskbarIconScaling.add(taskbarIcon);
     taskbarIconTranslation.add(taskbarIconScaling);
     return taskbarIconTranslation;
   };
 
-  const taskbarScaling = new GroupNode(new Scaling(new Vector(8.5, 1, 1, 0)));
-  const taskbarTranslation = new GroupNode(
-    new Translation(new Vector(0, -3, 0, 0))
-  );
+  const taskbarScaling = new GroupNode(new Scaling(new Vector(15, 1, 1, 0)));
+  const taskbarTranslation = new GroupNode(new Translation(new Vector(0, -6.3, 0, 0)));
   const taskbar = new AABoxNode(new Vector(0.5, 0.5, 0.5, 1), taskbarScaling);
   taskbarScaling.add(taskbar);
   taskbarTranslation.add(taskbarScaling);
   sg.add(taskbarTranslation);
 
-  const leftTaskbarIcon = createTaskbarIcon(-3.5, 10);
+  const leftTaskbarIcon = createTaskbarIcon(-3.5, 10, new Vector(0.5, 0.1, 0.3, 1));
   taskbarTranslation.add(leftTaskbarIcon);
 
-  const rightTaskbarIcon = createTaskbarIcon(-2.2, 11);
+  const rightTaskbarIcon = createTaskbarIcon(-2.2, 11, new Vector(0.1, 0.5, 0.3, 1));
   taskbarTranslation.add(rightTaskbarIcon);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
+  //Animation Nodes
+  let animation1 = new DriverNode(selectedGroupNode, new Vector(0, -5, -30, 0), 0.0002);
+  let minimizeScaling = new ScalerNode(selectedGroupNode, new Vector(0.1, 0.1, 0.1, 0), true, 0.0002);
 
-  let animation1 = new DriverNode(
-    selectedGroupNode,
-    new Vector(0, -5, -30, 0),
-    0.0002
-  );
+  let rotationSphere = new RotationNode(aaboxScaling, new Vector(1, 0, 0, 0));
+  rotationSphere.toggleActive();
+
+  let rotationPyramid = new RotationNode(pyramidScaling, new Vector(0, 1, 0, 0), 0.0003);
+  rotationPyramid.toggleActive();
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //raster
-  const rasterCanvas = document.getElementById(
-    "raster-canvas"
-  ) as HTMLCanvasElement;
+  const rasterCanvas = document.getElementById("raster-canvas") as HTMLCanvasElement;
 
-  const rasterContext: WebGL2RenderingContext =
-    rasterCanvas.getContext("webgl2");
+  const rasterContext: WebGL2RenderingContext = rasterCanvas.getContext("webgl2");
   const setupVisitor = new RasterSetupVisitor(rasterContext);
   setupVisitor.setup(sg);
 
-  const phongShader = new Shader(
-    rasterContext,
-    phongVertexPerspectiveShader,
-    phongFragmentShader
-  );
+  const phongShader = new Shader(rasterContext, phongVertexPerspectiveShader, phongFragmentShader);
 
-  const textureShader = new Shader(
-    rasterContext,
-    textureVertexShader,
-    textureFragmentShader
-  );
+  const textureShader = new Shader(rasterContext, textureVertexShader, textureFragmentShader);
 
-  const rasterVisitor = new RasterVisitor(
-    rasterContext,
-    phongShader,
-    textureShader,
-    setupVisitor.objects
-  );
+  const rasterVisitor = new RasterVisitor(rasterContext, phongShader, textureShader, setupVisitor.objects);
 
   phongShader.load();
   textureShader.load();
@@ -305,16 +218,9 @@ window.addEventListener("load", () => {
 
   let rayContext: CanvasRenderingContext2D = rayCanvas.getContext("2d");
 
-  const mouseRayVisitor = new MouserayVisitor(
-    rayCanvas.width,
-    rayCanvas.height
-  );
+  const mouseRayVisitor = new MouserayVisitor(rayCanvas.width, rayCanvas.height);
 
-  const rayVisitor = new RayVisitor(
-    rayContext,
-    rayCanvas.width,
-    rayCanvas.height
-  );
+  const rayVisitor = new RayVisitor(rayContext, rayCanvas.width, rayCanvas.height);
 
   //default is rasterization
   let renderMode = "rasterization";
@@ -344,9 +250,7 @@ window.addEventListener("load", () => {
         rayCanvas.style.display = "none";
         rasterCanvas.style.display = "block";
         //set the radioButton to checked
-        let rasterizationButton = document.getElementById(
-          "rasterization"
-        ) as HTMLInputElement;
+        let rasterizationButton = document.getElementById("rasterization") as HTMLInputElement;
         rasterizationButton.checked = true;
         break;
 
@@ -356,9 +260,7 @@ window.addEventListener("load", () => {
         rasterCanvas.style.display = "none";
         rayCanvas.style.display = "block";
         //set the radioButton to checked
-        let raytracingButton = document.getElementById(
-          "raytracing"
-        ) as HTMLInputElement;
+        let raytracingButton = document.getElementById("raytracing") as HTMLInputElement;
         raytracingButton.checked = true;
         break;
     }
@@ -375,6 +277,9 @@ window.addEventListener("load", () => {
       rayVisitor.render(sg, null, null, phongValues);
     }
     animation1.simulate(timestamp - lastTimestamp);
+    rotationSphere.simulate(timestamp - lastTimestamp);
+    rotationPyramid.simulate(timestamp - lastTimestamp);
+    minimizeScaling.simulate(timestamp - lastTimestamp);
 
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
@@ -440,10 +345,7 @@ window.addEventListener("load", () => {
     }
   });
 
-  //TODO change phong parameters for rasterizer aswell
-  const shininessElement = document.getElementById(
-    "shininess"
-  ) as HTMLInputElement;
+  const shininessElement = document.getElementById("shininess") as HTMLInputElement;
   shininessElement.onchange = () => {
     phongValues.shininess = Number(shininessElement.value);
     window.requestAnimationFrame(animate);
@@ -467,7 +369,6 @@ window.addEventListener("load", () => {
     window.requestAnimationFrame(animate);
   };
 
-  //zu einer methode machen die abhängig vom current context wählen kann?
   rasterCanvas.addEventListener("mousedown", (event) => {
     let mx = event.offsetX;
     let my = event.offsetY;
@@ -494,52 +395,30 @@ window.addEventListener("load", () => {
   function checkactions() {
     if (selectedGroupNode.id == null) {
       //jumps once
-      animation1 = new JumperNode(
-        selectedGroupNode,
-        new Vector(0, 0.5, 0, 0),
-        0.005,
-        true
-      );
+      animation1 = new JumperNode(selectedGroupNode, new Vector(0, 0.5, 0, 0), 0.005, true);
       animation1.toggleActive();
-
       //if left minimize btn is selected, animate the minimization
     } else if (selectedGroupNode.id == 1 && maximisedLeft) {
-      animation1 = new DriverNode(
-        leftWindowSceneTranslation,
-        new Vector(0, -5, -30, 0),
-        0.002
-      );
+      animation1 = new DriverNode(leftWindowSceneTranslation, new Vector(-2, -14, 0, 0), 0.001);
       maximisedLeft = false;
       animation1.toggleActive();
     }
     //if right minimize btn is selected, animate the minimization
     else if (selectedGroupNode.id == 2 && maximisedRight) {
-      animation1 = new DriverNode(
-        rightWindowSceneTranslation,
-        new Vector(0, -5, -30, 0),
-        0.002
-      );
+      animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(-6, -14, 0, 0), 0.001);
       maximisedRight = false;
       animation1.toggleActive();
     }
     //if left maximize btn is selected, animate the maximization
     else if (selectedGroupNode.id == 10 && !maximisedLeft) {
-      console.log("left");
-      animation1 = new DriverNode(
-        leftWindowSceneTranslation,
-        new Vector(0, 5, 30, 0),
-        0.002
-      );
+      animation1 = new DriverNode(leftWindowSceneTranslation, new Vector(2, 14, 0, 0), 0.001);
       maximisedLeft = true;
       animation1.toggleActive();
+
+      // scale(new Vector(10, 10, 10, 0), leftWindowSceneTranslation);
       //if right maximize btn is selected, animate the maximization
     } else if (selectedGroupNode.id == 11 && !maximisedRight) {
-      console.log("right");
-      animation1 = new DriverNode(
-        rightWindowSceneTranslation,
-        new Vector(0, 5, 30, 0),
-        0.002
-      );
+      animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(6, 14, 0, 0), 0.001);
       maximisedRight = true;
       animation1.toggleActive();
     }
@@ -566,9 +445,7 @@ export function rotate(axis: Vector, angle: number, node: GroupNode) {
   let oldMatrixInverse = node.transform.getInverseMatrix();
   let newTransformation = new Rotation(axis, angle);
   newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-  newTransformation.inverse = newTransformation
-    .getInverseMatrix()
-    .mul(oldMatrixInverse);
+  newTransformation.inverse = newTransformation.getInverseMatrix().mul(oldMatrixInverse);
   node.transform = newTransformation;
 }
 
@@ -577,9 +454,7 @@ export function translate(translation: Vector, node: GroupNode) {
   let oldMatrixInverse = node.transform.getInverseMatrix();
   let newTransformation = new Translation(translation);
   newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-  newTransformation.inverse = newTransformation
-    .getInverseMatrix()
-    .mul(oldMatrixInverse);
+  newTransformation.inverse = newTransformation.getInverseMatrix().mul(oldMatrixInverse);
   node.transform = newTransformation;
 }
 
@@ -588,9 +463,7 @@ export function scale(scale: Vector, node: GroupNode) {
   let oldMatrixInverse = node.transform.getInverseMatrix();
   let newTransformation = new Scaling(scale);
   newTransformation.matrix = oldMatrix.mul(newTransformation.getMatrix());
-  newTransformation.inverse = newTransformation
-    .getInverseMatrix()
-    .mul(oldMatrixInverse);
+  newTransformation.inverse = newTransformation.getInverseMatrix().mul(oldMatrixInverse);
 
   node.transform = newTransformation;
 }

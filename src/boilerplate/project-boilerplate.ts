@@ -65,7 +65,7 @@ let scene: SceneObj;
 window.addEventListener("load", () => {
   const modeToggleForm = document.getElementById("mode--toggle") as HTMLFormElement;
 
-  //null in the beginning, changes on cklick
+  //null in the beginning, changes on click
   let selectedNode: SphereNode | PyramidNode | AABoxNode | CustomShapeNode | TextureVideoBoxNode | TextureTextBoxNode | TextureBoxNode = null;
   let selectedGroupNode: GroupNode = null;
 
@@ -75,55 +75,41 @@ window.addEventListener("load", () => {
 
   let sg = new GroupNode(new Translation(new Vector(0, 0, -15, 0)));
 
+  // camera
   const camera1 = new CameraNode();
   const cameraTranslation = new GroupNode(new Translation(new Vector(0, -1, 12, 0)));
   cameraTranslation.add(camera1);
   sg.add(cameraTranslation);
 
-  const light1 = new LightNode();
-  const lightBulb = new SphereNode(new Vector(1,1,0,1))
-  const lightTranslation = new GroupNode(new Translation(new Vector(-3, -2, 4, 0)));
-  const lightBulbScaling = new GroupNode(new Scaling(new Vector(0.5,0.5,0.5,1)));
-  const lightJump = new JumperNode(lightTranslation, new Vector(0, 5, 0, 0), 0.001, false);
-  lightBulbScaling.add(lightBulb);
-  lightTranslation.add(light1);
-  lightTranslation.add(lightBulbScaling);
-  sg.add(lightTranslation);
-  lightJump.toggleActive();
+  // creates light with lightbulb (yellow SphereNode) and toggles its jumper nodes activation
+  function createLight(translationVector: Vector, bulbColor: Vector, movementVector: Vector) {
+    const light = new LightNode();
+    const bulb = new SphereNode(bulbColor);
+    const lightTranslation = new GroupNode(new Translation(translationVector));
+    const bulbScaling = new GroupNode(new Scaling(new Vector(0.5,0.5,0.5,1)));
+    const lightJump = new JumperNode(lightTranslation, movementVector, 0.001, false);
+    bulbScaling.add(bulb);
+    lightTranslation.add(light);
+    lightTranslation.add(bulbScaling);
+    sg.add(lightTranslation);
+    lightJump.toggleActive();
+    return lightJump
+  }
 
-  const light2 = new LightNode();
-  const light2Bulb = new SphereNode(new Vector(1,1,0,1))
-  const light2Translation = new GroupNode(new Translation(new Vector(-3, 3, 4, 0)));
-  const light2BulbScaling = new GroupNode(new Scaling(new Vector(0.5,0.5,0.5,1)));
-  const light2Jump = new JumperNode(light2Translation, new Vector(7, 0, 0, 0), 0.001, false);
-  light2BulbScaling.add(light2Bulb);
-  light2Translation.add(light2);
-  light2Translation.add(light2BulbScaling)
-  sg.add(light2Translation);
-  light2Jump.toggleActive();
+  // create 4 specific lights for the scene and add to lights array for clean functional .simulate calls
+  const light1 = createLight(new Vector(-3, -2, 4, 0), new Vector(1,1,0,1), new Vector(0, 5, 0, 0));
+  const light2 = createLight(new Vector(-3, 3, 4, 0), new Vector(1,1,0,1), new Vector(7, 0, 0, 0));
+  const light3 = createLight(new Vector(5, -3, -3, 0), new Vector(1,1,0,1), new Vector(0, 0, 7, 0));
+  const light4 = createLight(new Vector(5, 0, 20, 0), new Vector(1,1,0,1), new Vector(-10, 0, 0, 0));
 
-  const light3 = new LightNode();
-  const light3Bulb = new SphereNode(new Vector(1,1,0,1))
-  const light3Translation = new GroupNode(new Translation(new Vector(5, -3, -3, 0)));
-  const light3BulbScaling = new GroupNode(new Scaling(new Vector(0.5,0.5,0.5,1)));
-  const light3Jump = new JumperNode(light3Translation, new Vector(0, 0, 7, 0), 0.001, false);
-  light3BulbScaling.add(light3Bulb);
-  light3Translation.add(light3);
-  light3Translation.add(light3BulbScaling)
-  sg.add(light3Translation);
-  light3Jump.toggleActive();
-
-  const light4 = new LightNode();
-  const light4Bulb = new SphereNode(new Vector(1,1,0,1))
-  const light4Translation = new GroupNode(new Translation(new Vector(5, 0, 20, 0)));
-  const light4Jump = new JumperNode(light4Translation, new Vector(-10, 0, 0, 0), 0.001, false);
-  light4Translation.add(light4);
-  light4Translation.add(light4Bulb)
-  sg.add(light4Translation);
-  light4Jump.toggleActive();
+  const lights = [light1, light2, light3, light4]
 
 
+// create window
   const createWindow = (xTranslation: number, id: number, windowNaming: string) => {
+
+    // first the window itself, sg x tranlation x scaling x window
+    // windowTranslation is the window parent so click
     const windowScaling = new GroupNode(new Scaling(new Vector(5, 6, 1, 0)));
     const windowTranslation = new GroupNode(new Translation(new Vector(xTranslation, 0.5, 0, 0)));
     const window = new AABoxNode(new Vector(0.4, 0.3, 0.0, 1), windowTranslation);
@@ -131,6 +117,7 @@ window.addEventListener("load", () => {
     windowTranslation.add(windowScaling);
     sg.add(windowTranslation);
 
+    // adding top bars for windows
     const windowTopBarScaling = new GroupNode(new Scaling(new Vector(5, 0.3, 1.1, 0)));
     const windowTopBarTranslation = new GroupNode(new Translation(new Vector(0, 2.8, 0, 0)));
     const windowTopBar = new AABoxNode(new Vector(0.7, 0.1, 0, 1), windowTranslation);
@@ -138,11 +125,7 @@ window.addEventListener("load", () => {
     const windowNameTranslation = new GroupNode(new Translation(new Vector(-1.49, 2.7, 0.1, 0)));
     const windowNameRotation = new GroupNode(new Rotation(new Vector(0, 0, 1, 0), Math.PI));
 
-    // textureBoxRotation.add(textureBox);
-    // textureBoxScaling.add(textureBoxRotation);
-    // textureBoxTranslation.add(textureBoxScaling);
-    // rightWindowSceneTranslation.add(textureBoxTranslation);
-
+    // adds window name
     const windowName = new TextureTextBoxNode(windowNaming, windowTranslation);
 
     windowNameRotation.add(windowName);
@@ -154,7 +137,7 @@ window.addEventListener("load", () => {
     windowTopBarTranslation.add(windowTopBarScaling);
     windowTranslation.add(windowTopBarTranslation);
 
-    //minimierungsschaltfläche
+    //adds window minimizer to taskbar
     const minimizerTranslation = new GroupNode(new Translation(new Vector(2.2, 2.8, 0.5, 0)));
     const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.5, 0)), id);
     const minimizer = new AABoxNode(new Vector(0.3, 0.1, 1, 1), minimizerScaling);
@@ -163,6 +146,7 @@ window.addEventListener("load", () => {
     minimizerTranslation.add(minimizerScaling);
     windowTranslation.add(minimizerTranslation);
 
+    // adds a white blank scene for nicer styling into the window
     const windowSceneScaling = new GroupNode(new Scaling(new Vector(4.5, 5.0, 1.1, 0)));
     const windowSceneTranslation = new GroupNode(new Translation(new Vector(0, -0.2, 0, 0)));
     const windowScene = new AABoxNode(new Vector(0.9, 0.9, 0.9, 1), windowTranslation);
@@ -173,9 +157,11 @@ window.addEventListener("load", () => {
     return windowTranslation;
   };
 
+  // create 2 specific windows with id for click recognition and x translation values
   const leftWindowSceneTranslation = createWindow(-2.8, 1, "Left");
   const rightWindowSceneTranslation = createWindow(2.8, 2, "Right");
 
+  // add some geometry to first window
   const pyramidScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 0)));
   const pyramidTranslation = new GroupNode(new Translation(new Vector(-1, 1, 1, 0)));
   const pyramid = new PyramidNode(new Vector(0.5, 0.1, 0.3, 1), pyramidScaling);
@@ -198,7 +184,7 @@ window.addEventListener("load", () => {
   aaboxTranslation.add(aaboxScaling);
   leftWindowSceneTranslation.add(aaboxTranslation);
 
-  // texture only comes after first traversal; cube just stays black now
+  // video
   const textureBoxScaling = new GroupNode(new Scaling(new Vector(4.0, 2.0, 0.1, 0)));
   const textureBoxTranslation = new GroupNode(new Translation(new Vector(0.1, 1, 0.51, 0)));
   const textureBox = new TextureVideoBoxNode("assitoni.mp4", textureBoxScaling);
@@ -210,6 +196,7 @@ window.addEventListener("load", () => {
   textureBoxTranslation.add(textureBoxScaling);
   leftWindowSceneTranslation.add(textureBoxTranslation);
 
+  // taskbar icons
   const createTaskbarIcon = (xPos: number, id: number, color: Vector) => {
     const taskbarIconTranslation = new GroupNode(new Translation(new Vector(xPos, 0.01, 0, 0)), id);
     const taskbarIconScaling = new GroupNode(new Scaling(new Vector(1, 1, 1.1, 0)));
@@ -219,6 +206,7 @@ window.addEventListener("load", () => {
     return taskbarIconTranslation;
   };
 
+  // taskbar
   const taskbarScaling = new GroupNode(new Scaling(new Vector(15, 1, 1, 0)));
   const taskbarTranslation = new GroupNode(new Translation(new Vector(0, -4, 0, 0)));
   const taskbar = new AABoxNode(new Vector(0.5, 0.5, 0.5, 1), taskbarScaling);
@@ -226,13 +214,14 @@ window.addEventListener("load", () => {
   taskbarTranslation.add(taskbarScaling);
   sg.add(taskbarTranslation);
 
+
+  // create specific taskbar icons with id for click recognition and x translation
   const leftTaskbarIcon = createTaskbarIcon(-3.5, 10, new Vector(0.5, 0.1, 0.3, 1));
   taskbarTranslation.add(leftTaskbarIcon);
 
   const rightTaskbarIcon = createTaskbarIcon(-2.2, 11, new Vector(0.1, 0.5, 0.3, 1));
   taskbarTranslation.add(rightTaskbarIcon);
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
   //TicTacToe
   const ticTacToeRoot = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
   ticTacToeRoot.add(createTicTacToe());
@@ -358,10 +347,7 @@ window.addEventListener("load", () => {
     rotationSphere.simulate(timestamp - lastTimestamp);
     rotationPyramid.simulate(timestamp - lastTimestamp);
     minimizeScaling.simulate(timestamp - lastTimestamp);
-    lightJump.simulate(timestamp - lastTimestamp);
-    light2Jump.simulate(timestamp - lastTimestamp);
-    light3Jump.simulate(timestamp - lastTimestamp);
-    light4Jump.simulate(timestamp - lastTimestamp);
+    lights.forEach(light => light.simulate(timestamp - lastTimestamp));
 
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
@@ -522,11 +508,20 @@ window.addEventListener("load", () => {
     //switch between 3 otpions X, O, empty
     if (selectedNode instanceof TextureTextBoxNode) {
       if (selectedNode.texture == "X") {
+        console.log(selectedNode)
+        console.log("X gewählt! jetzt wechseln auf 0")
         selectedNode.texture = "O";
+        console.log(selectedNode)
       } else if (selectedNode.texture == "O") {
+        console.log(selectedNode)
+        console.log(" 0 gewählt! Jetzt wechseln auf leer!")
         selectedNode.texture = "";
+        console.log(selectedNode)
       } else {
+        console.log(selectedNode)
+        console.log("leer gewählt! Jetzt wechseln auf X")
         selectedNode.texture = "X";
+        console.log(selectedNode)
       }
     }
   }

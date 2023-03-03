@@ -96,10 +96,10 @@ window.addEventListener("load", () => {
   // creates light with lightbulb (yellow SphereNode) and toggles its jumper nodes activation
   function createLight(translationVector: Vector, bulbColor: Vector, movementVector: Vector) {
     const light = new LightNode();
-    const bulb = new SphereNode(bulbColor);
-    const lightTranslation = new GroupNode(new Translation(translationVector));
+    const lightTranslation = new GroupNode(new Translation(translationVector), 12345);
     const bulbScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 1)));
     const lightJump = new JumperNode(lightTranslation, movementVector, 0.001, false);
+    const bulb = new SphereNode(bulbColor, lightTranslation);
     bulbScaling.add(bulb);
     lightTranslation.add(light);
     lightTranslation.add(bulbScaling);
@@ -112,7 +112,7 @@ window.addEventListener("load", () => {
   const light1 = createLight(new Vector(-3, -2, 4, 0), new Vector(1, 1, 0, 1), new Vector(0, 5, 0, 0));
   const light2 = createLight(new Vector(-3, 3, 4, 0), new Vector(1, 1, 0, 1), new Vector(7, 0, 0, 0));
   const light3 = createLight(new Vector(5, -3, -3, 0), new Vector(1, 1, 0, 1), new Vector(0, 0, 7, 0));
-  const light4 = createLight(new Vector(5, 0, 20, 0), new Vector(1, 1, 0, 1), new Vector(-10, 0, 0, 0));
+  const light4 = createLight(new Vector(5, 0, 40, 0), new Vector(1, 1, 0, 1), new Vector(-10, 0, 0, 0));
 
   const lights = [light1, light2, light3, light4];
 
@@ -269,7 +269,17 @@ window.addEventListener("load", () => {
     return ticTacToeScaling;
   }
 
+
+
   rightWindowSceneTranslation.add(ticTacToeRoot);
+
+  const backgroundScaling = new GroupNode(new Scaling(new Vector(200, 200, thickness, 0)), 12345);
+  const backgroundTranslation = new GroupNode(new Translation(new Vector(0, 0, -50, 0)));
+  const background = new AABoxNode(new Vector(0.1, 0.1, 0.1, 1), backgroundScaling);
+  backgroundScaling.add(background);
+  backgroundTranslation.add(backgroundScaling);
+  sg.add(backgroundTranslation);
+
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //Animation Nodes
   let animation1 = new DriverNode(selectedGroupNode, new Vector(0, -5, -30, 0), 0.0002);

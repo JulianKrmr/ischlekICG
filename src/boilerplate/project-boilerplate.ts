@@ -62,6 +62,8 @@ export interface CameraRasteriser {
 }
 
 let scene: SceneObj;
+const thickness = 0.1;
+
 
 window.addEventListener("load", () => {
   const modeToggleForm = document.getElementById("mode--toggle") as HTMLFormElement;
@@ -84,6 +86,14 @@ window.addEventListener("load", () => {
   let nodes: any[] = [];
 
   let sg = new GroupNode(new Translation(new Vector(0, 0, -15, 0)));
+
+  const backgroundScaling = new GroupNode(new Scaling(new Vector(10, 10, thickness, 1)));
+  const backgroundTranslation = new GroupNode(new Translation(new Vector(0, 0, -200, 1)));
+  const textureBackgroundBox = new TextureBoxNode("hci-logo.png", backgroundTranslation, "brickwall-normal.jpg");
+
+  backgroundScaling.add(textureBackgroundBox);
+  backgroundTranslation.add(backgroundScaling);
+  sg.add(backgroundTranslation)
 
   // camera
   const camera1 = new CameraNode();
@@ -113,12 +123,11 @@ window.addEventListener("load", () => {
   const light4 = createLight(new Vector(5, 0, 20, 0), new Vector(1, 1, 0, 1), new Vector(-10, 0, 0, 0));
 
   const lights = [light1, light2, light3, light4];
-  const thickness = 0.1;
 
   // create window including name, top bar and bottom bar
   const createWindow = (xTranslation: number, idMini: number, idMaxi: number, windowNaming: string) => {
     // first the window itself, sg x tranlation x scaling x window
-    // windowTranslation is the window parent so click
+    // windowTranslation is the window parent so click can be determined by it
     const windowScaling = new GroupNode(new Scaling(new Vector(5, 5.25, thickness, 0)));
     const windowTranslation = new GroupNode(new Translation(new Vector(xTranslation, 0.5, 0, 0)));
     const window = new AABoxNode(new Vector(0.4, 0.3, 0.0, 1), windowTranslation);

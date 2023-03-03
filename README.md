@@ -5,7 +5,7 @@
 1. install dependencies with `npm install` inside the project directory and after installation run `npm run start` to start the project
 1. you will start on the basic excercise selection screen, select the top option "project"
 
-## how to use
+## How to use
 
 To trigger the magnifying glass effect, hold down the Shift key and click with the mouse to the desired location.
 

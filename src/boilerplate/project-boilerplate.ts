@@ -491,10 +491,13 @@ window.addEventListener("load", () => {
     if (selectedNode instanceof TextureTextBoxNode) {
       if (selectedNode.texture == "X") {
         selectedNode.texture = "O";
+        setupVisitor.setup(sg)
       } else if (selectedNode.texture == "O") {
         selectedNode.texture = "";
+        setupVisitor.setup(sg)
       } else {
         selectedNode.texture = "X";
+        setupVisitor.setup(sg)
       }
     }
   }

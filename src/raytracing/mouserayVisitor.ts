@@ -110,7 +110,8 @@ export default class MouserayVisitor implements Visitor {
         intersectedNode instanceof CustomShapeNode ||
         intersectedNode instanceof TextureBoxNode ||
         intersectedNode instanceof TextureVideoBoxNode ||
-        intersectedNode instanceof TextureTextBoxNode
+        intersectedNode instanceof TextureTextBoxNode ||
+        intersectedNode instanceof TexturePyramidNode
       ) {
         //Selects the node of the closest intersection and returns it
         return intersectedNode;

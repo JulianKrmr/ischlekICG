@@ -2,10 +2,7 @@ import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
 import { GroupNode, SphereNode, TextureBoxNode } from "../nodes";
-import {
-  RasterVisitor,
-  RasterSetupVisitor,
-} from "../rasterisation/rastervisitor";
+import { RasterVisitor, RasterSetupVisitor } from "../rasterisation/rastervisitor";
 import Shader from "../shader/shader";
 import { SlerpNode } from "../raytracing/animation-nodes";
 import phongVertexShader from "../shader/phong-vertex-perspective-shader.glsl";
@@ -20,13 +17,7 @@ window.addEventListener("load", () => {
   const gl = canvas.getContext("webgl2");
 
   // construct scene graph
-  const sg = new GroupNode(
-    new SQT(
-      new Vector(1, 1, 1, 0),
-      { angle: 0.6, axis: new Vector(0, 1, 0, 0) },
-      new Vector(0, 0, 0, 0)
-    )
-  );
+  const sg = new GroupNode(new SQT(new Vector(1, 1, 1, 0), { angle: 0.6, axis: new Vector(0, 1, 0, 0) }, new Vector(0, 0, 0, 0)));
   const cube = new TextureBoxNode("hci-logo.png");
   sg.add(cube);
 
@@ -45,17 +36,8 @@ window.addEventListener("load", () => {
   };
 
   const phongShader = new Shader(gl, phongVertexShader, phongFragmentShader);
-  const textureShader = new Shader(
-    gl,
-    textureVertexShader,
-    textureFragmentShader
-  );
-  const visitor = new RasterVisitor(
-    gl,
-    phongShader,
-    textureShader,
-    setupVisitor.objects
-  );
+  const textureShader = new Shader(gl, textureVertexShader, textureFragmentShader);
+  const visitor = new RasterVisitor(gl, phongShader, textureShader, setupVisitor.objects);
 
   let animationNodes = [
     new SlerpNode(
@@ -75,13 +57,11 @@ window.addEventListener("load", () => {
 
   function animate(timestamp: number) {
     simulate(timestamp - lastTimestamp);
-    visitor.render(sg, camera, []);
+    visitor.render(sg);
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
   }
-  Promise.all([phongShader.load(), textureShader.load()]).then((x) =>
-    window.requestAnimationFrame(animate)
-  );
+  Promise.all([phongShader.load(), textureShader.load()]).then((x) => window.requestAnimationFrame(animate));
 
   window.addEventListener("keydown", function (event) {
     switch (event.key) {

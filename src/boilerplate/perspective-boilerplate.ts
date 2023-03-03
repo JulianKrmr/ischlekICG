@@ -2,10 +2,7 @@ import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
 import { GroupNode, SphereNode, AABoxNode } from "../nodes";
-import {
-  RasterVisitor,
-  RasterSetupVisitor,
-} from "../rasterisation/rastervisitor";
+import { RasterVisitor, RasterSetupVisitor } from "../rasterisation/rastervisitor";
 import Shader from "../shader/shader";
 import perspectiveVertexShader from "../shader/perspective-vertex-shader.glsl";
 import fragmentShader from "../shader/basic-fragment-shader.glsl";
@@ -43,13 +40,8 @@ window.addEventListener("load", () => {
   const visitor = new RasterVisitor(gl, shader, null, setupVisitor.objects);
 
   function animate(timestamp: number) {
-    camera.eye = new Vector(
-      Math.cos(timestamp / 1000),
-      0,
-      Math.sin(timestamp / 1000),
-      1
-    );
-    visitor.render(sg, camera, []);
+    camera.eye = new Vector(Math.cos(timestamp / 1000), 0, Math.sin(timestamp / 1000), 1);
+    visitor.render(sg);
     window.requestAnimationFrame(animate);
   }
 

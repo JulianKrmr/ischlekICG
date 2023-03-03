@@ -2,10 +2,7 @@ import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
 import { GroupNode, SphereNode, AABoxNode } from "../nodes";
-import {
-  RasterVisitor,
-  RasterSetupVisitor,
-} from "../rasterisation/rastervisitor";
+import { RasterVisitor, RasterSetupVisitor } from "../rasterisation/rastervisitor";
 import Shader from "../shader/shader";
 import vertexShader from "../shader/basic-vertex-shader.glsl";
 import fragmentShader from "../shader/basic-fragment-shader.glsl";
@@ -36,5 +33,5 @@ window.addEventListener("load", () => {
   // render
   const visitor = new RasterVisitor(gl, shader, null, setupVisitor.objects);
   shader.load();
-  visitor.render(sg, null, []);
+  visitor.render(sg);
 });

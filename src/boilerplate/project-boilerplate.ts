@@ -68,7 +68,15 @@ window.addEventListener("load", () => {
 
   //This is the node that can be moved through key commands
   //null in the beginning, changes on click
-  let selectedNode: SphereNode | PyramidNode | AABoxNode | CustomShapeNode | TextureVideoBoxNode | TextureTextBoxNode | TextureBoxNode = null;
+  let selectedNode:
+    | SphereNode
+    | PyramidNode
+    | AABoxNode
+    | CustomShapeNode
+    | TextureVideoBoxNode
+    | TextureTextBoxNode
+    | TextureBoxNode
+    | TexturePyramidNode = null;
   let selectedGroupNode: GroupNode = null;
 
   //scene graph
@@ -486,7 +494,6 @@ window.addEventListener("load", () => {
   let maximisedRight = true;
   let currentPlayerOne = true;
   function checkactions() {
-    console.log(selectedGroupNode.id);
     if (!ctrlDown) {
       if (selectedGroupNode.id == null) {
         //jumps once

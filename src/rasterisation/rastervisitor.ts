@@ -16,7 +16,7 @@ import {
   LightNode,
   TextureVideoBoxNode,
   TextureTextBoxNode,
-  TexturePyramidNode
+  TexturePyramidNode,
 } from "../nodes";
 import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
@@ -72,7 +72,7 @@ export class RasterVisitor implements Visitor {
    * @param camera The camera used
    * @param lightPositions The light light positions
    */
-  render(rootNode: Node, camera: Camera | null, lightPositions: Array<Vector>) {
+  render(rootNode: Node) {
     // clear
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
@@ -503,10 +503,7 @@ export class RasterSetupVisitor {
   }
 
   visitTexturePyramidNode(node: TexturePyramidNode) {
-    this.objects.set(
-      node,
-      new RasterTexturePyramid(this.gl, new Vector(0, 0, 0, 1), node.texture)
-    );
+    this.objects.set(node, new RasterTexturePyramid(this.gl, new Vector(0, 0, 0, 1), node.texture));
   }
 
   /**

@@ -86,28 +86,26 @@ window.addEventListener("load", () => {
     const light = new LightNode();
     const bulb = new SphereNode(bulbColor);
     const lightTranslation = new GroupNode(new Translation(translationVector));
-    const bulbScaling = new GroupNode(new Scaling(new Vector(0.5,0.5,0.5,1)));
+    const bulbScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 1)));
     const lightJump = new JumperNode(lightTranslation, movementVector, 0.001, false);
     bulbScaling.add(bulb);
     lightTranslation.add(light);
     lightTranslation.add(bulbScaling);
     sg.add(lightTranslation);
     lightJump.toggleActive();
-    return lightJump
+    return lightJump;
   }
 
   // create 4 specific lights for the scene and add to lights array for clean functional .simulate calls
-  const light1 = createLight(new Vector(-3, -2, 4, 0), new Vector(1,1,0,1), new Vector(0, 5, 0, 0));
-  const light2 = createLight(new Vector(-3, 3, 4, 0), new Vector(1,1,0,1), new Vector(7, 0, 0, 0));
-  const light3 = createLight(new Vector(5, -3, -3, 0), new Vector(1,1,0,1), new Vector(0, 0, 7, 0));
-  const light4 = createLight(new Vector(5, 0, 20, 0), new Vector(1,1,0,1), new Vector(-10, 0, 0, 0));
+  const light1 = createLight(new Vector(-3, -2, 4, 0), new Vector(1, 1, 0, 1), new Vector(0, 5, 0, 0));
+  const light2 = createLight(new Vector(-3, 3, 4, 0), new Vector(1, 1, 0, 1), new Vector(7, 0, 0, 0));
+  const light3 = createLight(new Vector(5, -3, -3, 0), new Vector(1, 1, 0, 1), new Vector(0, 0, 7, 0));
+  const light4 = createLight(new Vector(5, 0, 20, 0), new Vector(1, 1, 0, 1), new Vector(-10, 0, 0, 0));
 
-  const lights = [light1, light2, light3, light4]
+  const lights = [light1, light2, light3, light4];
 
-
-// create window
+  // create window
   const createWindow = (xTranslation: number, id: number, windowNaming: string) => {
-
     // first the window itself, sg x tranlation x scaling x window
     // windowTranslation is the window parent so click
     const windowScaling = new GroupNode(new Scaling(new Vector(5, 6, 1, 0)));
@@ -213,7 +211,6 @@ window.addEventListener("load", () => {
   taskbarScaling.add(taskbar);
   taskbarTranslation.add(taskbarScaling);
   sg.add(taskbarTranslation);
-
 
   // create specific taskbar icons with id for click recognition and x translation
   const leftTaskbarIcon = createTaskbarIcon(-3.5, 10, new Vector(0.5, 0.1, 0.3, 1));
@@ -347,7 +344,7 @@ window.addEventListener("load", () => {
     rotationSphere.simulate(timestamp - lastTimestamp);
     rotationPyramid.simulate(timestamp - lastTimestamp);
     minimizeScaling.simulate(timestamp - lastTimestamp);
-    lights.forEach(light => light.simulate(timestamp - lastTimestamp));
+    lights.forEach((light) => light.simulate(timestamp - lastTimestamp));
 
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
@@ -508,20 +505,20 @@ window.addEventListener("load", () => {
     //switch between 3 otpions X, O, empty
     if (selectedNode instanceof TextureTextBoxNode) {
       if (selectedNode.texture == "X") {
-        console.log(selectedNode)
-        console.log("X gewählt! jetzt wechseln auf 0")
+        console.log(selectedNode);
+        console.log("X gewählt! jetzt wechseln auf 0");
         selectedNode.texture = "O";
-        console.log(selectedNode)
+        console.log(selectedNode);
       } else if (selectedNode.texture == "O") {
-        console.log(selectedNode)
-        console.log(" 0 gewählt! Jetzt wechseln auf leer!")
+        console.log(selectedNode);
+        console.log(" 0 gewählt! Jetzt wechseln auf leer!");
         selectedNode.texture = "";
-        console.log(selectedNode)
+        console.log(selectedNode);
       } else {
-        console.log(selectedNode)
-        console.log("leer gewählt! Jetzt wechseln auf X")
+        console.log(selectedNode);
+        console.log("leer gewählt! Jetzt wechseln auf X");
         selectedNode.texture = "X";
-        console.log(selectedNode)
+        console.log(selectedNode);
       }
     }
   }
@@ -538,13 +535,13 @@ window.addEventListener("load", () => {
   var ctrlDown = false;
 
   document.addEventListener("keydown", function (event) {
-    if (event.key === "Control") {
+    if (event.key === "Shift") {
       ctrlDown = true;
     }
   });
 
   document.addEventListener("keyup", function (event) {
-    if (event.key === "Control") {
+    if (event.key === "Shift") {
       ctrlDown = false;
     }
   });

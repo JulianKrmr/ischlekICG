@@ -36,6 +36,19 @@
         margin-left: auto;
       }
 
+      .instructions {
+        display: flex;
+        position: absolute;
+        top: 20px;
+        right: 250px;
+        bottom: 0;
+        /* left: 100px; */
+        width: 300px;
+        height: 300px;
+        flex-direction: column;
+        align-items: center;
+        margin-left: auto;
+      }
       #modeControls label {
         font-size: 16px;
         margin-right: 10px;
@@ -76,8 +89,10 @@
       <button id="downloadButton">Download</button>
       <br />
       <button id="resetTicTacToe">Reset Game</button>
-      <br />
-      <button id="TestButton">Test</button>
+    </div>
+    <div id="instructions" class="instructions">
+      <h3>Erklärung</h3>
+      <p>Um einen Lupeneffekt zu erzeugen, shift gedrückt halten und mit der Maus an die gewünschte Stelle klicken</p>
     </div>
   </body>
 </html>

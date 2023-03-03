@@ -64,7 +64,6 @@ export interface CameraRasteriser {
 let scene: SceneObj;
 const thickness = 0.1;
 
-
 window.addEventListener("load", () => {
   const modeToggleForm = document.getElementById("mode--toggle") as HTMLFormElement;
 
@@ -274,6 +273,7 @@ window.addEventListener("load", () => {
   //Animation Nodes
   let animation1 = new DriverNode(selectedGroupNode, new Vector(0, -5, -30, 0), 0.0002);
   let minimizeScaling = new ScalerNode(selectedGroupNode, new Vector(0.1, 0.1, 0.1, 0), true, 0.0002);
+  let animationZoom = new DriverNode(selectedGroupNode, new Vector(0, 0, -30, 0), 0.0002);
 
   let rotationSphere = new RotationNode(aaboxScaling, new Vector(1, 0, 0, 0));
   rotationSphere.toggleActive();
@@ -373,6 +373,7 @@ window.addEventListener("load", () => {
     rotationSphere.simulate(timestamp - lastTimestamp);
     rotationPyramid.simulate(timestamp - lastTimestamp);
     minimizeScaling.simulate(timestamp - lastTimestamp);
+    animationZoom.simulate(timestamp - lastTimestamp);
     lights.forEach((light) => light.simulate(timestamp - lastTimestamp));
 
     lastTimestamp = timestamp;
@@ -387,55 +388,57 @@ window.addEventListener("load", () => {
   let rotationAmount = 0.3;
 
   window.addEventListener("keydown", function (event) {
-    switch (event.key) {
-      case "w": //hoch
-        translate(new Vector(0, translationSize, 0, 0), selectedGroupNode);
-        break;
-      case "s": //runter
-        translate(new Vector(0, -translationSize, 0, 0), selectedGroupNode);
-        break;
-      case "a": //links
-        translate(new Vector(-translationSize, 0, 0, 0), selectedGroupNode);
-        break;
-      case "d": //rechts
-        translate(new Vector(translationSize, 0, 0, 0), selectedGroupNode);
-        break;
-      case "e": //vor
-        translate(new Vector(0, 0, translationSize, 0), selectedGroupNode);
-        break;
-      case "q": //zurück
-        translate(new Vector(0, 0, -translationSize, 0), selectedGroupNode);
-        break;
-      case "x": //um x achse rotieren
-        rotate(new Vector(1, 0, 0, 0), rotationAmount, selectedGroupNode);
-        break;
-      case "y": //um y achse rotieren
-        rotate(new Vector(0, 1, 0, 0), rotationAmount, selectedGroupNode);
-        break;
-      case "c": //um z achse rotieren
-        rotate(new Vector(0, 0, 1, 0), rotationAmount, selectedGroupNode);
-        break;
-      case "r": //X skalieren größer
-        scale(new Vector(1 + scaleSize, 1, 1, 0), selectedGroupNode);
-        break;
-      case "f": //Y skalieren größer
-        scale(new Vector(1, 1 + scaleSize, 1, 0), selectedGroupNode);
-        break;
-      case "v": //Z skalieren größer
-        scale(new Vector(1, 1, 1 + scaleSize, 0), selectedGroupNode);
-        break;
-      case "t": //X skalieren kleiner
-        scale(new Vector(1 - scaleSize, 1, 1, 0), selectedGroupNode);
-        break;
-      case "g": //Y skalieren kleiner
-        scale(new Vector(1, 1 - scaleSize, 1, 0), selectedGroupNode);
-        break;
-      case "b": //Z skalieren kleiner
-        scale(new Vector(1, 1, 1 - scaleSize, 0), selectedGroupNode);
-        break;
-      case "m": //Z skalieren kleiner
-        scale(new Vector(1, 1, 1, 0), selectedGroupNode);
-        break;
+    if (selectedGroupNode.id == null) {
+      switch (event.key) {
+        case "w": //hoch
+          translate(new Vector(0, translationSize, 0, 0), selectedGroupNode);
+          break;
+        case "s": //runter
+          translate(new Vector(0, -translationSize, 0, 0), selectedGroupNode);
+          break;
+        case "a": //links
+          translate(new Vector(-translationSize, 0, 0, 0), selectedGroupNode);
+          break;
+        case "d": //rechts
+          translate(new Vector(translationSize, 0, 0, 0), selectedGroupNode);
+          break;
+        case "e": //vor
+          translate(new Vector(0, 0, translationSize, 0), selectedGroupNode);
+          break;
+        case "q": //zurück
+          translate(new Vector(0, 0, -translationSize, 0), selectedGroupNode);
+          break;
+        case "x": //um x achse rotieren
+          rotate(new Vector(1, 0, 0, 0), rotationAmount, selectedGroupNode);
+          break;
+        case "y": //um y achse rotieren
+          rotate(new Vector(0, 1, 0, 0), rotationAmount, selectedGroupNode);
+          break;
+        case "c": //um z achse rotieren
+          rotate(new Vector(0, 0, 1, 0), rotationAmount, selectedGroupNode);
+          break;
+        case "r": //X skalieren größer
+          scale(new Vector(1 + scaleSize, 1, 1, 0), selectedGroupNode);
+          break;
+        case "f": //Y skalieren größer
+          scale(new Vector(1, 1 + scaleSize, 1, 0), selectedGroupNode);
+          break;
+        case "v": //Z skalieren größer
+          scale(new Vector(1, 1, 1 + scaleSize, 0), selectedGroupNode);
+          break;
+        case "t": //X skalieren kleiner
+          scale(new Vector(1 - scaleSize, 1, 1, 0), selectedGroupNode);
+          break;
+        case "g": //Y skalieren kleiner
+          scale(new Vector(1, 1 - scaleSize, 1, 0), selectedGroupNode);
+          break;
+        case "b": //Z skalieren kleiner
+          scale(new Vector(1, 1, 1 - scaleSize, 0), selectedGroupNode);
+          break;
+        case "m": //Z skalieren kleiner
+          scale(new Vector(1, 1, 1, 0), selectedGroupNode);
+          break;
+      }
     }
   });
 
@@ -505,15 +508,25 @@ window.addEventListener("load", () => {
         animation1 = new DriverNode(leftWindowSceneTranslation, new Vector(-2, -14, 0, 0), 0.001);
         maximisedLeft = false;
         animation1.toggleActive();
+        if (zoomedIn) {
+          zoom(167, 291);
+        }
       }
       //if right minimize btn is selected, animate the minimization
       else if (selectedGroupNode.id == 2 && maximisedRight) {
         animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(-6, -14, 0, 0), 0.001);
         maximisedRight = false;
         animation1.toggleActive();
-      } else if (selectedGroupNode.id == 3) {
+        if (zoomedIn) {
+          zoom(840, 287);
+        }
+      }
+      //the left maximizer
+      else if (selectedGroupNode.id == 3) {
         zoom(167, 291);
-      } else if (selectedGroupNode.id == 4) {
+      }
+      //the right maximizer
+      else if (selectedGroupNode.id == 4) {
         zoom(840, 287);
       }
       //if left maximize btn is selected, animate the maximization
@@ -612,11 +625,11 @@ window.addEventListener("load", () => {
     if (!zoomedIn) {
       let ray = mouseRayVisitor.CameraDrive(sg, mx, my, rasterContext);
       zoomVector = ray.direction.mul(7);
-      animation1 = new DriverNode(cameraTranslation, zoomVector, 0.002);
+      animationZoom = new DriverNode(cameraTranslation, zoomVector, 0.002);
     } else {
-      animation1 = new DriverNode(cameraTranslation, zoomVector.mul(-1), 0.002);
+      animationZoom = new DriverNode(cameraTranslation, zoomVector.mul(-1), 0.002);
     }
-    animation1.toggleActive();
+    animationZoom.toggleActive();
     zoomedIn = !zoomedIn;
   }
 

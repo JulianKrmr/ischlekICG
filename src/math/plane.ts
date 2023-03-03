@@ -39,9 +39,7 @@ export default class Plane {
       return null;
     }
     //calculate intersection point
-    const t =
-      normalVector.dot(pointsArray[0].sub(ray.origin)) /
-      normalVector.dot(ray.direction);
+    const t = normalVector.dot(pointsArray[0].sub(ray.origin)) / normalVector.dot(ray.direction);
     if (t < 0) {
       //if t is negative, the ray is pointing away from the plane
       return null;
@@ -50,8 +48,8 @@ export default class Plane {
     return new Intersection(t, intersectionPoint, normalVector);
   }
 
+  //a method that checks if the intersection point is inside the polygon given by the vertices
   isInside(vertices: Array<Vector>, intersectionPoint: Vector): boolean {
-    //a method that checks if the intersection point is inside the polygon given by the vertices
     let inside = true;
     let startDirection;
     for (let i = 0; i < vertices.length; i++) {

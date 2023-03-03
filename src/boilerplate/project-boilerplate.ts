@@ -65,6 +65,7 @@ let scene: SceneObj;
 window.addEventListener("load", () => {
   const modeToggleForm = document.getElementById("mode--toggle") as HTMLFormElement;
 
+  //This is the node that can be moved through key commands
   //null in the beginning, changes on click
   let selectedNode: SphereNode | PyramidNode | AABoxNode | CustomShapeNode | TextureVideoBoxNode | TextureTextBoxNode | TextureBoxNode = null;
   let selectedGroupNode: GroupNode = null;
@@ -104,7 +105,7 @@ window.addEventListener("load", () => {
 
   const lights = [light1, light2, light3, light4];
 
-  // create window
+  // create window including name, top bar and bottom bar
   const createWindow = (xTranslation: number, id: number, windowNaming: string) => {
     // first the window itself, sg x tranlation x scaling x window
     // windowTranslation is the window parent so click
@@ -135,9 +136,9 @@ window.addEventListener("load", () => {
     windowTopBarTranslation.add(windowTopBarScaling);
     windowTranslation.add(windowTopBarTranslation);
 
-    //adds window minimizer to taskbar
+    //adds window minimizer to topBar
     const minimizerTranslation = new GroupNode(new Translation(new Vector(2.2, 2.8, 0.5, 0)));
-    const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.5, 0)), id);
+    const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.1, 0)), id);
     const minimizer = new AABoxNode(new Vector(0.3, 0.1, 1, 1), minimizerScaling);
 
     minimizerScaling.add(minimizer);
@@ -161,16 +162,15 @@ window.addEventListener("load", () => {
 
   // add some geometry to first window
   const pyramidScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 0)));
-  const pyramidTranslation = new GroupNode(new Translation(new Vector(-1, 1, 1, 0)));
+  const pyramidTranslation = new GroupNode(new Translation(new Vector(-1, -2, 1, 0)));
   const pyramid = new PyramidNode(new Vector(0.5, 0.1, 0.3, 1), pyramidScaling);
   pyramidScaling.add(pyramid);
   pyramidTranslation.add(pyramidScaling);
   leftWindowSceneTranslation.add(pyramidTranslation);
 
   const sphereScaling = new GroupNode(new Scaling(new Vector(0.3, 0.3, 0.3, 0)));
-  const sphereTranslation = new GroupNode(new Translation(new Vector(0, 0, 1, 0)));
+  const sphereTranslation = new GroupNode(new Translation(new Vector(0, -0.5, 1, 0)));
   const sphere = new SphereNode(new Vector(0.5, 0.1, 0.3, 1), sphereScaling);
-
   sphereScaling.add(sphere);
   sphereTranslation.add(sphereScaling);
   leftWindowSceneTranslation.add(sphereTranslation);
@@ -223,9 +223,9 @@ window.addEventListener("load", () => {
   const ticTacToeRoot = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
   ticTacToeRoot.add(createTicTacToe());
 
+  //creates the tic tac toe board, returns the group node
   function createTicTacToe() {
     const ticTacToeScaling = new GroupNode(new Scaling(new Vector(0.8, 0.8, 0.8, 0))); //scales the size of the cubes
-    //creates 9 cubes with 9 different ids
     //attaches the cubes to the scale node, who is attached to the root node
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
@@ -241,8 +241,6 @@ window.addEventListener("load", () => {
   rightWindowSceneTranslation.add(ticTacToeRoot);
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //Animation Nodes
-  //an array of all the animation nodes
-
   let animation1 = new DriverNode(selectedGroupNode, new Vector(0, -5, -30, 0), 0.0002);
   let minimizeScaling = new ScalerNode(selectedGroupNode, new Vector(0.1, 0.1, 0.1, 0), true, 0.0002);
 
@@ -253,7 +251,7 @@ window.addEventListener("load", () => {
   rotationPyramid.toggleActive();
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
-  //raster
+  //rasterizer setup
   const rasterCanvas = document.getElementById("raster-canvas") as HTMLCanvasElement;
 
   const rasterContext: WebGL2RenderingContext = rasterCanvas.getContext("webgl2");
@@ -269,7 +267,7 @@ window.addEventListener("load", () => {
   phongShader.load();
   textureShader.load();
 
-  //ray
+  //ray tracer setup
   const rayCanvas = document.getElementById("ray-canvas") as HTMLCanvasElement;
 
   let phongValues = {
@@ -329,8 +327,8 @@ window.addEventListener("load", () => {
     }
   });
 
+  // animates the scene every frame
   let lastTimestamp = performance.now();
-
   window.requestAnimationFrame(animate);
 
   function animate(timestamp: number) {
@@ -410,6 +408,7 @@ window.addEventListener("load", () => {
     }
   });
 
+  //control sliders
   const shininessElement = document.getElementById("shininess") as HTMLInputElement;
   shininessElement.onchange = () => {
     phongValues.shininess = Number(shininessElement.value);
@@ -434,11 +433,12 @@ window.addEventListener("load", () => {
     window.requestAnimationFrame(animate);
   };
 
+  // mouse click listener, actions according to the id of the clicked node
   rasterCanvas.addEventListener("click", (event) => {
     if (canClick) {
       let mx = event.offsetX;
       let my = event.offsetY;
-      selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
+      selectedNode = mouseRayVisitor.click(sg, mx, my, rasterContext);
       if (selectedNode != null) {
         selectedGroupNode = selectedNode.parent;
         checkactions();
@@ -446,11 +446,12 @@ window.addEventListener("load", () => {
     }
   });
 
+  // mouse click listener, actions according to the id of the clicked node
   rayCanvas.addEventListener("click", (event) => {
     if (canClick) {
       let mx = event.offsetX;
       let my = event.offsetY;
-      selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
+      selectedNode = mouseRayVisitor.click(sg, mx, my, rayContext);
       if (selectedNode != null) {
         selectedGroupNode = selectedNode.parent;
         checkactions();
@@ -458,9 +459,9 @@ window.addEventListener("load", () => {
     }
   });
 
+  //all actions available due to the id of the clicked node
   let maximisedLeft = true;
   let maximisedRight = true;
-
   function checkactions() {
     if (!ctrlDown) {
       if (selectedGroupNode.id == null) {
@@ -501,6 +502,7 @@ window.addEventListener("load", () => {
     }
   }
 
+  //toggles the symbol of the tic tac toe cubes
   function toggleSymbol() {
     //switch between 3 otpions X, O, empty
     if (selectedNode instanceof TextureTextBoxNode) {
@@ -523,6 +525,7 @@ window.addEventListener("load", () => {
     }
   }
 
+  //reset button for the tic tac toe game
   let resetButton = document.getElementById("resetTicTacToe");
   resetButton.onclick = () => {
     ticTacToeRoot.children = [];
@@ -532,27 +535,27 @@ window.addEventListener("load", () => {
   let zoomedIn = false;
   let zoomVector = new Vector(0, 0, 0, 0);
 
+  //aktivates the listener for the shift key
   var ctrlDown = false;
-
   document.addEventListener("keydown", function (event) {
     if (event.key === "Shift") {
       ctrlDown = true;
     }
   });
-
   document.addEventListener("keyup", function (event) {
     if (event.key === "Shift") {
       ctrlDown = false;
     }
   });
 
+  //zoom in and out to the clicked point
   document.addEventListener("click", function (event) {
     if (canClick) {
       if (ctrlDown) {
         let mx = event.offsetX;
         let my = event.offsetY;
 
-        let ray = mouseRayVisitor.CameraDrive(sg, null, mx, my, rasterContext);
+        let ray = mouseRayVisitor.CameraDrive(sg, mx, my, rasterContext);
         zoomVector = ray.direction.mul(5);
         if (zoomedIn) {
           animation1 = new DriverNode(cameraTranslation, zoomVector.mul(-1), 0.002);
@@ -565,8 +568,8 @@ window.addEventListener("load", () => {
     }
   });
 
+  //adds a small timeout to the click event to prevent double clicks (and therefore double actions)
   var canClick = true;
-
   document.addEventListener("click", function (event) {
     if (canClick) {
       // Only executes when canClick is true
@@ -579,7 +582,6 @@ window.addEventListener("load", () => {
   });
 
   // download and import scene as JSON
-  //download
   let downloadButton = document.getElementById("downloadButton");
   downloadButton.onclick = () => {
     scene = {
@@ -594,6 +596,9 @@ window.addEventListener("load", () => {
     anchor.click();
   };
 });
+
+//functions to rotate, translate and scale a node, also used in animationNodes
+//multiply the old matrix with the new matrix to get the new matrix, changes the group node matrix
 export function rotate(axis: Vector, angle: number, node: GroupNode) {
   let oldMatrix = node.transform.getMatrix();
   let oldMatrixInverse = node.transform.getInverseMatrix();

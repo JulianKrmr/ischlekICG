@@ -185,6 +185,7 @@ export default class RasterPyramid {
     this.gl.disableVertexAttribArray(normalLocation);
   }
 
+  //calculates the intersection of the ray with the box and returns it
   intersect(ray: Ray): Intersection | null {
     let intersectionMin = null;
     let intersectionTMin = Infinity;

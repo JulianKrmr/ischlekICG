@@ -72,7 +72,7 @@ export default class MouserayVisitor implements Visitor {
    * @param lightPositions The light light positions
    */
   //Is triggered by mouseclick, casts a ray (like in rayvisitor) and returns the closest objectNode
-  click(rootNode: Node, camera: { origin: Vector; width: number; height: number; alpha: number }, x: number, y: number, renderingContext: any) {
+  click(rootNode: Node, x: number, y: number, renderingContext: any) {
     this.transformations = [];
     this.inverseTransformations = [];
     this.objectIntersections = [];
@@ -119,7 +119,7 @@ export default class MouserayVisitor implements Visitor {
     }
   }
 
-  CameraDrive(rootNode: Node, camera: { origin: Vector; width: number; height: number; alpha: number }, x: number, y: number, renderingContext: any) {
+  CameraDrive(rootNode: Node, x: number, y: number, renderingContext: any) {
     this.transformations = [];
     this.inverseTransformations = [];
     this.objectIntersections = [];

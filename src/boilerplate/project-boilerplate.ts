@@ -87,14 +87,6 @@ window.addEventListener("load", () => {
 
   let sg = new GroupNode(new Translation(new Vector(0, 0, -15, 0)));
 
-  const backgroundScaling = new GroupNode(new Scaling(new Vector(10, 10, thickness, 1)));
-  const backgroundTranslation = new GroupNode(new Translation(new Vector(0, 0, -200, 1)));
-  const textureBackgroundBox = new TextureBoxNode("hci-logo.png", backgroundTranslation, "brickwall-normal.jpg");
-
-  backgroundScaling.add(textureBackgroundBox);
-  backgroundTranslation.add(backgroundScaling);
-  sg.add(backgroundTranslation)
-
   // camera
   const camera1 = new CameraNode();
   const cameraTranslation = new GroupNode(new Translation(new Vector(0, -1, 12, 0)));
@@ -259,7 +251,7 @@ window.addEventListener("load", () => {
   taskbarTranslation.add(textureTaskbarIcon);
 
   //TicTacToe
-  const ticTacToeRoot = new GroupNode(new Translation(new Vector(-1, -1, 0.01, 0)));
+  const ticTacToeRoot = new GroupNode(new Translation(new Vector(-1, -1, 0.2, 0)));
   ticTacToeRoot.add(createTicTacToe());
 
   //creates the tic tac toe board, returns the group node

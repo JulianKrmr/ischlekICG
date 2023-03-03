@@ -250,7 +250,7 @@ window.addEventListener("load", () => {
   taskbarTranslation.add(textureTaskbarIcon);
 
   //TicTacToe
-  const ticTacToeRoot = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
+  const ticTacToeRoot = new GroupNode(new Translation(new Vector(-1, -1, 0.01, 0)));
   ticTacToeRoot.add(createTicTacToe());
 
   //creates the tic tac toe board, returns the group node
@@ -259,7 +259,7 @@ window.addEventListener("load", () => {
     //attaches the cubes to the scale node, who is attached to the root node
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
-        let cubetranslation = new GroupNode(new Translation(new Vector(i * 1.3 - 1, j * 1.3 - 0.5, 0.3, 0)), i + j * 3 + 20); //ids go from 20 to 28
+        let cubetranslation = new GroupNode(new Translation(new Vector(i * 1.3, j * 1.3, 0, 0)), i + j * 3 + 20); //ids go from 20 to 28
         let cube = new TextureTextBoxNode(" ", cubetranslation);
         cubetranslation.add(cube);
         ticTacToeScaling.add(cubetranslation);
@@ -490,7 +490,6 @@ window.addEventListener("load", () => {
   });
 
   //all actions available due to the id of the clicked node
-  let thirdWindow = false;
   let maximisedLeft = true;
   let maximisedRight = true;
   let currentPlayerOne = true;
@@ -526,13 +525,6 @@ window.addEventListener("load", () => {
         animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(6, 14, 0, 0), 0.001);
         maximisedRight = true;
         animation1.toggleActive();
-      } else if (selectedGroupNode.id == 13) {
-        if (!thirdWindow) {
-          //Geht nicht
-          thirdWindow = true;
-          createWindow(0, 2, 4, "Right");
-          setupVisitor.setup(sg);
-        }
       } else if (selectedGroupNode.id >= 20 && selectedGroupNode.id <= 28) {
         //covers all tictactoe cubes
         toggleSymbol(currentPlayerOne);

@@ -246,9 +246,6 @@ window.addEventListener("load", () => {
   const rightTaskbarIcon = createTaskbarIcon(-2.2, 11, new Vector(0.1, 0.5, 0.3, 1));
   taskbarTranslation.add(rightTaskbarIcon);
 
-  const animationTaskBarIcon = createTaskbarIcon(0.9, 12, new Vector(0.1, 0.3, 1, 1));
-  taskbarTranslation.add(animationTaskBarIcon);
-
   const textureTaskbarIcon = createTexturedTaskbarIcon(-0.9, 12, "hci-logo.png");
   taskbarTranslation.add(textureTaskbarIcon);
 
@@ -271,6 +268,8 @@ window.addEventListener("load", () => {
     return ticTacToeScaling;
   }
 
+
+
   rightWindowSceneTranslation.add(ticTacToeRoot);
 
   const backgroundScaling = new GroupNode(new Scaling(new Vector(200, 200, thickness, 0)), 12345);
@@ -285,9 +284,6 @@ window.addEventListener("load", () => {
   let animation1 = new DriverNode(selectedGroupNode, new Vector(0, -5, -30, 0), 0.0002);
   let minimizeScaling = new ScalerNode(selectedGroupNode, new Vector(0.1, 0.1, 0.1, 0), true, 0.0002);
   let animationZoom = new DriverNode(selectedGroupNode, new Vector(0, 0, -30, 0), 0.0002);
-  let cubeScalingAnimation = new ScalerNode(selectedGroupNode, new Vector(0.1, 0.1, 0.1, 0), true, 0.0002);
-  let cubeTranslationAnimation = new DriverNode(selectedGroupNode, new Vector(0, 0, -30, 0), 0.0002);
-  let cubeRotationAnimation = new RotationNode(selectedGroupNode, new Vector(0, 1, 0, 0));
 
   let rotationSphere = new RotationNode(aaboxScaling, new Vector(1, 0, 0, 0));
   rotationSphere.toggleActive();
@@ -388,9 +384,6 @@ window.addEventListener("load", () => {
     rotationPyramid.simulate(timestamp - lastTimestamp);
     minimizeScaling.simulate(timestamp - lastTimestamp);
     animationZoom.simulate(timestamp - lastTimestamp);
-    cubeScalingAnimation.simulate(timestamp - lastTimestamp);
-    cubeTranslationAnimation.simulate(timestamp - lastTimestamp);
-    cubeRotationAnimation.simulate(timestamp - lastTimestamp);
     lights.forEach((light) => light.simulate(timestamp - lastTimestamp));
 
     lastTimestamp = timestamp;
@@ -400,125 +393,60 @@ window.addEventListener("load", () => {
   //tastatur eingaben
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  let animationAllowed = true;
-  let time = 1000;
-
-  let translationSize = 5;
-  let scaleSize = 2;
+  let translationSize = 0.2;
+  let scaleSize = 0.1;
+  let rotationAmount = 0.3;
 
   window.addEventListener("keydown", function (event) {
-    if (animationAllowed) {
+    if (selectedGroupNode.id == null) {
       switch (event.key) {
         case "w": //hoch
-          cubeTranslationAnimation = new DriverNode(animationTaskBarIcon, new Vector(0, translationSize, 0, 0), 0.0002);
-          cubeTranslationAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeTranslationAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
-
+          translate(new Vector(0, translationSize, 0, 0), selectedGroupNode);
           break;
         case "s": //runter
-          cubeTranslationAnimation = new DriverNode(animationTaskBarIcon, new Vector(0, -translationSize, 0, 0), 0.0002);
-          cubeTranslationAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeTranslationAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
+          translate(new Vector(0, -translationSize, 0, 0), selectedGroupNode);
           break;
         case "a": //links
-          cubeTranslationAnimation = new DriverNode(animationTaskBarIcon, new Vector(-translationSize, 0, 0, 0), 0.0002);
-          cubeTranslationAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeTranslationAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
+          translate(new Vector(-translationSize, 0, 0, 0), selectedGroupNode);
           break;
         case "d": //rechts
-          cubeTranslationAnimation = new DriverNode(animationTaskBarIcon, new Vector(translationSize, 0, 0, 0), 0.0002);
-          cubeTranslationAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeTranslationAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
+          translate(new Vector(translationSize, 0, 0, 0), selectedGroupNode);
           break;
         case "e": //vor
-          cubeTranslationAnimation = new DriverNode(animationTaskBarIcon, new Vector(0, 0, translationSize, 0), 0.0002);
-          cubeTranslationAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeTranslationAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
+          translate(new Vector(0, 0, translationSize, 0), selectedGroupNode);
           break;
         case "q": //zurück
-          cubeTranslationAnimation = new DriverNode(animationTaskBarIcon, new Vector(0, 0, -translationSize, 0), 0.0002);
-          cubeTranslationAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeTranslationAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
+          translate(new Vector(0, 0, -translationSize, 0), selectedGroupNode);
           break;
         case "x": //um x achse rotieren
-          cubeRotationAnimation = new RotationNode(animationTaskBarIcon, new Vector(1, 0, 0, 0));
-          cubeRotationAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeRotationAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
+          rotate(new Vector(1, 0, 0, 0), rotationAmount, selectedGroupNode);
           break;
         case "y": //um y achse rotieren
-          cubeRotationAnimation = new RotationNode(animationTaskBarIcon, new Vector(0, 1, 0, 0));
-          cubeRotationAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeRotationAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
+          rotate(new Vector(0, 1, 0, 0), rotationAmount, selectedGroupNode);
           break;
         case "c": //um z achse rotieren
-          cubeRotationAnimation = new RotationNode(animationTaskBarIcon, new Vector(0, 0, 1, 0));
-          cubeRotationAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeRotationAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
+          rotate(new Vector(0, 0, 1, 0), rotationAmount, selectedGroupNode);
           break;
-        case "r": //Skalieren größer
-          cubeScalingAnimation = new ScalerNode(animationTaskBarIcon, new Vector(scaleSize, scaleSize, scaleSize, 0));
-          cubeScalingAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeScalingAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
+        case "r": //X skalieren größer
+          scale(new Vector(1 + scaleSize, 1, 1, 0), selectedGroupNode);
           break;
-        case "t": //Skalieren größer
-          cubeScalingAnimation = new ScalerNode(animationTaskBarIcon, new Vector(0.5, 0.5, 0.5, 0));
-          cubeScalingAnimation.toggleActive();
-          animationAllowed = false;
-          //activate the animation for 2 seconds
-          setTimeout(function () {
-            cubeScalingAnimation.toggleActive();
-            animationAllowed = true;
-          }, time);
+        case "f": //Y skalieren größer
+          scale(new Vector(1, 1 + scaleSize, 1, 0), selectedGroupNode);
+          break;
+        case "v": //Z skalieren größer
+          scale(new Vector(1, 1, 1 + scaleSize, 0), selectedGroupNode);
+          break;
+        case "t": //X skalieren kleiner
+          scale(new Vector(1 - scaleSize, 1, 1, 0), selectedGroupNode);
+          break;
+        case "g": //Y skalieren kleiner
+          scale(new Vector(1, 1 - scaleSize, 1, 0), selectedGroupNode);
+          break;
+        case "b": //Z skalieren kleiner
+          scale(new Vector(1, 1, 1 - scaleSize, 0), selectedGroupNode);
+          break;
+        case "m": //Z skalieren kleiner
+          scale(new Vector(1, 1, 1, 0), selectedGroupNode);
           break;
       }
     }

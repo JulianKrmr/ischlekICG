@@ -106,7 +106,7 @@ window.addEventListener("load", () => {
   const lights = [light1, light2, light3, light4];
 
   // create window including name, top bar and bottom bar
-  const createWindow = (xTranslation: number, id: number, windowNaming: string) => {
+  const createWindow = (xTranslation: number, idMini: number, idMaxi: number, windowNaming: string) => {
     // first the window itself, sg x tranlation x scaling x window
     // windowTranslation is the window parent so click
     const windowScaling = new GroupNode(new Scaling(new Vector(5, 6, 1, 0)));
@@ -137,13 +137,22 @@ window.addEventListener("load", () => {
     windowTranslation.add(windowTopBarTranslation);
 
     //adds window minimizer to topBar
-    const minimizerTranslation = new GroupNode(new Translation(new Vector(2.2, 2.8, 0.5, 0)));
-    const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.3, 0)), id);
+    const minimizerTranslation = new GroupNode(new Translation(new Vector(2.2, 2.8, 0.6, 0)));
+    const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.3, 0)), idMini);
     const minimizer = new AABoxNode(new Vector(0.3, 0.1, 1, 1), minimizerScaling);
 
     minimizerScaling.add(minimizer);
     minimizerTranslation.add(minimizerScaling);
     windowTranslation.add(minimizerTranslation);
+
+    //adds window maximizer to topBar
+    const maximizerTranslation = new GroupNode(new Translation(new Vector(1.7, 2.8, 0.6, 0)));
+    const maximizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.3, 0)), idMaxi);
+    const maximizer = new AABoxNode(new Vector(0.7, 0.3, 0.3, 1), maximizerScaling);
+
+    maximizerScaling.add(maximizer);
+    maximizerTranslation.add(maximizerScaling);
+    windowTranslation.add(maximizerTranslation);
 
     // adds a white blank scene for nicer styling into the window
     const windowSceneScaling = new GroupNode(new Scaling(new Vector(4.5, 5.0, 1.1, 0)));
@@ -157,8 +166,8 @@ window.addEventListener("load", () => {
   };
 
   // create 2 specific windows with id for click recognition and x translation values
-  const leftWindowSceneTranslation = createWindow(-2.8, 1, "Left");
-  const rightWindowSceneTranslation = createWindow(2.8, 2, "Right");
+  const leftWindowSceneTranslation = createWindow(-2.8, 1, 3, "Left");
+  const rightWindowSceneTranslation = createWindow(2.8, 2, 4, "Right");
 
   // add some geometry to first window
   const pyramidScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 0)));
@@ -481,14 +490,16 @@ window.addEventListener("load", () => {
         animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(-6, -14, 0, 0), 0.001);
         maximisedRight = false;
         animation1.toggleActive();
+      } else if (selectedGroupNode.id == 3) {
+        zoom(167, 291);
+      } else if (selectedGroupNode.id == 4) {
+        zoom(840, 287);
       }
       //if left maximize btn is selected, animate the maximization
       else if (selectedGroupNode.id == 10 && !maximisedLeft) {
         animation1 = new DriverNode(leftWindowSceneTranslation, new Vector(2, 14, 0, 0), 0.001);
         maximisedLeft = true;
         animation1.toggleActive();
-
-        // scale(new Vector(10, 10, 10, 0), leftWindowSceneTranslation);
         //if right maximize btn is selected, animate the maximization
       } else if (selectedGroupNode.id == 11 && !maximisedRight) {
         animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(6, 14, 0, 0), 0.001);
@@ -569,19 +580,24 @@ window.addEventListener("load", () => {
       if (ctrlDown) {
         let mx = event.offsetX;
         let my = event.offsetY;
-
-        let ray = mouseRayVisitor.CameraDrive(sg, mx, my, rasterContext);
-        zoomVector = ray.direction.mul(5);
-        if (zoomedIn) {
-          animation1 = new DriverNode(cameraTranslation, zoomVector.mul(-1), 0.002);
-        } else {
-          animation1 = new DriverNode(cameraTranslation, zoomVector, 0.002);
-        }
-        animation1.toggleActive();
-        zoomedIn = !zoomedIn;
+        console.log(mx);
+        console.log(my);
+        zoom(mx, my);
       }
     }
   });
+
+  function zoom(mx: number, my: number) {
+    if (!zoomedIn) {
+      let ray = mouseRayVisitor.CameraDrive(sg, mx, my, rasterContext);
+      zoomVector = ray.direction.mul(7);
+      animation1 = new DriverNode(cameraTranslation, zoomVector, 0.002);
+    } else {
+      animation1 = new DriverNode(cameraTranslation, zoomVector.mul(-1), 0.002);
+    }
+    animation1.toggleActive();
+    zoomedIn = !zoomedIn;
+  }
 
   //adds a small timeout to the click event to prevent double clicks (and therefore double actions)
   var canClick = true;

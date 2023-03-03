@@ -189,7 +189,6 @@ export default class MouserayVisitor implements Visitor {
     let toWorld = this.transformations[this.transformations.length - 1];
     const origin = toWorld.mulVec(new Vector(0, 0, 0, 1));
     this.ray = Ray.makeRay(this.x, this.y, { width: this.width, height: this.height, alpha: Math.PI / 3, origin: origin });
-    console.log(this.ray);
   }
 
   visitLightNode() {}

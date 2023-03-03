@@ -12,11 +12,7 @@ export default class Sphere {
    * @param radius The radius of the Sphere
    * @param color The colour of the Sphere
    */
-  constructor(
-    public center: Vector,
-    public radius: number,
-    public color: Vector
-  ) {
+  constructor(public center: Vector, public radius: number, public color: Vector) {
     this.center = center;
     this.radius = radius;
     this.color = color;
@@ -28,13 +24,12 @@ export default class Sphere {
    * @return The intersection if there is one, null if there is none
    */
   intersect(ray: Ray): Intersection | null {
-    const x0 = ray.origin.sub(this.center); //Translate ray about -center
-    const c =
-      Math.pow(x0.dot(ray.direction.normalize()), 2) -
-      Math.pow(x0.length, 2) +
-      Math.pow(this.radius, 2); //calculate the discremenant to determine how many intersections there are
+    //Translate ray about -center to make the sphere centered at the origin
+    const x0 = ray.origin.sub(this.center);
+    //calculate the discremenant to determine how many intersections there are
+    const c = Math.pow(x0.dot(ray.direction.normalize()), 2) - Math.pow(x0.length, 2) + Math.pow(this.radius, 2);
     if (c < 0) {
-      //Keine Intersections
+      //No Intersections
       return null;
     }
 

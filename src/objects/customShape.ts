@@ -4,11 +4,11 @@ import Intersection from "src/math/intersection";
 import Plane from "../math/plane";
 
 /**
- * Class representing a Pyramid
+ * Class representing an Object
  */
 export default class CustomShape {
   /**
-   * The pyramids vertices
+   * The Objects vertices
    */
   vertices: Array<Vector>;
   indices: Array<number>;
@@ -20,7 +20,7 @@ export default class CustomShape {
   }
 
   /**
-   * Calculates the intersection of the Pyramid with the given ray
+   * Calculates the intersection of the Object with the given ray
    * @param ray The ray to intersect with
    * @return The intersection if there is one, null if there is none
    */
@@ -32,18 +32,14 @@ export default class CustomShape {
       const b = this.vertices[this.indices[i + 1]];
       const c = this.vertices[this.indices[i + 2]];
 
-      //create a plane from the 3 vertices of the pyramid
+      //create a plane from the 3 vertices of the Object
       const plane = new Plane(a, b, c);
       //calculate the intersection of the ray with the plane
       const intersection = plane.intersect(ray);
 
       const vertices = [a, b, c];
       // if the intersection is not null and is inside the triangle, return it
-      if (
-        intersection &&
-        plane.isInside(vertices, intersection.point) &&
-        intersection.t < intersectionTMin
-      ) {
+      if (intersection && plane.isInside(vertices, intersection.point) && intersection.t < intersectionTMin) {
         intersectionMin = intersection;
         intersectionTMin = intersection.t;
       }

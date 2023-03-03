@@ -104,11 +104,7 @@ export default class AABox {
 
       const vertices = [a, b, c];
       // if the intersection is not null and is inside the box, return it
-      if (
-        intersection &&
-        plane.isInside(vertices, intersection.point) &&
-        intersection.t < intersectionTMin
-      ) {
+      if (intersection && plane.isInside(vertices, intersection.point) && intersection.t < intersectionTMin) {
         intersectionMin = intersection;
         intersectionTMin = intersection.t;
       }

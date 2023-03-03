@@ -77,15 +77,9 @@ window.addEventListener("load", () => {
     "mode--toggle"
   ) as HTMLFormElement;
 
-  //null in the beginning, changes on cklick
-  let selectedNode:
-    | SphereNode
-    | PyramidNode
-    | AABoxNode
-    | CustomShapeNode
-    | TextureVideoBoxNode
-    | TextureTextBoxNode
-    | TextureBoxNode = null;
+  //This is the node that can be moved through key commands
+  //null in the beginning, changes on click
+  let selectedNode: SphereNode | PyramidNode | AABoxNode | CustomShapeNode | TextureVideoBoxNode | TextureTextBoxNode | TextureBoxNode = null;
   let selectedGroupNode: GroupNode = null;
 
   //scene graph
@@ -94,36 +88,39 @@ window.addEventListener("load", () => {
 
   let sg = new GroupNode(new Translation(new Vector(0, 0, -15, 0)));
 
+  // camera
   const camera1 = new CameraNode();
-  const cameraTranslation = new GroupNode(
-    new Translation(new Vector(0, 0, 12, 0))
-  );
+  const cameraTranslation = new GroupNode(new Translation(new Vector(0, -1, 12, 0)));
   cameraTranslation.add(camera1);
   sg.add(cameraTranslation);
 
-  const light1 = new LightNode();
-  const lightBulb = new SphereNode(new Vector(1, 1, 0, 1));
-  const lightTranslation = new GroupNode(
-    new Translation(new Vector(-2, -2, 4, 0))
-  );
-  lightTranslation.add(light1);
-  lightTranslation.add(lightBulb);
-  sg.add(lightTranslation);
+  // creates light with lightbulb (yellow SphereNode) and toggles its jumper nodes activation
+  function createLight(translationVector: Vector, bulbColor: Vector, movementVector: Vector) {
+    const light = new LightNode();
+    const bulb = new SphereNode(bulbColor);
+    const lightTranslation = new GroupNode(new Translation(translationVector));
+    const bulbScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 1)));
+    const lightJump = new JumperNode(lightTranslation, movementVector, 0.001, false);
+    bulbScaling.add(bulb);
+    lightTranslation.add(light);
+    lightTranslation.add(bulbScaling);
+    sg.add(lightTranslation);
+    lightJump.toggleActive();
+    return lightJump;
+  }
 
-  const light2 = new LightNode();
-  const light2Bulb = new SphereNode(new Vector(1, 1, 0, 1));
-  const light2Translation = new GroupNode(
-    new Translation(new Vector(2, 4, 4, 0))
-  );
-  light2Translation.add(light2);
-  light2Translation.add(light2Bulb);
-  sg.add(light2Translation);
+  // create 4 specific lights for the scene and add to lights array for clean functional .simulate calls
+  const light1 = createLight(new Vector(-3, -2, 4, 0), new Vector(1, 1, 0, 1), new Vector(0, 5, 0, 0));
+  const light2 = createLight(new Vector(-3, 3, 4, 0), new Vector(1, 1, 0, 1), new Vector(7, 0, 0, 0));
+  const light3 = createLight(new Vector(5, -3, -3, 0), new Vector(1, 1, 0, 1), new Vector(0, 0, 7, 0));
+  const light4 = createLight(new Vector(5, 0, 20, 0), new Vector(1, 1, 0, 1), new Vector(-10, 0, 0, 0));
 
-  const createWindow = (
-    xTranslation: number,
-    id: number,
-    windowNaming: string
-  ) => {
+  const lights = [light1, light2, light3, light4];
+
+  // create window including name, top bar and bottom bar
+  const createWindow = (xTranslation: number, id: number, windowNaming: string) => {
+    // first the window itself, sg x tranlation x scaling x window
+    // windowTranslation is the window parent so click
     const windowScaling = new GroupNode(new Scaling(new Vector(5, 6, 1, 0)));
     const windowTranslation = new GroupNode(
       new Translation(new Vector(xTranslation, 0.5, 0, 0))
@@ -136,31 +133,15 @@ window.addEventListener("load", () => {
     windowTranslation.add(windowScaling);
     sg.add(windowTranslation);
 
-    const windowTopBarScaling = new GroupNode(
-      new Scaling(new Vector(5, 0.3, 1.1, 0))
-    );
-    const windowTopBarTranslation = new GroupNode(
-      new Translation(new Vector(0, 2.8, 0, 0))
-    );
-    const windowTopBar = new AABoxNode(
-      new Vector(0.7, 0.1, 0, 1),
-      windowTranslation
-    );
-    const windowNameScaling = new GroupNode(
-      new Scaling(new Vector(2, 0.5, 1, 0))
-    );
-    const windowNameTranslation = new GroupNode(
-      new Translation(new Vector(-1.49, 2.7, 0.1, 0))
-    );
-    const windowNameRotation = new GroupNode(
-      new Rotation(new Vector(0, 0, 1, 0), Math.PI)
-    );
+    // adding top bars for windows
+    const windowTopBarScaling = new GroupNode(new Scaling(new Vector(5, 0.3, 1.1, 0)));
+    const windowTopBarTranslation = new GroupNode(new Translation(new Vector(0, 2.8, 0, 0)));
+    const windowTopBar = new AABoxNode(new Vector(0.7, 0.1, 0, 1), windowTranslation);
+    const windowNameScaling = new GroupNode(new Scaling(new Vector(2, 0.5, 1, 0)));
+    const windowNameTranslation = new GroupNode(new Translation(new Vector(-1.49, 2.7, 0.1, 0)));
+    const windowNameRotation = new GroupNode(new Rotation(new Vector(0, 0, 1, 0), Math.PI));
 
-    // textureBoxRotation.add(textureBox);
-    // textureBoxScaling.add(textureBoxRotation);
-    // textureBoxTranslation.add(textureBoxScaling);
-    // rightWindowSceneTranslation.add(textureBoxTranslation);
-
+    // adds window name
     const windowName = new TextureTextBoxNode(windowNaming, windowTranslation);
 
     windowNameRotation.add(windowName);
@@ -172,33 +153,19 @@ window.addEventListener("load", () => {
     windowTopBarTranslation.add(windowTopBarScaling);
     windowTranslation.add(windowTopBarTranslation);
 
-    //minimierungsschaltfläche
-    const minimizerTranslation = new GroupNode(
-      new Translation(new Vector(2.2, 2.8, 0.5, 0))
-    );
-    const minimizerScaling = new GroupNode(
-      new Scaling(new Vector(0.5, 0.3, 0.5, 0)),
-      id
-    );
-    const minimizer = new AABoxNode(
-      new Vector(0.3, 0.1, 1, 1),
-      minimizerScaling
-    );
+    //adds window minimizer to topBar
+    const minimizerTranslation = new GroupNode(new Translation(new Vector(2.2, 2.8, 0.5, 0)));
+    const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.1, 0)), id);
+    const minimizer = new AABoxNode(new Vector(0.3, 0.1, 1, 1), minimizerScaling);
 
     minimizerScaling.add(minimizer);
     minimizerTranslation.add(minimizerScaling);
     windowTranslation.add(minimizerTranslation);
 
-    const windowSceneScaling = new GroupNode(
-      new Scaling(new Vector(4.5, 5.0, 1.1, 0))
-    );
-    const windowSceneTranslation = new GroupNode(
-      new Translation(new Vector(0, -0.2, 0, 0))
-    );
-    const windowScene = new AABoxNode(
-      new Vector(0.9, 0.9, 0.9, 1),
-      windowTranslation
-    );
+    // adds a white blank scene for nicer styling into the window
+    const windowSceneScaling = new GroupNode(new Scaling(new Vector(4.5, 5.0, 1.1, 0)));
+    const windowSceneTranslation = new GroupNode(new Translation(new Vector(0, -0.2, 0, 0)));
+    const windowScene = new AABoxNode(new Vector(0.9, 0.9, 0.9, 1), windowTranslation);
     windowSceneScaling.add(windowScene);
     windowSceneTranslation.add(windowSceneScaling);
     windowTranslation.add(windowSceneTranslation);
@@ -206,28 +173,21 @@ window.addEventListener("load", () => {
     return windowTranslation;
   };
 
+  // create 2 specific windows with id for click recognition and x translation values
   const leftWindowSceneTranslation = createWindow(-2.8, 1, "Left");
   const rightWindowSceneTranslation = createWindow(2.8, 2, "Right");
 
-  const pyramidScaling = new GroupNode(
-    new Scaling(new Vector(0.5, 0.5, 0.5, 0))
-  );
-  const pyramidTranslation = new GroupNode(
-    new Translation(new Vector(-1, 1, 1, 0))
-  );
+  // add some geometry to first window
+  const pyramidScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 0)));
+  const pyramidTranslation = new GroupNode(new Translation(new Vector(-1, -2, 1, 0)));
   const pyramid = new PyramidNode(new Vector(0.5, 0.1, 0.3, 1), pyramidScaling);
   pyramidScaling.add(pyramid);
   pyramidTranslation.add(pyramidScaling);
   leftWindowSceneTranslation.add(pyramidTranslation);
 
-  const sphereTranslation = new GroupNode(
-    new Translation(new Vector(0, 0, 1, 0))
-  );
-  const sphereScaling = new GroupNode(
-    new Scaling(new Vector(0.3, 0.3, 0.3, 0))
-  );
+  const sphereScaling = new GroupNode(new Scaling(new Vector(0.3, 0.3, 0.3, 0)));
+  const sphereTranslation = new GroupNode(new Translation(new Vector(0, -0.5, 1, 0)));
   const sphere = new SphereNode(new Vector(0.5, 0.1, 0.3, 1), sphereScaling);
-
   sphereScaling.add(sphere);
   sphereTranslation.add(sphereScaling);
   leftWindowSceneTranslation.add(sphereTranslation);
@@ -241,13 +201,9 @@ window.addEventListener("load", () => {
   aaboxTranslation.add(aaboxScaling);
   leftWindowSceneTranslation.add(aaboxTranslation);
 
-  // texture only comes after first traversal; cube just stays black now
-  const textureBoxScaling = new GroupNode(
-    new Scaling(new Vector(4.0, 2.0, 0.1, 0))
-  );
-  const textureBoxTranslation = new GroupNode(
-    new Translation(new Vector(0.1, 1, 0.51, 0))
-  );
+  // video
+  const textureBoxScaling = new GroupNode(new Scaling(new Vector(4.0, 2.0, 0.1, 0)));
+  const textureBoxTranslation = new GroupNode(new Translation(new Vector(0.1, 1, 0.51, 0)));
   const textureBox = new TextureVideoBoxNode("assitoni.mp4", textureBoxScaling);
 
   const textureBoxRotation = new GroupNode(
@@ -259,6 +215,7 @@ window.addEventListener("load", () => {
   textureBoxTranslation.add(textureBoxScaling);
   leftWindowSceneTranslation.add(textureBoxTranslation);
 
+  // taskbar icons
   const createTaskbarIcon = (xPos: number, id: number, color: Vector) => {
     const taskbarIconTranslation = new GroupNode(
       new Translation(new Vector(xPos, 0.01, 0, 0)),
@@ -273,20 +230,16 @@ window.addEventListener("load", () => {
     return taskbarIconTranslation;
   };
 
+  // taskbar
   const taskbarScaling = new GroupNode(new Scaling(new Vector(15, 1, 1, 0)));
-  const taskbarTranslation = new GroupNode(
-    new Translation(new Vector(0, -6.2, 0, 0))
-  );
+  const taskbarTranslation = new GroupNode(new Translation(new Vector(0, -4, 0, 0)));
   const taskbar = new AABoxNode(new Vector(0.5, 0.5, 0.5, 1), taskbarScaling);
   taskbarScaling.add(taskbar);
   taskbarTranslation.add(taskbarScaling);
   sg.add(taskbarTranslation);
 
-  const leftTaskbarIcon = createTaskbarIcon(
-    -3.5,
-    10,
-    new Vector(0.5, 0.1, 0.3, 1)
-  );
+  // create specific taskbar icons with id for click recognition and x translation
+  const leftTaskbarIcon = createTaskbarIcon(-3.5, 10, new Vector(0.5, 0.1, 0.3, 1));
   taskbarTranslation.add(leftTaskbarIcon);
 
   const rightTaskbarIcon = createTaskbarIcon(
@@ -296,16 +249,13 @@ window.addEventListener("load", () => {
   );
   taskbarTranslation.add(rightTaskbarIcon);
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
   //TicTacToe
   const ticTacToeRoot = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));
   ticTacToeRoot.add(createTicTacToe());
 
+  //creates the tic tac toe board, returns the group node
   function createTicTacToe() {
-    const ticTacToeScaling = new GroupNode(
-      new Scaling(new Vector(0.8, 0.8, 0.8, 0))
-    ); //scales the size of the cubes
-    //creates 9 cubes with 9 different ids
+    const ticTacToeScaling = new GroupNode(new Scaling(new Vector(0.8, 0.8, 0.8, 0))); //scales the size of the cubes
     //attaches the cubes to the scale node, who is attached to the root node
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
@@ -324,19 +274,8 @@ window.addEventListener("load", () => {
   rightWindowSceneTranslation.add(ticTacToeRoot);
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //Animation Nodes
-  //an array of all the animation nodes
-
-  let animation1 = new DriverNode(
-    selectedGroupNode,
-    new Vector(0, -5, -30, 0),
-    0.0002
-  );
-  let minimizeScaling = new ScalerNode(
-    selectedGroupNode,
-    new Vector(0.1, 0.1, 0.1, 0),
-    true,
-    0.0002
-  );
+  let animation1 = new DriverNode(selectedGroupNode, new Vector(0, -5, -30, 0), 0.0002);
+  let minimizeScaling = new ScalerNode(selectedGroupNode, new Vector(0.1, 0.1, 0.1, 0), true, 0.0002);
 
   let rotationSphere = new RotationNode(aaboxScaling, new Vector(1, 0, 0, 0));
   rotationSphere.toggleActive();
@@ -349,10 +288,8 @@ window.addEventListener("load", () => {
   rotationPyramid.toggleActive();
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
-  //raster
-  const rasterCanvas = document.getElementById(
-    "raster-canvas"
-  ) as HTMLCanvasElement;
+  //rasterizer setup
+  const rasterCanvas = document.getElementById("raster-canvas") as HTMLCanvasElement;
 
   const rasterContext: WebGL2RenderingContext =
     rasterCanvas.getContext("webgl2");
@@ -381,7 +318,7 @@ window.addEventListener("load", () => {
   phongShader.load();
   textureShader.load();
 
-  //ray
+  //ray tracer setup
   const rayCanvas = document.getElementById("ray-canvas") as HTMLCanvasElement;
 
   let phongValues = {
@@ -452,8 +389,8 @@ window.addEventListener("load", () => {
     }
   });
 
+  // animates the scene every frame
   let lastTimestamp = performance.now();
-
   window.requestAnimationFrame(animate);
 
   function animate(timestamp: number) {
@@ -467,6 +404,7 @@ window.addEventListener("load", () => {
     rotationSphere.simulate(timestamp - lastTimestamp);
     rotationPyramid.simulate(timestamp - lastTimestamp);
     minimizeScaling.simulate(timestamp - lastTimestamp);
+    lights.forEach((light) => light.simulate(timestamp - lastTimestamp));
 
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
@@ -532,9 +470,8 @@ window.addEventListener("load", () => {
     }
   });
 
-  const shininessElement = document.getElementById(
-    "shininess"
-  ) as HTMLInputElement;
+  //control sliders
+  const shininessElement = document.getElementById("shininess") as HTMLInputElement;
   shininessElement.onchange = () => {
     phongValues.shininess = Number(shininessElement.value);
     window.requestAnimationFrame(animate);
@@ -558,11 +495,12 @@ window.addEventListener("load", () => {
     window.requestAnimationFrame(animate);
   };
 
+  // mouse click listener, actions according to the id of the clicked node
   rasterCanvas.addEventListener("click", (event) => {
     if (canClick) {
       let mx = event.offsetX;
       let my = event.offsetY;
-      selectedNode = mouseRayVisitor.click(sg, null, mx, my, rasterContext);
+      selectedNode = mouseRayVisitor.click(sg, mx, my, rasterContext);
       if (selectedNode != null) {
         selectedGroupNode = selectedNode.parent;
         checkactions();
@@ -570,11 +508,12 @@ window.addEventListener("load", () => {
     }
   });
 
+  // mouse click listener, actions according to the id of the clicked node
   rayCanvas.addEventListener("click", (event) => {
     if (canClick) {
       let mx = event.offsetX;
       let my = event.offsetY;
-      selectedNode = mouseRayVisitor.click(sg, null, mx, my, rayContext);
+      selectedNode = mouseRayVisitor.click(sg, mx, my, rayContext);
       if (selectedNode != null) {
         selectedGroupNode = selectedNode.parent;
         checkactions();
@@ -582,6 +521,7 @@ window.addEventListener("load", () => {
     }
   });
 
+  //all actions available due to the id of the clicked node
   let maximisedLeft = true;
   let maximisedRight = true;
   let currentPlayerOne = true
@@ -700,27 +640,27 @@ window.addEventListener("load", () => {
   let zoomedIn = false;
   let zoomVector = new Vector(0, 0, 0, 0);
 
+  //aktivates the listener for the shift key
   var ctrlDown = false;
-
   document.addEventListener("keydown", function (event) {
-    if (event.key === "Control") {
+    if (event.key === "Shift") {
       ctrlDown = true;
     }
   });
-
   document.addEventListener("keyup", function (event) {
-    if (event.key === "Control") {
+    if (event.key === "Shift") {
       ctrlDown = false;
     }
   });
 
+  //zoom in and out to the clicked point
   document.addEventListener("click", function (event) {
     if (canClick) {
       if (ctrlDown) {
         let mx = event.offsetX;
         let my = event.offsetY;
 
-        let ray = mouseRayVisitor.CameraDrive(sg, null, mx, my, rasterContext);
+        let ray = mouseRayVisitor.CameraDrive(sg, mx, my, rasterContext);
         zoomVector = ray.direction.mul(5);
         if (zoomedIn) {
           animation1 = new DriverNode(
@@ -737,8 +677,8 @@ window.addEventListener("load", () => {
     }
   });
 
+  //adds a small timeout to the click event to prevent double clicks (and therefore double actions)
   var canClick = true;
-
   document.addEventListener("click", function (event) {
     if (canClick) {
       // Only executes when canClick is true
@@ -751,7 +691,6 @@ window.addEventListener("load", () => {
   });
 
   // download and import scene as JSON
-  //download
   let downloadButton = document.getElementById("downloadButton");
   downloadButton.onclick = () => {
     scene = {
@@ -766,6 +705,9 @@ window.addEventListener("load", () => {
     anchor.click();
   };
 });
+
+//functions to rotate, translate and scale a node, also used in animationNodes
+//multiply the old matrix with the new matrix to get the new matrix, changes the group node matrix
 export function rotate(axis: Vector, angle: number, node: GroupNode) {
   let oldMatrix = node.transform.getMatrix();
   let oldMatrixInverse = node.transform.getInverseMatrix();

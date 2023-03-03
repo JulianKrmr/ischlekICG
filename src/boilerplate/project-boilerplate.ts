@@ -594,6 +594,7 @@ window.addEventListener("load", () => {
 
   //reset button for the tic tac toe game
   let resetGameButton = document.getElementById("resetTicTacToe");
+
   resetGameButton.onclick = () => {
     ticTacToeRoot.children = [];
     const newTicTacToe = new GroupNode(new Translation(new Vector(-1, -1, 0.5, 0)));

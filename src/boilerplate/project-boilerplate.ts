@@ -463,6 +463,7 @@ window.addEventListener("load", () => {
   let maximisedLeft = true;
   let maximisedRight = true;
   function checkactions() {
+    console.log(selectedGroupNode.id);
     if (!ctrlDown) {
       if (selectedGroupNode.id == null) {
         //jumps once

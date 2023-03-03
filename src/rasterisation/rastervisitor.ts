@@ -81,12 +81,7 @@ export class RasterVisitor implements Visitor {
     // traverse and render
     rootNode.accept(this);
   }
-  renderWithPhong(
-    rootNode: Node,
-    camera: Camera | null,
-    lightPositions: Array<Vector>,
-    phongValues: PhongValues
-  ) {
+  renderWithPhong(rootNode: Node, camera: Camera | null, lightPositions: Array<Vector>, phongValues: PhongValues) {
     // clear
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
@@ -170,29 +165,24 @@ export class RasterVisitor implements Visitor {
   setupCamera(camera: Camera) {
     this.lookat = Matrix.lookat(camera.eye, camera.center, camera.up);
 
-    this.perspective = Matrix.perspective(
-      camera.fovy,
-      camera.aspect,
-      camera.near,
-      camera.far
-    );
+    this.perspective = Matrix.perspective(camera.fovy, camera.aspect, camera.near, camera.far);
     this.eye = camera.eye;
   }
 
   visitCameraNode(node: CameraNode): void {
-      let toWorld = this.transformations[this.transformations.length - 1];
+    let toWorld = this.transformations[this.transformations.length - 1];
 
-      let cameraRasteriser = {
-        eye: toWorld.mulVec(new Vector(0, 0, 0, 1)),
-        center: toWorld.mulVec(new Vector(0, 0, -1, 1)),
-        up: toWorld.mulVec(new Vector(0, 1, 0, 0)),
-        fovy: 60,
-        aspect: 500 / 500,
-        near: 0.1,
-        far: 100,
-      };
-      this.cameraToWorld = toWorld;
-      this.setupCamera(cameraRasteriser);
+    let cameraRasteriser = {
+      eye: toWorld.mulVec(new Vector(0, 0, 0, 1)),
+      center: toWorld.mulVec(new Vector(0, 0, -1, 1)),
+      up: toWorld.mulVec(new Vector(0, 1, 0, 0)),
+      fovy: 60,
+      aspect: 500 / 500,
+      near: 0.1,
+      far: 100,
+    };
+    this.cameraToWorld = toWorld;
+    this.setupCamera(cameraRasteriser);
   }
 
   /**
@@ -200,18 +190,8 @@ export class RasterVisitor implements Visitor {
    * @param node The node to visit
    */
   visitGroupNode(node: GroupNode) {
-    this.transformations.push(
-      this.transformations[this.transformations.length - 1].mul(
-        node.transform.getMatrix()
-      )
-    );
-    this.inverseTransformations.push(
-      node.transform
-        .getInverseMatrix()
-        .mul(
-          this.inverseTransformations[this.inverseTransformations.length - 1]
-        )
-    );
+    this.transformations.push(this.transformations[this.transformations.length - 1].mul(node.transform.getMatrix()));
+    this.inverseTransformations.push(node.transform.getInverseMatrix().mul(this.inverseTransformations[this.inverseTransformations.length - 1]));
     for (let i = 0; i < node.children.length; i++) {
       node.children[i].accept(this);
     }
@@ -229,8 +209,7 @@ export class RasterVisitor implements Visitor {
     const shader = this.shader;
     shader.use();
     const toWorld = this.transformations[this.transformations.length - 1];
-    const fromWorld =
-      this.inverseTransformations[this.inverseTransformations.length - 1];
+    const fromWorld = this.inverseTransformations[this.inverseTransformations.length - 1];
 
     shader.getUniformMatrix("M").set(toWorld);
     shader.getUniformMatrix("M_inverse").set(fromWorld);
@@ -272,8 +251,7 @@ export class RasterVisitor implements Visitor {
     this.shader.use();
     let shader = this.shader;
     const toWorld = this.transformations[this.transformations.length - 1];
-    const fromWorld =
-      this.inverseTransformations[this.inverseTransformations.length - 1];
+    const fromWorld = this.inverseTransformations[this.inverseTransformations.length - 1];
     shader.getUniformMatrix("M").set(toWorld);
     let V = shader.getUniformMatrix("V");
     if (V && this.lookat) {
@@ -309,8 +287,7 @@ export class RasterVisitor implements Visitor {
     this.shader.use();
     let shader = this.shader;
     const toWorld = this.transformations[this.transformations.length - 1];
-    const fromWorld =
-      this.inverseTransformations[this.inverseTransformations.length - 1];
+    const fromWorld = this.inverseTransformations[this.inverseTransformations.length - 1];
 
     shader.getUniformMatrix("M").set(toWorld);
     let V = shader.getUniformMatrix("V");
@@ -488,10 +465,7 @@ export class RasterSetupVisitor {
    * @param node - The node to visit
    */
   visitSphereNode(node: SphereNode) {
-    this.objects.set(
-      node,
-      new RasterSphere(this.gl, new Vector(0, 0, 0, 1), 1, node.color)
-    );
+    this.objects.set(node, new RasterSphere(this.gl, new Vector(0, 0, 0, 1), 1, node.color));
   }
 
   /**
@@ -499,22 +473,11 @@ export class RasterSetupVisitor {
    * @param  {AABoxNode} node - The node to visit
    */
   visitAABoxNode(node: AABoxNode) {
-    this.objects.set(
-      node,
-      new RasterBox(
-        this.gl,
-        new Vector(-0.5, -0.5, -0.5, 1),
-        new Vector(0.5, 0.5, 0.5, 1),
-        node.color
-      )
-    );
+    this.objects.set(node, new RasterBox(this.gl, new Vector(-0.5, -0.5, -0.5, 1), new Vector(0.5, 0.5, 0.5, 1), node.color));
   }
 
   visitPyramidNode(node: PyramidNode) {
-    this.objects.set(
-      node,
-      new RasterPyramid(this.gl, new Vector(0, 0, 0, 1), node.color)
-    );
+    this.objects.set(node, new RasterPyramid(this.gl, new Vector(0, 0, 0, 1), node.color));
   }
 
   /**
@@ -523,16 +486,7 @@ export class RasterSetupVisitor {
    * @param  {TextureBoxNode} node - The node to visit
    */
   visitTextureBoxNode(node: TextureBoxNode) {
-    this.objects.set(
-      node,
-      new RasterTextureBox(
-        this.gl,
-        new Vector(-0.5, -0.5, -0.5, 1),
-        new Vector(0.5, 0.5, 0.5, 1),
-        node.texture,
-        node.normal
-      )
-    );
+    this.objects.set(node, new RasterTextureBox(this.gl, new Vector(-0.5, -0.5, -0.5, 1), new Vector(0.5, 0.5, 0.5, 1), node.texture, node.normal));
   }
 
   visitTextureVideoBoxNode(node: TextureVideoBoxNode) {
@@ -542,13 +496,7 @@ export class RasterSetupVisitor {
     }
     this.objects.set(
       node,
-      new RasterVideoTextureBox(
-        this.gl,
-        new Vector(-0.5, -0.5, -0.5, 1),
-        new Vector(0.5, 0.5, 0.5, 1),
-        node.texture,
-        normalMap
-      )
+      new RasterVideoTextureBox(this.gl, new Vector(-0.5, -0.5, -0.5, 1), new Vector(0.5, 0.5, 0.5, 1), node.texture, normalMap)
     );
   }
   visitTextureTextBoxNode(node: TextureTextBoxNode) {
@@ -556,16 +504,7 @@ export class RasterSetupVisitor {
     if (node.normal) {
       normalMap = node.normal;
     }
-    this.objects.set(
-      node,
-      new RasterTextTextureBox(
-        this.gl,
-        new Vector(-0.5, -0.5, -0.5, 1),
-        new Vector(0.5, 0.5, 0.5, 1),
-        node.texture,
-        normalMap
-      )
-    );
+    this.objects.set(node, new RasterTextTextureBox(this.gl, new Vector(-0.5, -0.5, -0.5, 1), new Vector(0.5, 0.5, 0.5, 1), node.texture, normalMap));
   }
 
   visitCustomShapeNode(node: CustomShapeNode) {}

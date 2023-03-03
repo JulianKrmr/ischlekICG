@@ -36,12 +36,7 @@ export default class RasterSphere {
    * @param radius The radius of the sphere
    * @param color The color of the sphere
    */
-  constructor(
-    private gl: WebGL2RenderingContext,
-    center: Vector,
-    radius: number,
-    color: Vector
-  ) {
+  constructor(private gl: WebGL2RenderingContext, center: Vector, radius: number, color: Vector) {
     let vertices = [];
     let indices = [];
     let normals = [];
@@ -84,29 +79,17 @@ export default class RasterSphere {
 
     const vertexBuffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vertexBuffer);
-    this.gl.bufferData(
-      this.gl.ARRAY_BUFFER,
-      new Float32Array(vertices),
-      this.gl.STATIC_DRAW
-    );
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl.STATIC_DRAW);
     this.vertexBuffer = vertexBuffer;
 
     const indexBuffer = gl.createBuffer();
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    this.gl.bufferData(
-      this.gl.ELEMENT_ARRAY_BUFFER,
-      new Uint16Array(indices),
-      this.gl.STATIC_DRAW
-    );
+    this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
     this.indexBuffer = indexBuffer;
 
     const normalBuffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, normalBuffer);
-    this.gl.bufferData(
-      this.gl.ARRAY_BUFFER,
-      new Float32Array(normals),
-      this.gl.STATIC_DRAW
-    );
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(normals), this.gl.STATIC_DRAW);
     this.normalBuffer = normalBuffer;
     this.elements = indices.length;
 
@@ -124,14 +107,7 @@ export default class RasterSphere {
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
     const positionLocation = shader.getAttributeLocation("a_position");
     this.gl.enableVertexAttribArray(positionLocation);
-    this.gl.vertexAttribPointer(
-      positionLocation,
-      3,
-      this.gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    this.gl.vertexAttribPointer(positionLocation, 3, this.gl.FLOAT, false, 0, 0);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
     const colorLocation = shader.getAttributeLocation("a_color");
     this.gl.enableVertexAttribArray(colorLocation);
@@ -143,38 +119,12 @@ export default class RasterSphere {
     this.gl.vertexAttribPointer(normalLocation, 3, this.gl.FLOAT, false, 0, 0);
 
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-    this.gl.drawElements(
-      this.gl.TRIANGLES,
-      this.elements,
-      this.gl.UNSIGNED_SHORT,
-      0
-    );
+    this.gl.drawElements(this.gl.TRIANGLES, this.elements, this.gl.UNSIGNED_SHORT, 0);
 
     this.gl.disableVertexAttribArray(positionLocation);
 
     this.gl.disableVertexAttribArray(colorLocation);
 
     this.gl.disableVertexAttribArray(normalLocation);
-  }
-
-  intersect(ray: Ray): Intersection | null {
-    const x0 = ray.origin.sub(this.center); //Translate ray about -center
-    const c =
-      Math.pow(x0.dot(ray.direction.normalize()), 2) -
-      Math.pow(x0.length, 2) +
-      Math.pow(this.radius, 2); //calculate the discremenant to determine how many intersections there are
-    if (c < 0) {
-      //Keine Intersections
-      return null;
-    }
-
-    const t1 = -x0.dot(ray.direction.normalize()) + Math.sqrt(c); //calculate distance +/- c with p-q Formula
-    const t2 = -x0.dot(ray.direction.normalize()) - Math.sqrt(c);
-
-    const closest = Math.min(t1, t2); //Abstand zur Kugel
-    let intersectionPoint = ray.origin.add(ray.direction.mul(closest)); //Kollisions Punkt
-    let direction = intersectionPoint.sub(this.center).normalize(); //richtung des Normalenvektors
-
-    return new Intersection(closest, intersectionPoint, direction);
   }
 }

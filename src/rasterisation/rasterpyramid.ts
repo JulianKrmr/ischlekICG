@@ -27,11 +27,7 @@ export default class RasterPyramid {
   indices: Array<number>;
   normals: Array<number>;
 
-  constructor(
-    private gl: WebGL2RenderingContext,
-    centerPoint: Vector,
-    color: Vector
-  ) {
+  constructor(private gl: WebGL2RenderingContext, centerPoint: Vector, color: Vector) {
     let height = 1;
     let width = 0.5;
 
@@ -72,12 +68,7 @@ export default class RasterPyramid {
     //for each indice, take the 3 vertices, calulate 2 vectors from them (that span a plane),
     //cross product them, normalize the vector and push it to the normals array, resulting in the normal vector for each triangle
     for (let i = 0; i < this.indices.length; i += 3) {
-      let p1 = new Vector(
-        this.vertices[this.indices[i] * 3],
-        this.vertices[this.indices[i] * 3 + 1],
-        this.vertices[this.indices[i] * 3 + 2],
-        1
-      );
+      let p1 = new Vector(this.vertices[this.indices[i] * 3], this.vertices[this.indices[i] * 3 + 1], this.vertices[this.indices[i] * 3 + 2], 1);
       let p2 = new Vector(
         this.vertices[this.indices[i + 1] * 3],
         this.vertices[this.indices[i + 1] * 3 + 1],
@@ -109,29 +100,17 @@ export default class RasterPyramid {
 
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(this.vertices),
-      gl.STATIC_DRAW
-    );
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
     this.vertexBuffer = vertexBuffer;
 
     const indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(
-      gl.ELEMENT_ARRAY_BUFFER,
-      new Uint16Array(this.indices),
-      gl.STATIC_DRAW
-    );
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
     this.indexBuffer = indexBuffer;
 
     const normalBuffer = this.gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(this.normals),
-      this.gl.STATIC_DRAW
-    );
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.normals), this.gl.STATIC_DRAW);
     this.normalBuffer = normalBuffer;
 
     const colorBuffer = gl.createBuffer();
@@ -148,14 +127,7 @@ export default class RasterPyramid {
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
     const positionLocation = shader.getAttributeLocation("a_position");
     this.gl.enableVertexAttribArray(positionLocation);
-    this.gl.vertexAttribPointer(
-      positionLocation,
-      3,
-      this.gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    this.gl.vertexAttribPointer(positionLocation, 3, this.gl.FLOAT, false, 0, 0);
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
     const colorLocation = shader.getAttributeLocation("a_color");
@@ -168,60 +140,10 @@ export default class RasterPyramid {
     this.gl.vertexAttribPointer(normalLocation, 3, this.gl.FLOAT, false, 0, 0);
 
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-    this.gl.drawElements(
-      this.gl.TRIANGLES,
-      this.indices.length,
-      this.gl.UNSIGNED_SHORT,
-      0
-    );
+    this.gl.drawElements(this.gl.TRIANGLES, this.indices.length, this.gl.UNSIGNED_SHORT, 0);
 
     this.gl.disableVertexAttribArray(positionLocation);
     this.gl.disableVertexAttribArray(colorLocation);
     this.gl.disableVertexAttribArray(normalLocation);
-  }
-
-  intersect(ray: Ray): Intersection | null {
-    let intersectionMin = null;
-    let intersectionTMin = Infinity;
-
-    //iterate over all triangles of the pyramid
-    for (let i = 0; i < this.indices.length; i += 3) {
-      //get the vertices of the triangle
-      const a = new Vector(
-        this.vertices[this.indices[i] * 3],
-        this.vertices[this.indices[i] * 3 + 1],
-        this.vertices[this.indices[i] * 3 + 2],
-        0
-      );
-      const b = new Vector(
-        this.vertices[this.indices[i + 1] * 3],
-        this.vertices[this.indices[i + 1] * 3 + 1],
-        this.vertices[this.indices[i + 1] * 3 + 2],
-        0
-      );
-      const c = new Vector(
-        this.vertices[this.indices[i + 2] * 3],
-        this.vertices[this.indices[i + 2] * 3 + 1],
-        this.vertices[this.indices[i + 2] * 3 + 2],
-        0
-      );
-
-      //create a plane from the 3 vertices of the pyramid
-      const plane = new Plane(a, b, c);
-      //calculate the intersection of the ray with the plane
-      const intersection = plane.intersect(ray);
-
-      const vertices = [a, b, c];
-      // if the intersection is not null and is inside the triangle, return it
-      if (
-        intersection &&
-        plane.isInside(vertices, intersection.point) &&
-        intersection.t < intersectionTMin
-      ) {
-        intersectionMin = intersection;
-        intersectionTMin = intersection.t;
-      }
-    }
-    return intersectionMin;
   }
 }

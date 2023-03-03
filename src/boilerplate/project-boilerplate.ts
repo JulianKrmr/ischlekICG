@@ -205,6 +205,15 @@ window.addEventListener("load", () => {
     return taskbarIconTranslation;
   };
 
+  const createTexturedTaskbarIcon = (xPos: number, id: number, texture: string) => {
+    const taskbarIconTranslation = new GroupNode(new Translation(new Vector(xPos, 0.01, 0, 0)), id);
+    const taskbarIconScaling = new GroupNode(new Scaling(new Vector(1, 1, 1.1, 0)));
+    const taskbarIcon = new TextureBoxNode(texture, taskbarIconTranslation, "brickwall-normal.jpg");
+    taskbarIconScaling.add(taskbarIcon);
+    taskbarIconTranslation.add(taskbarIconScaling);
+    return taskbarIconTranslation;
+  };
+
   // taskbar
   const taskbarScaling = new GroupNode(new Scaling(new Vector(15, 1, 1, 0)));
   const taskbarTranslation = new GroupNode(new Translation(new Vector(0, -4, 0, 0)));
@@ -219,6 +228,9 @@ window.addEventListener("load", () => {
 
   const rightTaskbarIcon = createTaskbarIcon(-2.2, 11, new Vector(0.1, 0.5, 0.3, 1));
   taskbarTranslation.add(rightTaskbarIcon);
+
+  const textureTaskbarIcon = createTexturedTaskbarIcon(-0.9, 12, "hci-logo.png");
+  taskbarTranslation.add(textureTaskbarIcon);
 
   //TicTacToe
   const ticTacToeRoot = new GroupNode(new Translation(new Vector(0, 0, 0, 0)));

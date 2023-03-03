@@ -16,12 +16,14 @@ import {
   LightNode,
   TextureVideoBoxNode,
   TextureTextBoxNode,
+  TexturePyramidNode
 } from "../nodes";
 import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
 import PhongValues from "../boilerplate/project-boilerplate";
 import RasterVideoTextureBox from "./raster-texture-box-video";
 import RasterTextTextureBox from "./raster-texture-box-text";
+import RasterTexturePyramid from "./raster-texture-pyramid";
 
 interface Camera {
   eye: Vector;
@@ -271,6 +273,33 @@ export class RasterVisitor implements Visitor {
 
     this.renderables.get(node).render(shader);
   }
+  visitTexturePyramidNode(node: TexturePyramidNode): void {
+    this.textureshader.use();
+    let shader = this.textureshader;
+    const fromWorld = this.transformations[this.transformations.length - 1];
+    const toWorld = this.transformations[this.transformations.length - 1];
+    shader.getUniformMatrix("M").set(toWorld);
+    let P = shader.getUniformMatrix("P");
+    if (P && this.perspective) {
+      P.set(this.perspective);
+    }
+    let normal = fromWorld.transpose();
+    normal.setVal(0, 3, 0);
+    normal.setVal(1, 3, 0);
+    normal.setVal(2, 3, 0);
+    normal.setVal(3, 0, 0);
+    normal.setVal(3, 1, 0);
+    normal.setVal(3, 2, 0);
+    normal.setVal(3, 3, 1);
+
+    const N = shader.getUniformMatrix("N");
+    if (N) {
+      N.set(normal);
+    }
+    shader.getUniformMatrix("V").set(this.lookat);
+
+    this.renderables.get(node).render(shader);
+  }
 
   /**
    * Visits a Pyramid node
@@ -471,6 +500,13 @@ export class RasterSetupVisitor {
 
   visitPyramidNode(node: PyramidNode) {
     this.objects.set(node, new RasterPyramid(this.gl, new Vector(0, 0, 0, 1), node.color));
+  }
+
+  visitTexturePyramidNode(node: TexturePyramidNode) {
+    this.objects.set(
+      node,
+      new RasterTexturePyramid(this.gl, new Vector(0, 0, 0, 1), node.texture)
+    );
   }
 
   /**

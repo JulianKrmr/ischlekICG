@@ -10,6 +10,7 @@ import {
   PyramidNode,
   SphereNode,
   TextureBoxNode,
+  TexturePyramidNode,
   TextureTextBoxNode,
   TextureVideoBoxNode,
 } from "../nodes";
@@ -163,7 +164,7 @@ window.addEventListener("load", () => {
   // add some geometry to first window
   const pyramidScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 0)));
   const pyramidTranslation = new GroupNode(new Translation(new Vector(-1, -2, 1, 0)));
-  const pyramid = new PyramidNode(new Vector(0.5, 0.1, 0.3, 1), pyramidScaling);
+  const pyramid = new TexturePyramidNode("hci-logo.png", pyramidScaling);
   pyramidScaling.add(pyramid);
   pyramidTranslation.add(pyramidScaling);
   leftWindowSceneTranslation.add(pyramidTranslation);

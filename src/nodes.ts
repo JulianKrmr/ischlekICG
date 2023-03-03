@@ -191,6 +191,30 @@ export class PyramidNode extends Node {
     };
   }
 }
+export class TexturePyramidNode extends Node {
+  /**
+   * @param color The colour of the pyramid
+   */
+  constructor(public texture: string, public parent?: GroupNode, public normal?: string) {
+    super();
+  }
+
+    /**
+   * Accepts a visitor according to the visitor pattern
+   * @param  {Visitor} visitor - The visitor
+   */
+    accept(visitor: Visitor) {
+      visitor.visitTexturePyramidNode(this);
+    }
+    toJSON() {
+      return {
+        PyramidNode: {
+          texture: this.texture,
+        },
+      };
+    }
+
+}
 
 /**
  * Class representing a Textured Axis Aligned Box in the Scenegraph

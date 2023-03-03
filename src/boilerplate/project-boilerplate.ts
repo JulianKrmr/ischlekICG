@@ -113,12 +113,13 @@ window.addEventListener("load", () => {
   const light4 = createLight(new Vector(5, 0, 20, 0), new Vector(1, 1, 0, 1), new Vector(-10, 0, 0, 0));
 
   const lights = [light1, light2, light3, light4];
+  const thickness = 0.1;
 
   // create window including name, top bar and bottom bar
   const createWindow = (xTranslation: number, idMini: number, idMaxi: number, windowNaming: string) => {
     // first the window itself, sg x tranlation x scaling x window
     // windowTranslation is the window parent so click
-    const windowScaling = new GroupNode(new Scaling(new Vector(5, 6, 1, 0)));
+    const windowScaling = new GroupNode(new Scaling(new Vector(5, 5.25, thickness, 0)));
     const windowTranslation = new GroupNode(new Translation(new Vector(xTranslation, 0.5, 0, 0)));
     const window = new AABoxNode(new Vector(0.4, 0.3, 0.0, 1), windowTranslation);
     windowScaling.add(window);
@@ -126,11 +127,11 @@ window.addEventListener("load", () => {
     sg.add(windowTranslation);
 
     // adding top bars for windows
-    const windowTopBarScaling = new GroupNode(new Scaling(new Vector(5, 0.3, 1.1, 0)));
-    const windowTopBarTranslation = new GroupNode(new Translation(new Vector(0, 2.8, 0, 0)));
+    const windowTopBarScaling = new GroupNode(new Scaling(new Vector(2, 0.5, thickness, 0)));
+    const windowTopBarTranslation = new GroupNode(new Translation(new Vector(0.5, 2.9, 0, 0)));
     const windowTopBar = new AABoxNode(new Vector(0.7, 0.1, 0, 1), windowTranslation);
-    const windowNameScaling = new GroupNode(new Scaling(new Vector(2, 0.5, 1, 0)));
-    const windowNameTranslation = new GroupNode(new Translation(new Vector(-1.49, 2.7, 0.1, 0)));
+    const windowNameScaling = new GroupNode(new Scaling(new Vector(2, 0.5, thickness, 0)));
+    const windowNameTranslation = new GroupNode(new Translation(new Vector(-1.49, 2.9, 0, 0)));
     const windowNameRotation = new GroupNode(new Rotation(new Vector(0, 0, 1, 0), Math.PI));
 
     // adds window name
@@ -146,8 +147,8 @@ window.addEventListener("load", () => {
     windowTranslation.add(windowTopBarTranslation);
 
     //adds window minimizer to topBar
-    const minimizerTranslation = new GroupNode(new Translation(new Vector(2.2, 2.8, 0.6, 0)));
-    const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.3, 0)), idMini);
+    const minimizerTranslation = new GroupNode(new Translation(new Vector(2.25, 2.9, 0, 0)));
+    const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, thickness, 0)), idMini);
     const minimizer = new AABoxNode(new Vector(0.3, 0.1, 1, 1), minimizerScaling);
 
     minimizerScaling.add(minimizer);
@@ -155,8 +156,8 @@ window.addEventListener("load", () => {
     windowTranslation.add(minimizerTranslation);
 
     //adds window maximizer to topBar
-    const maximizerTranslation = new GroupNode(new Translation(new Vector(1.7, 2.8, 0.6, 0)));
-    const maximizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.3, 0)), idMaxi);
+    const maximizerTranslation = new GroupNode(new Translation(new Vector(1.75, 2.9, 0, 0)));
+    const maximizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, thickness, 0)), idMaxi);
     const maximizer = new AABoxNode(new Vector(0.7, 0.3, 0.3, 1), maximizerScaling);
 
     maximizerScaling.add(maximizer);
@@ -164,8 +165,8 @@ window.addEventListener("load", () => {
     windowTranslation.add(maximizerTranslation);
 
     // adds a white blank scene for nicer styling into the window
-    const windowSceneScaling = new GroupNode(new Scaling(new Vector(4.5, 5.0, 1.1, 0)));
-    const windowSceneTranslation = new GroupNode(new Translation(new Vector(0, -0.2, 0, 0)));
+    const windowSceneScaling = new GroupNode(new Scaling(new Vector(4.5, 4.7, thickness, 0)));
+    const windowSceneTranslation = new GroupNode(new Translation(new Vector(0, 0, 0.01, 0)));
     const windowScene = new AABoxNode(new Vector(0.9, 0.9, 0.9, 1), windowTranslation);
     windowSceneScaling.add(windowScene);
     windowSceneTranslation.add(windowSceneScaling);
@@ -177,7 +178,6 @@ window.addEventListener("load", () => {
   // create 2 specific windows with id for click recognition and x translation values
   const leftWindowSceneTranslation = createWindow(-2.8, 1, 3, "Left");
   const rightWindowSceneTranslation = createWindow(2.8, 2, 4, "Right");
-
   // add some geometry to first window
   const pyramidScaling = new GroupNode(new Scaling(new Vector(0.5, 0.5, 0.5, 0)));
   const pyramidTranslation = new GroupNode(new Translation(new Vector(-1, -2, 1, 0)));
@@ -202,7 +202,7 @@ window.addEventListener("load", () => {
 
   // video
   const textureBoxScaling = new GroupNode(new Scaling(new Vector(4.0, 2.0, 0.1, 0)));
-  const textureBoxTranslation = new GroupNode(new Translation(new Vector(0.1, 1, 0.51, 0)));
+  const textureBoxTranslation = new GroupNode(new Translation(new Vector(0.1, 1, 0.02, 0)));
   const textureBox = new TextureVideoBoxNode("schalke.mp4", textureBoxScaling);
 
   const textureBoxRotation = new GroupNode(new Rotation(new Vector(0, 0, 1, 0), Math.PI));
@@ -255,7 +255,7 @@ window.addEventListener("load", () => {
 
   //creates the tic tac toe board, returns the group node
   function createTicTacToe() {
-    const ticTacToeScaling = new GroupNode(new Scaling(new Vector(0.8, 0.8, 0.8, 0))); //scales the size of the cubes
+    const ticTacToeScaling = new GroupNode(new Scaling(new Vector(0.8, 0.8, thickness, 0))); //scales the size of the cubes
     //attaches the cubes to the scale node, who is attached to the root node
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
@@ -490,6 +490,7 @@ window.addEventListener("load", () => {
   });
 
   //all actions available due to the id of the clicked node
+  let thirdWindow = false;
   let maximisedLeft = true;
   let maximisedRight = true;
   let currentPlayerOne = true;
@@ -525,6 +526,13 @@ window.addEventListener("load", () => {
         animation1 = new DriverNode(rightWindowSceneTranslation, new Vector(6, 14, 0, 0), 0.001);
         maximisedRight = true;
         animation1.toggleActive();
+      } else if (selectedGroupNode.id == 13) {
+        if (!thirdWindow) {
+          //Geht nicht
+          thirdWindow = true;
+          createWindow(0, 2, 4, "Right");
+          setupVisitor.setup(sg);
+        }
       } else if (selectedGroupNode.id >= 20 && selectedGroupNode.id <= 28) {
         //covers all tictactoe cubes
         toggleSymbol(currentPlayerOne);

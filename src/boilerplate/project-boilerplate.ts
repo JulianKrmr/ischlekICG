@@ -233,7 +233,7 @@ window.addEventListener("load", () => {
   };
 
   // taskbar
-  const taskbarScaling = new GroupNode(new Scaling(new Vector(15, 1, 1, 0)));
+  const taskbarScaling = new GroupNode(new Scaling(new Vector(15, 1, 1, 0)), 12345);
   const taskbarTranslation = new GroupNode(new Translation(new Vector(0, -4, 0, 0)));
   const taskbar = new AABoxNode(new Vector(0.5, 0.5, 0.5, 1), taskbarScaling);
   taskbarScaling.add(taskbar);

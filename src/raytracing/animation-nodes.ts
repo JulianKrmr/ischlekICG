@@ -2,7 +2,7 @@ import Vector from "../math/vector";
 import { GroupNode } from "../nodes";
 import { Rotation, SQT, Translation } from "../math/transformation";
 import Quaternion from "../math/quaternion";
-import { scale, translate } from "../boilerplate/project-boilerplate";
+import { rotate, scale, translate } from "../boilerplate/project-boilerplate";
 
 /**
  * Class representing an Animation
@@ -51,7 +51,7 @@ export class RotationNode extends AnimationNode {
    */
   constructor(groupNode: GroupNode, axis: Vector, speed?: number) {
     super(groupNode);
-    this.angle = 0;
+    this.angle = Math.PI * 4;
     this.axis = axis;
     if (speed) {
       this.speed = speed;
@@ -65,13 +65,7 @@ export class RotationNode extends AnimationNode {
    */
   simulate(deltaT: number) {
     if (this.active) {
-      this.angle = Math.PI * 4;
-      const matrix = this.groupNode.transform.getMatrix();
-      const inverse = this.groupNode.transform.getInverseMatrix();
-      let rotation = new Rotation(this.axis, this.speed * this.angle * deltaT);
-      rotation.matrix = matrix.mul(rotation.getMatrix());
-      rotation.inverse = rotation.getInverseMatrix().mul(inverse);
-      this.groupNode.transform = rotation;
+      rotate(this.axis, this.speed * this.angle * deltaT, this.groupNode);
     }
   }
 }
@@ -157,7 +151,6 @@ export class JumperNode extends AnimationNode {
         translate(this.direction.mul(-1 * this.speed * deltaT), this.groupNode);
         this.distanceCovered -= this.direction.mul(this.speed).length * deltaT;
         if (this.distanceCovered <= 0) {
-          //not needed?
           if (this.single) {
             this.active = false;
           }

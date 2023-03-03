@@ -596,7 +596,7 @@ window.addEventListener("load", () => {
   let resetGameButton = document.getElementById("resetTicTacToe");
   resetGameButton.onclick = () => {
     ticTacToeRoot.children = [];
-    const newTicTacToe = new GroupNode(new Translation(new Vector(-1, -1, 0.5, 0)));
+    const newTicTacToe = new GroupNode(new Translation(new Vector(-1, -1, 0.2, 0)));
     newTicTacToe.add(createTicTacToe());
     rightWindowSceneTranslation.add(newTicTacToe);
     setupVisitor.setup(sg);

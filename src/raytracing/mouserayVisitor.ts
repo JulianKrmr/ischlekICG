@@ -15,6 +15,7 @@ import {
   PyramidNode,
   SphereNode,
   TextureBoxNode,
+  TexturePyramidNode,
   TextureTextBoxNode,
   TextureVideoBoxNode,
 } from "../nodes";
@@ -176,6 +177,11 @@ export default class MouserayVisitor implements Visitor {
   visitTextureBoxNode(node: TextureBoxNode) {
     this.visitNode(node, UNIT_AABOX);
   }
+
+  visitTexturePyramidNode(node: TexturePyramidNode): void {
+    this.visitNode(node, UNIT_PYRAMID);
+  }
+
   visitTextureVideoBoxNode(node: TextureVideoBoxNode): void {
     this.visitNode(node, UNIT_AABOX);
   }

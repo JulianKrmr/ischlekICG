@@ -20,9 +20,6 @@ uniform vec3 LightPositions[8];
 uniform int numberOfLights;
 
 void main(void) {
-
-
-
     ambient = kA * v_color.rgb;
 
     vec3 norm = normalize(v_normal);
@@ -31,21 +28,29 @@ void main(void) {
     for(int i = 0; i < 8; i++) {
       if (i >= numberOfLights){ break; }
          vec3 lightDirection = normalize(LightPositions[i] - v_position.xyz);
-    //     // calculate diffuse
+   // calculate diffuse
+   // It first calculates the direction of the light from the current pixel, and then calculates the dot product 
+   // of this direction with the surface normal. This dot product gives the cosine of the angle between the
+   // light direction and the surface normal, which is then clamped to a minimum value of 0.0
+   // to avoid negative contributions. 
+   // The resulting value is multiplied by the vertex color and the diffuse coefficient "kD" to give the diffuse contribution.
          float currentDiffuse = max(dot(lightDirection, norm), 0.0);
          diffuse += currentDiffuse * v_color.rgb * kD;
 
-    //     // calculate specular
+    // calculate specular
+    // The shader then calculates the reflection direction of the light by reflecting the negated light direction
+    // around the surface normal. It then calculates the dot product of the reflection direction with the view direction
+    // (the direction from the current pixel to the camera), which gives the cosine of the angle between the 
+    // reflection direction and the view direction. This cosine is raised to the power of the
+    // shininess coefficient to give the specular contribution. The resulting value is multiplied by the vertex 
+    // color and the specular coefficient "kS" to give the specular contribution.
+
          vec3 viewDir = normalize(cameraPos.xyz - v_position.xyz);
          vec3 reflectDir = reflect(-lightDirection, norm);
          float currentSpecular = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
          specular += currentSpecular * v_color.rgb * kS;
-    // }
     }
-
-    //     vec3 diffuse = kD * v_color.rgb * max(dot(n, s), 0.0);
-    //     vec3 specular = kS * v_color.rgb * pow(max(dot(v, r), 0.0), shininess);
 
          gl_FragColor = vec4 (ambient + diffuse + specular, 1.0);
 }

@@ -2,10 +2,7 @@ import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
 import { GroupNode, SphereNode, TextureBoxNode } from "../nodes";
-import {
-  RasterVisitor,
-  RasterSetupVisitor,
-} from "../rasterisation/rastervisitor";
+import { RasterVisitor, RasterSetupVisitor } from "../rasterisation/rastervisitor";
 import Shader from "../shader/shader";
 import phongVertexShader from "../shader/phong-vertex-shader.glsl";
 import phongFragmentShader from "../shader/phong-fragment-shader.glsl";
@@ -50,17 +47,8 @@ window.addEventListener("load", () => {
   };
 
   const phongShader = new Shader(gl, phongVertexShader, phongFragmentShader);
-  const textureShader = new Shader(
-    gl,
-    textureVertexShader,
-    textureFragmentShader
-  );
-  const visitor = new RasterVisitor(
-    gl,
-    phongShader,
-    textureShader,
-    setupVisitor.objects
-  );
+  const textureShader = new Shader(gl, textureVertexShader, textureFragmentShader);
+  const visitor = new RasterVisitor(gl, phongShader, textureShader, setupVisitor.objects);
 
   const phongValues: PhongValues = {
     ambient: 0.3,
@@ -72,7 +60,7 @@ window.addEventListener("load", () => {
   function animate(timestamp: number) {
     gn0.transform = new Rotation(new Vector(0, 0, 1, 0), timestamp / 1000);
     gn3.transform = new Rotation(new Vector(0, 1, 0, 0), timestamp / 1000);
-    visitor.renderWithPhong(sg, camera, [], phongValues);
+    visitor.renderWithPhong(sg, phongValues);
     window.requestAnimationFrame(animate);
   }
 

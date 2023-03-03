@@ -2,10 +2,7 @@ import "bootstrap";
 import "bootstrap/scss/bootstrap.scss";
 import Vector from "../math/vector";
 import { GroupNode, SphereNode, TextureBoxNode } from "../nodes";
-import {
-  RasterVisitor,
-  RasterSetupVisitor,
-} from "../rasterisation/rastervisitor";
+import { RasterVisitor, RasterSetupVisitor } from "../rasterisation/rastervisitor";
 import Shader from "../shader/shader";
 import { RotationNode } from "../raytracing/animation-nodes";
 import phongVertexShader from "../shader/phong-vertex-perspective-shader.glsl";
@@ -55,22 +52,10 @@ window.addEventListener("load", () => {
   };
 
   const phongShader = new Shader(gl, phongVertexShader, phongFragmentShader);
-  const textureShader = new Shader(
-    gl,
-    textureVertexShader,
-    textureFragmentShader
-  );
-  const visitor = new RasterVisitor(
-    gl,
-    phongShader,
-    textureShader,
-    setupVisitor.objects
-  );
+  const textureShader = new Shader(gl, textureVertexShader, textureFragmentShader);
+  const visitor = new RasterVisitor(gl, phongShader, textureShader, setupVisitor.objects);
 
-  let animationNodes = [
-    new RotationNode(sg, new Vector(0, 0, 1, 0)),
-    new RotationNode(gn3, new Vector(0, 1, 0, 0)),
-  ];
+  let animationNodes = [new RotationNode(sg, new Vector(0, 0, 1, 0)), new RotationNode(gn3, new Vector(0, 1, 0, 0))];
 
   function simulate(deltaT: number) {
     for (let animationNode of animationNodes) {
@@ -94,13 +79,11 @@ window.addEventListener("load", () => {
 
   function animate(timestamp: number) {
     simulate(timestamp - lastTimestamp);
-    visitor.renderWithPhong(sg, camera, [], phongValues);
+    visitor.renderWithPhong(sg, phongValues);
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
   }
-  Promise.all([phongShader.load(), textureShader.load()]).then((x) =>
-    window.requestAnimationFrame(animate)
-  );
+  Promise.all([phongShader.load(), textureShader.load()]).then((x) => window.requestAnimationFrame(animate));
 
   window.addEventListener("keydown", function (event) {
     switch (event.key) {

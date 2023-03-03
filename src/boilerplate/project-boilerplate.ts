@@ -138,7 +138,7 @@ window.addEventListener("load", () => {
 
     //adds window minimizer to topBar
     const minimizerTranslation = new GroupNode(new Translation(new Vector(2.2, 2.8, 0.5, 0)));
-    const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.1, 0)), id);
+    const minimizerScaling = new GroupNode(new Scaling(new Vector(0.5, 0.3, 0.3, 0)), id);
     const minimizer = new AABoxNode(new Vector(0.3, 0.1, 1, 1), minimizerScaling);
 
     minimizerScaling.add(minimizer);
@@ -333,7 +333,7 @@ window.addEventListener("load", () => {
 
   function animate(timestamp: number) {
     if (renderMode == "rasterization") {
-      rasterVisitor.renderWithPhong(sg, null, null, phongValues);
+      rasterVisitor.renderWithPhong(sg, phongValues);
     } else if (renderMode == "raytracing") {
       rayVisitor.render(sg, null, null, phongValues);
     }

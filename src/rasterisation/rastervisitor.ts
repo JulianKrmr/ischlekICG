@@ -19,11 +19,7 @@ import {
 } from "../nodes";
 import Shader from "../shader/shader";
 import RasterPyramid from "./rasterpyramid";
-import Ray from "../math/ray";
-import Intersection from "../math/intersection";
 import PhongValues from "../boilerplate/project-boilerplate";
-import AABox from "../objects/aabox";
-import Sphere from "../objects/sphere";
 import RasterVideoTextureBox from "./raster-texture-box-video";
 import RasterTextTextureBox from "./raster-texture-box-text";
 
@@ -81,13 +77,10 @@ export class RasterVisitor implements Visitor {
     // traverse and render
     rootNode.accept(this);
   }
-  renderWithPhong(rootNode: Node, camera: Camera | null, lightPositions: Array<Vector>, phongValues: PhongValues) {
+  renderWithPhong(rootNode: Node, phongValues: PhongValues) {
     // clear
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    // if (camera) {
-    //   this.setupCamera(camera);
-    // }
     this.transformations = [];
     this.inverseTransformations = [];
     this.transformations.push(Matrix.identity());
@@ -169,7 +162,7 @@ export class RasterVisitor implements Visitor {
     this.eye = camera.eye;
   }
 
-  visitCameraNode(node: CameraNode): void {
+  visitCameraNode(): void {
     let toWorld = this.transformations[this.transformations.length - 1];
 
     let cameraRasteriser = {
@@ -406,7 +399,7 @@ export class RasterVisitor implements Visitor {
 
   visitCustomShapeNode(node: CustomShapeNode) {}
 
-  visitLightNode(node: LightNode): void {
+  visitLightNode(): void {
     let toWorld = this.transformations[this.transformations.length - 1];
 
     this.lightPositions.push(toWorld.mulVec(new Vector(0, 0, 0, 1)));
@@ -509,6 +502,6 @@ export class RasterSetupVisitor {
 
   visitCustomShapeNode(node: CustomShapeNode) {}
 
-  visitCameraNode(node: CameraNode) {}
-  visitLightNode(node: LightNode) {}
+  visitCameraNode() {}
+  visitLightNode() {}
 }

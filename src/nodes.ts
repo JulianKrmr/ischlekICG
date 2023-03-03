@@ -27,6 +27,7 @@ export class GroupNode extends Node {
    * Constructor
    * @param transform The node's transformation
    */
+  //Group nodes may have an id if they are supposed to have a specific feature if they get clicked
   constructor(public transform: Transformation, id?: number) {
     super();
     this.children = new Array() as Array<Node>;
@@ -71,18 +72,12 @@ export class CameraNode extends Node {
    * @param visitor The visitor
    */
   accept(visitor: Visitor) {
-    visitor.visitCameraNode(this);
+    visitor.visitCameraNode();
   }
-
-  // setActiveStatus(val: boolean) {
-  //   this.active = val;
-  // }
 
   toJSON() {
     return {
-      CameraNode: {
-        // active: this.active,
-      },
+      CameraNode: {},
     };
   }
 }
@@ -100,7 +95,7 @@ export class LightNode extends Node {
    * @param visitor The visitor
    */
   accept(visitor: Visitor) {
-    visitor.visitLightNode(this);
+    visitor.visitLightNode();
   }
 
   toJSON() {

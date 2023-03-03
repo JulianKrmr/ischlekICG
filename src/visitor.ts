@@ -19,7 +19,7 @@ export default interface Visitor {
   visitTextureBoxNode(node: TextureBoxNode): void;
   visitTextureVideoBoxNode(node: TextureVideoBoxNode): void;
   visitTextureTextBoxNode(node: TextureTextBoxNode): void;
-  visitCameraNode(node: CameraNode): void;
-  visitLightNode(node: LightNode): void;
+  visitCameraNode(): void;
+  visitLightNode(): void;
   visitCustomShapeNode(node: CustomShapeNode): void;
 }

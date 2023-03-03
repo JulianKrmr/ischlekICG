@@ -9,10 +9,8 @@ import Ray from "../math/ray";
 import Visitor from "../visitor";
 import {
   AABoxNode,
-  CameraNode,
   CustomShapeNode,
   GroupNode,
-  LightNode,
   Node,
   PyramidNode,
   SphereNode,
@@ -187,14 +185,14 @@ export default class MouserayVisitor implements Visitor {
   visitCustomShapeNode(node: CustomShapeNode): void {
     this.visitNode(node, new CustomShape(node.vertices, node.indices, new Vector(0, 0, 0, 1)));
   }
-  visitCameraNode(node: CameraNode) {
+  visitCameraNode() {
     let toWorld = this.transformations[this.transformations.length - 1];
     const origin = toWorld.mulVec(new Vector(0, 0, 0, 1));
     this.ray = Ray.makeRay(this.x, this.y, { width: this.width, height: this.height, alpha: Math.PI / 3, origin: origin });
     console.log(this.ray);
   }
 
-  visitLightNode(node: LightNode) {}
+  visitLightNode() {}
 
   //visits a node and checks for intersection, pushes intersection and node to array
   visitNode(node: Node, unitObject: any) {

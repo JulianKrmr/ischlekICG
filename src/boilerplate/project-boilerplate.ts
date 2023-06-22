@@ -203,7 +203,7 @@ window.addEventListener("load", () => {
   // video
   const textureBoxScaling = new GroupNode(new Scaling(new Vector(4.0, 2.0, 0.1, 0)));
   const textureBoxTranslation = new GroupNode(new Translation(new Vector(0.1, 1, 0.02, 0)));
-  const textureBox = new TextureVideoBoxNode("schalke.mp4", textureBoxScaling);
+  const textureBox = new TextureVideoBoxNode("assitoni.mp4", textureBoxScaling);
 
   const textureBoxRotation = new GroupNode(new Rotation(new Vector(0, 0, 1, 0), Math.PI));
 
